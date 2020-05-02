@@ -1,0 +1,20 @@
+<mat-list role="list">
+  <ng-container *ngFor="let gameList of gameLists; let i = index">
+    <mat-divider *ngIf="i > 0"></mat-divider>
+    <div mat-subheader>{{gameList.display}}</div>
+    <mat-list-item matRipple *ngFor="let game of gameList.games" [routerLink]="game.id" role="listitem">
+      <div mat-line>
+        <span *ngFor="let player of game.players; let i = index" >
+          <span style="white-space: pre;" *ngIf="i > 0">{{i > 0 ? ', ' : ''}}</span>
+          <span [style.color]="(palletService.pallet$ | async)[player.color]" [style.font-weight]="player.winner ? 'bold' : 'normal'">
+            {{player.winner ? '🏆' : ''}}{{player.nick$ | async}}
+          </span>
+        </span>
+      <div mat-line> {{game.modified | date:'medium'}} </div>
+    </div>
+    </mat-list-item>
+  </ng-container>
+</mat-list>
+<button mat-fab color="primary" (click)="joinQueue()" aria-label="new game">
+    <mat-icon>add</mat-icon>
+</button>

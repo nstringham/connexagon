@@ -25,7 +25,10 @@
             "aot": true,
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/manifest.webmanifest",
+              "src/firebase-messaging-sw.js",
+              "src/.well-known"
             ],
             "styles": [
               "src/styles.scss"
@@ -59,7 +62,9 @@
                   "maximumWarning": "6kb",
                   "maximumError": "10kb"
                 }
-              ]
+              ],
+              "serviceWorker": true,
+              "ngswConfigPath": "ngsw-config.json"
             }
           }
         },
@@ -89,7 +94,8 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/manifest.webmanifest"
             ],
             "styles": [
               "src/styles.scss"
@@ -121,8 +127,16 @@
               "devServerTarget": "Tic-Tac-Toe:serve:production"
             }
           }
+        },
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {}
         }
       }
-    }},
-  "defaultProject": "Tic-Tac-Toe"
+    }
+  },
+  "defaultProject": "Tic-Tac-Toe",
+  "cli": {
+    "analytics": "7f756532-6d13-40c9-8bc8-0f07c65cc388"
+  }
 }

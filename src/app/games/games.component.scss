@@ -1,0 +1,36 @@
+mat-list {
+    user-select: none;
+    -webkit-user-select: none;
+    margin: auto;
+    min-width: 200px;
+    max-width: 600px;
+    @media only screen and (min-width: 800px) {
+        max-width: 1200px;
+        columns: 3;
+        column-rule: 1px solid rgba(0, 0, 0, 0.12);
+        @media (prefers-color-scheme: dark) {
+            column-rule: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        mat-list-item {
+            break-before: avoid-column;
+        }
+        mat-divider {
+            break-after: column;
+            opacity: 0;
+        }
+        div { // mat-subheader
+            margin-top: 0px !important;
+        }
+    }
+}
+
+mat-list-item {
+    cursor: pointer;
+    &:hover {
+        background-color: rgba(128, 128, 128, 0.08);
+    }
+    &:focus {
+        outline: none !important;
+        background-color: rgba(128, 128, 128, 0.24);
+    }
+}

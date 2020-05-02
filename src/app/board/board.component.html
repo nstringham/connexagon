@@ -1,0 +1,6 @@
+<div class="canvas-wraper">
+    <canvas (click)="canvasClickHandler($event)" #canvas style="--scale-factor: 1;"></canvas>
+</div>
+<button mat-fab color="primary" (click)="submit()" aria-label="submit" [disabled]="!(isTurn && board.move && board.game.winner === -1)">
+    <mat-icon>done</mat-icon>
+</button>

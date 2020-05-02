@@ -1,0 +1,7 @@
+<h1 mat-dialog-title><span *ngIf="data.preTitle" [style.color]="data.preTitle.color" [style.font-weight]="data.preTitle.bold ? 'bold' : 'normal'">{{data.preTitle.text}}</span>{{data.title}}</h1>
+<div mat-dialog-content>
+    <p *ngIf="data.body">{{data.body}}</p>
+</div>
+<div mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close="ok" cdkFocusInitial>OK</button>
+</div>

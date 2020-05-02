@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "nates-tic-tac-toe": {
+      "hosting": {
+        "Tic-Tac-Toe": [
+          "nates-tic-tac-toe"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "nates-tic-tac-toe"
+  }
+}
