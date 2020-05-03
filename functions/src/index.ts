@@ -28,7 +28,8 @@ export const makeTurn = functions.firestore.document('games/{gameID}').onUpdate(
                     uids = [data.players[data.turn % data.players.length].uid];
                     message = "Its your turn";
                 } else {
-                    uids = data.players.splice(data.turn % data.players.length, 1).map((player: types.Player) => {return player.uid;});
+                    data.players.splice(data.turn % data.players.length, 1);
+                    uids = data.players.map((player: types.Player) => {return player.uid;});
                     message = "Game Over";
                 }
                 return notify(doc.id, message, uids);
@@ -149,7 +150,7 @@ async function notify(gameID: string, message: string, uids:string[]) {
             await messaging.sendMulticast({
                 webpush: {
                     fcmOptions: {
-                        link: "https://nates-tic-tac-toe.web.app/games/" + gameID
+                        link: "/games/" + gameID
                     },
                     notification: {
                         title: message,

@@ -1,11 +1,4 @@
-<button (click)="requestPermission()">
-    requestPermission
+<button mat-icon-button (click)="notifications.toggle()">
+    <mat-icon>{{notificationsEnabled ? 'notifications_active' : 'notifications_off'}}</mat-icon>
 </button>
-<br>
-<button (click)="deleteToken()">
-    deleteToken
-</button>
-<br>
-<button routerLink="games">
-    Game List
-</button>
+<button mat-raised-button routerLink="games" color="primary">Game List</button>
