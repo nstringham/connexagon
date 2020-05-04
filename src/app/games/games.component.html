@@ -7,7 +7,7 @@
         <span *ngFor="let player of game.players; let i = index" >
           <span style="white-space: pre;" *ngIf="i > 0">{{i > 0 ? ', ' : ''}}</span>
           <span [style.color]="(palletService.pallet$ | async)[player.color]" [style.font-weight]="player.winner ? 'bold' : 'normal'">
-            {{player.winner ? '🏆' : ''}}{{player.nick$ | async}}
+            {{player.winner ? '🏆' : ''}}{{player.nick}}
           </span>
         </span>
       <div mat-line> {{game.modified | date:'medium'}} </div>

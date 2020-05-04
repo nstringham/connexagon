@@ -18,11 +18,12 @@ export interface Game {
     move: Move | null;
     winner: number;
     modified: admin.firestore.Timestamp;
+    uids: string[];
 }
   
 export type Player = {
-    uid: string;
     color: Color;
+    nickname: string;
 };
 
 export type Move = {

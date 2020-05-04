@@ -26,9 +26,8 @@ export class AuthService {
       }));
     }));
     this.games$ = this.fireAuth.authState.pipe(filter(user => user != null), switchMap((user: User) => {
-      return firestore.collection<Game>('games', ref => ref.where('players', 'array-contains-any', colors.map(color => {
-        return {uid: user.uid, color};
-      })).orderBy('modified', 'desc').limit(25)).snapshotChanges();
+      return firestore.collection<Game>('games', ref => ref.where('uids', 'array-contains', user.uid)
+        .orderBy('modified', 'desc').limit(25)).snapshotChanges();
     }));
 
     this.userDoc$.subscribe(async (snapshot: DocumentSnapshot<UserData>) => {

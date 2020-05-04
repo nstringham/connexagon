@@ -74,8 +74,7 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
             color = 'inherit';
           } else {
             const player = game.players[game.winner];
-            const user = await this.firestore.doc<UserData>('users/' + player.uid).get().toPromise();
-            name = '🏆' + (user.exists ? user.data().nickname : '[No Name]');
+            name = '🏆' + (player.nickname);
             color = this.board.pallet[player.color];
           }
           this.dialog.open(DialogComponent, winnerAlert(name, color));
@@ -128,7 +127,7 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private updateIsTurn(){
     try {
-      this.isTurn = this.board.game.players[this.board.game.turn % this.board.game.players.length].uid === this.user.uid;
+      this.isTurn = this.board.game.uids[this.board.game.turn % this.board.game.players.length] === this.user.uid;
     } catch (error) {
       this.isTurn = false;
     }
@@ -249,11 +248,12 @@ export interface Game {
   move: Move | null;
   winner: number;
   modified: Timestamp;
+  uids: string[];
 }
 
 export type Player = {
-  uid: string;
   color: Color;
+  nickname: string;
 };
 
 export type Move = {

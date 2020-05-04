@@ -1,4 +1,5 @@
-<button mat-icon-button (click)="notifications.toggle()">
-    <mat-icon>{{notificationsEnabled ? 'notifications_active' : 'notifications_off'}}</mat-icon>
-</button>
-<button mat-raised-button routerLink="games" color="primary">Game List</button>
+    <button mat-icon-button (click)="notifications.toggle()" class="notification-icon">
+        <mat-icon>{{notificationsEnabled ? 'notifications_active' : 'notifications_off'}}</mat-icon>
+    </button>
+    <h1 class="mat-display-4 title">Tic -Tac -Toe</h1>
+    <div class="flex-wrapper"><button mat-raised-button routerLink="games" color="primary" class="centered">Game List</button></div>

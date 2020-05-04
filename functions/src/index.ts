@@ -25,11 +25,11 @@ export const makeTurn = functions.firestore.document('games/{gameID}').onUpdate(
                 let uids: string[];
                 let message: string;
                 if (data.winner === -1) {
-                    uids = [data.players[data.turn % data.players.length].uid];
+                    uids = [data.uids[data.turn % data.players.length]];
                     message = "Its your turn";
                 } else {
                     data.players.splice(data.turn % data.players.length, 1);
-                    uids = data.players.map((player: types.Player) => {return player.uid;});
+                    uids = data.uids;
                     message = "Game Over";
                 }
                 return notify(doc.id, message, uids);
@@ -64,16 +64,17 @@ export const handleGameQueues = functions.firestore.document('queues/{queueName}
 export const deleteUserData = functions.auth.user().onDelete((user) => {
     return Promise.all([
         firestore.runTransaction(transaction => {
-            const userGames= firestore.collection('games').where('players', 'array-contains-any', types.colors.map(color => ({uid: user.uid, color})));
+            const userGames= firestore.collection('games').where('uids', 'array-contains', user.uid,);
             return transaction.get(userGames).then(gameDocs => {gameDocs.forEach(doc => {
                 const data = doc.data();
-                const index: number = data.players.findIndex((player: types.Player) => player.uid === user.uid);
+                const index: number = data.uids.indexOf(user.uid);
                 if(data.winner === -1){
                     data.turn -= Math.floor(data.turn / data.players.length);
                     data.players.splice(index, 1);
+                    data.uids.splice(index, 1);
                     data.board = data.board.map((value: number) => value === index ? -1 : value > index ? value -1 : value);
                 } else {
-                    data.players[index].uid = 'deleted';
+                    data.uids[index] = 'deleted';
                 }
                 transaction.set(doc.ref, data);
             })});
@@ -128,7 +129,11 @@ async function makeGame(size: number, uids: string[]) {
     const shuffledUIDs = shuffle(uids);
     return firestore.collection('games').add({
         board: new Array(size * size).fill(-1),
-        players: shuffledUIDs.map((uid, i) => ({uid, color: shuffledColors[i]})),
+        players: await Promise.all(shuffledUIDs.map(async (uid, i) => ({
+            color: shuffledColors[i],
+            nickname: (await firestore.doc('users/' + uid).get()).data()?.nickname || '[No Name]'
+        }))),
+        uids: shuffledUIDs,
         turn: 0,
         winner: -1,
         modified: admin.firestore.Timestamp.now()

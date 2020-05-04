@@ -34,7 +34,7 @@ export class GamesComponent implements OnInit, OnDestroy {
         const game = action.payload.doc.data();
         let gameArr: GameListElement[];
         if (game.winner === -1){
-          if (game.players[game.turn % game.players.length].uid === authService.currentUID && game.move == null) {
+          if (game.uids[game.turn % game.players.length] === authService.currentUID && game.move == null) {
             gameArr = newGameList[0].games;
           } else {
             gameArr = newGameList[1].games;
@@ -43,7 +43,7 @@ export class GamesComponent implements OnInit, OnDestroy {
           gameArr = newGameList[2].games;
         }
         const players = game.players.map((player, i) => ({
-          nick$: this.getNickObservable(player.uid),
+          nick: player.nickname,
           color: player.color,
           winner: game.winner === i
         }));
@@ -68,10 +68,6 @@ export class GamesComponent implements OnInit, OnDestroy {
     this.gamesSubscription.unsubscribe();
   }
 
-  public getNickObservable(uid: string){
-    return this.firestore.doc<UserData>('users/' + uid).valueChanges().pipe(map((userData: UserData) => userData ? userData.nickname : '[No Name]'));
-  }
-
   public joinQueue() {
     const data = {};
     data[this.authService.currentUID] = true;
@@ -80,7 +76,7 @@ export class GamesComponent implements OnInit, OnDestroy {
 }
 
 type GameListElement = {
-  players: {nick$: Observable<string>, color: Color, winner: boolean}[],
+  players: {nick: string, color: Color, winner: boolean}[],
   modified: Date,
   id: string,
 };

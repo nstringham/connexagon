@@ -4,7 +4,7 @@ service cloud.firestore {
   	match /games/{game} {
     	allow read;
       allow update:
-        if request.auth.uid == resource.data.players[resource.data.turn % resource.data.players.size()].uid
+        if request.auth.uid == resource.data.uids[resource.data.turn % resource.data.players.size()]
         && resource.data.winner == -1
         && request.resource.data.diff(resource.data).addedKeys() == ["move"].toSet()
         && request.resource.data.diff(resource.data).changedKeys() == [].toSet()
