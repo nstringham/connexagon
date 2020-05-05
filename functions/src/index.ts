@@ -8,63 +8,88 @@ const firestore = admin.firestore();
 const messaging = admin.messaging();
 
 export const makeTurn = functions.firestore.document('games/{gameID}').onUpdate((change, context) => {
-    return firestore.runTransaction(transaction => {
-        return transaction.get(change.after.ref).then(doc => {
-            const data = doc.data();
-            if(data?.move){
-                data.board[data.move.position] = data.turn % data.players.length;
-                delete data.move;
-                data.winner = findWinner(data.board);
-                if (data.winner === -1) {
-                    data.turn++;
+    const after = change.after.data();
+    if(after?.move){
+        return firestore.runTransaction(transaction => {
+            return transaction.get(change.after.ref).then(doc => {
+                const data = doc.data();
+                if(data?.move){
+                    data.board[data.move.position] = data.turn % data.players.length;
+                    delete data.move;
+                    data.winner = findWinner(data.board);
+                    if (data.winner === -1) {
+                        data.turn++;
+                    }
+                    data.modified = admin.firestore.Timestamp.now();
+                    transaction.set(doc.ref, data);
                 }
-                data.modified = admin.firestore.Timestamp.now();
-                transaction.set(doc.ref, data);
-                
-            } else if(data) {
-                let uids: string[];
-                let message: string;
-                if (data.winner === -1) {
-                    uids = [data.uids[data.turn % data.players.length]];
-                    message = "Its your turn";
-                } else {
-                    data.players.splice(data.turn % data.players.length, 1);
-                    uids = data.uids;
-                    message = "Game Over";
-                }
-                return notify(doc.id, message, uids);
-            }
-            return;
+            });
         });
-    });
+    } else if(after) {
+        let uids: string[];
+        let message: string;
+        if (after.winner === -1) {
+            uids = [after.uids[after.turn % after.players.length]];
+            message = "Its your turn";
+        } else {
+            after.uids.splice(after.turn % after.players.length, 1);
+            uids = after.uids;
+            message = "Game Over";
+        }
+        return notify(change.after.id, message, uids);
+    }
+    return
 });
 
 export const handleGameQueues = functions.firestore.document('queues/{queueName}').onUpdate((change, context) => {
-    return firestore.runTransaction(transaction => {
-        return transaction.get(change.after.ref).then(doc => {
-            const data = doc.data();
-            if (data){
-                const keys = Object.keys(data);
-                const queueProperties = context.params.queueName.split('p');
-                const playerCount = parseInt(queueProperties[0]);
-                if (keys.length >= playerCount) {
-                    const size = parseInt(queueProperties[1].split('x')[0]);
-                    const players = keys.slice(0, playerCount)
-                    return makeGame(size, players).then(() => {
-                        players.forEach(player => delete data[player]);
-                        transaction.set(doc.ref, data)
-                    });
+    const after = change.after.data();
+    const queueProperties = context.params.queueName.split('p');
+    const playerCount = parseInt(queueProperties[0]);
+    if(after && Object.keys(after).length >= playerCount){
+        return firestore.runTransaction(transaction => {
+            return transaction.get(change.after.ref).then(doc => {
+                const data = doc.data();
+                if (data){
+                    const keys = Object.keys(data);
+                    if (keys.length >= playerCount) {
+                        const size = parseInt(queueProperties[1].split('x')[0]);
+                        const players = keys.slice(0, playerCount);
+                        return makeGame(size, players).then(() => {
+                            players.forEach(player => delete data[player]);
+                            transaction.set(doc.ref, data)
+                        });
+                    }
                 }
-            }
-            return null;
+                return;
+            });
         });
-    });
+    }
+    return;
+});
+
+export const handleUserDataChange = functions.firestore.document('users/{uid}').onUpdate((change, context) => {
+    const nickname: string | undefined = change.after.data()?.nickname;
+    if (nickname && nickname !== change.before.data()?.nickname) {
+        return firestore.collection('games').where('uids', 'array-contains', change.after.id).get().then(snapshot => {
+            snapshot.forEach(gameDoc => {
+                const index: number = gameDoc.data().uids.indexOf(change.after.id);
+                return firestore.runTransaction(async transaction => {
+                    const players = (await transaction.get(gameDoc.ref)).data()?.players
+                    if (players) {
+                        players[index].nickname = nickname;
+                        transaction.update(gameDoc.ref, {players})
+                    }
+                })
+            })
+        })
+    }
+    return;
 });
 
 export const deleteUserData = functions.auth.user().onDelete((user) => {
     return Promise.all([
         firestore.runTransaction(transaction => {
-            const userGames= firestore.collection('games').where('uids', 'array-contains', user.uid,);
+            const userGames = firestore.collection('games').where('uids', 'array-contains', user.uid);
             return transaction.get(userGames).then(gameDocs => {gameDocs.forEach(doc => {
                 const data = doc.data();
                 const index: number = data.uids.indexOf(user.uid);

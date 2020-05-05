@@ -41,13 +41,21 @@ export class NotificationsService {
 
     this.Messaging.onMessage((message) => {
       this.zone.run(() => {
-        this.snackBar.open(message.notification.title, 'Open', {
-          verticalPosition: 'bottom',
-          horizontalPosition: 'center',
-          duration: 5000,
-        }).onAction().subscribe(() => {
-          this.router.navigateByUrl(message.fcmOptions.link);
-        });
+        if (message.fcmOptions.link !== this.router.url) {
+          this.snackBar.open(message.notification.title, 'Open', {
+            verticalPosition: 'bottom',
+            horizontalPosition: 'center',
+            duration: 5000,
+          }).onAction().subscribe(() => {
+            this.router.navigateByUrl(message.fcmOptions.link);
+          });
+        } else if (!message.notification.title.includes('Over')) {
+          this.snackBar.open(message.notification.title, null, {
+            verticalPosition: 'bottom',
+            horizontalPosition: 'center',
+            duration: 3000,
+          });
+        }
       });
     });
   }
