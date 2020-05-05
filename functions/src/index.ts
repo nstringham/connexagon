@@ -9,6 +9,7 @@ const messaging = admin.messaging();
 
 export const makeTurn = functions.firestore.document('games/{gameID}').onUpdate((change, context) => {
     const after = change.after.data();
+    const before = change.before.data();
     if(after?.move){
         return firestore.runTransaction(transaction => {
             return transaction.get(change.after.ref).then(doc => {
@@ -25,7 +26,7 @@ export const makeTurn = functions.firestore.document('games/{gameID}').onUpdate(
                 }
             });
         });
-    } else if(after) {
+    } else if(after && before && (after.turn !== before.turn || after.winner !== before.winner)) {
         let uids: string[];
         let message: string;
         if (after.winner === -1) {
@@ -38,7 +39,7 @@ export const makeTurn = functions.firestore.document('games/{gameID}').onUpdate(
         }
         return notify(change.after.id, message, uids);
     }
-    return
+    return null;
 });
 
 export const handleGameQueues = functions.firestore.document('queues/{queueName}').onUpdate((change, context) => {
@@ -72,7 +73,7 @@ export const handleUserDataChange = functions.firestore.document('users/{uid}').
     if (nickname && nickname !== change.before.data()?.nickname) {
         return firestore.collection('games').where('uids', 'array-contains', change.after.id)
             .orderBy('modified', 'desc').limit(1000).get().then(snapshot => {
-            snapshot.forEach(gameDoc => {
+            return Promise.all(snapshot.docs.map(gameDoc => {
                 const index: number = gameDoc.data().uids.indexOf(change.after.id);
                 return firestore.runTransaction(async transaction => {
                     const players = (await transaction.get(gameDoc.ref)).data()?.players
@@ -81,7 +82,7 @@ export const handleUserDataChange = functions.firestore.document('users/{uid}').
                         transaction.update(gameDoc.ref, {players})
                     }
                 })
-            })
+            }));
         })
     }
     return null;
