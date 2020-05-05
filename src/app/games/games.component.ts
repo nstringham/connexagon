@@ -1,11 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AngularFirestore, DocumentChangeAction } from '@angular/fire/firestore';
-import { AuthService, UserData } from '../auth.service';
-import { Observable, Subscription } from 'rxjs';
+import { AuthService } from '../auth.service';
+import { Subscription } from 'rxjs';
 import { Game } from '../board/board.component';
 import { Color, PalletService } from '../pallet.service';
-import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-games',
@@ -71,7 +70,7 @@ export class GamesComponent implements OnInit, OnDestroy {
   public joinQueue() {
     const data = {};
     data[this.authService.currentUID] = true;
-    this.firestore.doc('queues/2p3x3').update(data).then(() => console.log('added to queue'))
+    this.firestore.doc('queues/2p3x3').update(data).then(() => console.log('added to queue'));
   }
 }
 

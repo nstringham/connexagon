@@ -4,8 +4,7 @@ import { Observable } from 'rxjs';
 import { auth } from 'firebase/app';
 import { User } from 'firebase';
 import { switchMap, map, filter } from 'rxjs/operators';
-import { AngularFirestore, DocumentSnapshot, Action, DocumentReference, DocumentChangeAction } from '@angular/fire/firestore';
-import { colors } from './pallet.service';
+import { AngularFirestore, DocumentSnapshot, Action, DocumentChangeAction } from '@angular/fire/firestore';
 import { Game } from './board/board.component';
 
 @Injectable({

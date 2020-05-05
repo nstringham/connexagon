@@ -3,7 +3,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
 import { firestore } from 'firebase/app';
 import { AngularFireMessaging } from '@angular/fire/messaging';
-import { Subscription, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { switchMap, map, first } from 'rxjs/operators';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { MatSnackBar } from '@angular/material/snack-bar';
