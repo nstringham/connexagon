@@ -6,7 +6,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { User } from 'firebase';
 import { UserData } from '../auth.service';
 import { DialogComponent, winnerAlert } from '../dialog/dialog.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Pallet, PalletService, Color } from '../pallet.service';
 import { Timestamp } from '@firebase/firestore-types';
 
@@ -30,8 +30,7 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private gameDoc: AngularFirestoreDocument<Game>;
 
-  private initialPinchDistance = -1;
-  private initialPinchScale = 1;
+  private dialogRef: MatDialogRef<DialogComponent>;
 
   update(move: Move) {
     console.log({move});
@@ -66,6 +65,7 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
         this.board.game = game;
         this.updateIsTurn();
         this.board.drawLetters();
+        this?.dialogRef?.close();
         if (game.winner !== -1) {
           let name: string;
           let color: string;
@@ -77,7 +77,7 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
             name = '🏆' + (player.nickname);
             color = this.board.pallet[player.color];
           }
-          this.dialog.open(DialogComponent, winnerAlert(name, color));
+          this.dialogRef = this.dialog.open(DialogComponent, winnerAlert(name, color));
         }
       });
     }));
