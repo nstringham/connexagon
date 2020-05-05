@@ -60,17 +60,18 @@ export const handleGameQueues = functions.firestore.document('queues/{queueName}
                         });
                     }
                 }
-                return;
+                return null;
             });
         });
     }
-    return;
+    return null;
 });
 
 export const handleUserDataChange = functions.firestore.document('users/{uid}').onUpdate((change, context) => {
     const nickname: string | undefined = change.after.data()?.nickname;
     if (nickname && nickname !== change.before.data()?.nickname) {
-        return firestore.collection('games').where('uids', 'array-contains', change.after.id).get().then(snapshot => {
+        return firestore.collection('games').where('uids', 'array-contains', change.after.id)
+            .orderBy('modified', 'desc').limit(1000).get().then(snapshot => {
             snapshot.forEach(gameDoc => {
                 const index: number = gameDoc.data().uids.indexOf(change.after.id);
                 return firestore.runTransaction(async transaction => {
@@ -83,7 +84,7 @@ export const handleUserDataChange = functions.firestore.document('users/{uid}').
             })
         })
     }
-    return;
+    return null;
 });
 
 export const deleteUserData = functions.auth.user().onDelete((user) => {
