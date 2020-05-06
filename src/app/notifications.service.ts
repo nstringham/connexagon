@@ -42,9 +42,9 @@ export class NotificationsService {
     this.Messaging.onMessage((message) => {
       this.zone.run(() => {
         if (message.fcmOptions.link !== this.router.url) {
-          this.snackBar.open(message.notification.title, 'Open', {
+          this.snackBar.open(message.notification.title, 'View', {
             verticalPosition: 'bottom',
-            horizontalPosition: 'center',
+            horizontalPosition: 'left',
             duration: 5000,
           }).onAction().subscribe(() => {
             this.router.navigateByUrl(message.fcmOptions.link);
