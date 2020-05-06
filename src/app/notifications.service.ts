@@ -28,7 +28,7 @@ export class NotificationsService {
     this.isEnabled = this.fireAuth.authState.pipe(switchMap(user => {
       if (user?.uid) {
         return this.aFirestore.doc<string[]>('users/' + user.uid + '/private/tokens').valueChanges().pipe(switchMap((tokens => {
-          if (tokens) {
+          if (tokens && Notification.permission === 'granted') {
             return this.Messaging.getToken.pipe(map(token => Object.keys(tokens).includes(token)));
           } else {
             return of(false);
@@ -61,12 +61,18 @@ export class NotificationsService {
   }
 
   public enable() {
-    this.Messaging.requestToken.subscribe( (token) => {
-      console.log('Permission granted! Save to the server!', token);
-      const data = {};
-      data[token] = true;
-      this.aFirestore.doc('users/' + this.authService.currentUID + '/private/tokens').set(data, {merge: true});
-    }, (error) => { console.error(error); });
+    if (Notification.permission === 'granted' || confirm('Would you like to receive notifications when it\'s your turn?')) {
+      this.Messaging.requestToken.subscribe( (token) => {
+        console.log('Permission granted! Save to the server!', token);
+        const data = {};
+        data[token] = true;
+        this.aFirestore.doc('users/' + this.authService.currentUID + '/private/tokens').set(data, {merge: true});
+      }, (error) => {
+        if (error.code === 'messaging/permission-blocked') {
+          alert('Your browser is blocking notifications, so you will not be notified when it is your turn.');
+        }
+      });
+    }
   }
 
   public disable() {
