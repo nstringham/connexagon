@@ -5,6 +5,7 @@ import { AuthService } from '../auth.service';
 import { Subscription } from 'rxjs';
 import { Game } from '../board/board.component';
 import { Color, PalletService } from '../pallet.service';
+import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-games',
@@ -14,6 +15,16 @@ import { Color, PalletService } from '../pallet.service';
 export class GamesComponent implements OnInit, OnDestroy {
 
   private gamesSubscription: Subscription;
+
+  public spinner: {
+    visable: boolean,
+    mode: ProgressSpinnerMode,
+    value: number
+  } = {
+    visable: false,
+    mode: 'indeterminate',
+    value: 0
+  };
 
   public gameLists: {games: GameListElement[], display: string}[] = [
     {games: [], display: 'Your Turn'},
@@ -68,9 +79,27 @@ export class GamesComponent implements OnInit, OnDestroy {
   }
 
   public joinQueue() {
+    this.spinner.visable = true;
+    this.spinner.mode = 'indeterminate';
     const data = {};
     data[this.authService.currentUID] = true;
-    this.firestore.doc('queues/2p3x3').update(data).then(() => console.log('added to queue'));
+    this.firestore.doc('queues/2p3x3').update(data).then(() => this.listenToQueue(), () => this.listenToQueue());
+  }
+
+  private listenToQueue() {
+    const subscription = this.firestore.doc<{}>('queues/2p3x3').valueChanges().subscribe(queue => {
+      if (this.spinner) {
+        const keys = Object.keys(queue);
+        if (keys?.includes(this.authService.currentUID)) {
+          this.spinner.mode = 'determinate';
+          this.spinner.value = 100 * keys.length / 2;
+        } else {
+          this.spinner.mode = 'indeterminate';
+          this.spinner.visable = false;
+          subscription.unsubscribe();
+        }
+      }
+    });
   }
 }
 

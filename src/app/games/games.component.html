@@ -16,5 +16,8 @@
   </ng-container>
 </mat-list>
 <button mat-fab color="primary" (click)="joinQueue()" aria-label="new game">
-    <mat-icon>add</mat-icon>
+  <mat-icon *ngIf="!spinner.visable else spinnerTemplate">add</mat-icon>
+  <ng-template #spinnerTemplate>
+    <mat-spinner [value]="spinner.value" [mode]="spinner.mode" diameter="24"></mat-spinner>
+  </ng-template>
 </button>

@@ -64,4 +64,7 @@ button.mat-fab {
     right: 16px;
     bottom: calc(16px + env(safe-area-inset-bottom, 0px));
     right: calc(16px + env(safe-area-inset-right, 0px));
+    .mat-spinner circle {
+        stroke: #fff;
+    }
 }

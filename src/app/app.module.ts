@@ -17,6 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatListModule } from '@angular/material/list';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BoardComponent } from './board/board.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { GamesComponent } from './games/games.component';
@@ -50,6 +51,7 @@ import { LoginComponent } from './login/login.component';
     MatMenuModule,
     MatListModule,
     MatSnackBarModule,
+    MatProgressSpinnerModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production, registrationStrategy: 'registerImmediately' })
   ],
   providers: [],
