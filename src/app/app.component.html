@@ -9,6 +9,11 @@
     <span class="title">{{title}}</span>
     <span style="flex: 1 1 auto;"></span>
     <div class="icon-button-warper">
+      <button mat-icon-button *ngIf="deferredInstallPrompt" (click)="deferredInstallPrompt.prompt()" aria-label="Download App">
+        <mat-icon>get_app</mat-icon>
+      </button>
+    </div>
+    <div class="icon-button-warper">
       <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Account">
         <img class="account-photo" *ngIf="(fireAuth.authState | async)?.photoURL as photoURL else account_circle" src="{{photoURL}}">
         <ng-template #account_circle><mat-icon>account_circle</mat-icon></ng-template>

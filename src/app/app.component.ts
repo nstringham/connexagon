@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { LoginComponent } from './login/login.component';
 import { AuthService } from './auth.service';
@@ -18,6 +18,13 @@ export class AppComponent implements OnInit {
   dialog: MatDialogRef<LoginComponent>;
 
   public navigator = window.navigator;
+
+  public deferredInstallPrompt: any;
+  @HostListener('window:beforeinstallprompt', ['$event'])
+  onbeforeinstallprompt(event) {
+    event.preventDefault();
+    this.deferredInstallPrompt = event;
+  }
 
   constructor(
     public authService: AuthService,
