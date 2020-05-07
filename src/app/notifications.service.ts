@@ -35,6 +35,7 @@ export class NotificationsService {
           }
         })));
       } else {
+        this.deleteToken();
         return of(false);
       }
     }));
