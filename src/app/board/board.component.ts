@@ -104,6 +104,13 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public canvasClickHandler(event: MouseEvent) {
+    if (
+      this.canvas.nativeElement.height !== this.canvas.nativeElement.clientHeight ||
+      this.canvas.nativeElement.width !== this.canvas.nativeElement.clientWidth
+    ) {
+      // this deals with a problem caused by samsung internet not using css min()
+      this.resizeCanvas();
+    }
     const x = event.x - this.canvas.nativeElement.getBoundingClientRect().left;
     const y = event.y - this.canvas.nativeElement.getBoundingClientRect().top;
     const position = this.board.getPosition(x * window.devicePixelRatio, y * window.devicePixelRatio);
