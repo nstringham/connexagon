@@ -47,7 +47,7 @@ export class NotificationsService {
             verticalPosition: 'bottom',
             horizontalPosition: 'left',
             duration: 5000,
-          }).onAction().subscribe(() => {
+          }).onAction().pipe(first()).subscribe(() => {
             this.router.navigateByUrl(message.fcmOptions.link);
           });
         } else if (!message.notification.title.includes('Over')) {
