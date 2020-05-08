@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { firestore } from 'firebase/app';
 import { AngularFireMessaging } from '@angular/fire/messaging';
 import { Observable, of } from 'rxjs';
-import { switchMap, map, first } from 'rxjs/operators';
+import { switchMap, map, first, mergeMap } from 'rxjs/operators';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -35,10 +35,14 @@ export class NotificationsService {
           }
         })));
       } else {
-        this.deleteToken();
         return of(false);
       }
     }));
+    this.fireAuth.authState.subscribe(user => {
+      if (user == null && Notification.permission === 'granted') {
+        this.deleteToken();
+      }
+    });
 
     this.Messaging.onMessage((message) => {
       this.zone.run(() => {
@@ -46,7 +50,7 @@ export class NotificationsService {
           this.snackBar.open(message.notification.title, 'View', {
             verticalPosition: 'bottom',
             horizontalPosition: 'left',
-            duration: 5000,
+            duration: 6000000,
           }).onAction().pipe(first()).subscribe(() => {
             this.router.navigateByUrl(message.fcmOptions.link);
           });
@@ -54,7 +58,7 @@ export class NotificationsService {
           this.snackBar.open(message.notification.title, null, {
             verticalPosition: 'bottom',
             horizontalPosition: 'center',
-            duration: 3000,
+            duration: 4000,
           });
         }
       });
@@ -63,7 +67,7 @@ export class NotificationsService {
 
   public enable() {
     if (Notification.permission === 'granted' || confirm('Would you like to receive notifications when it\'s your turn?')) {
-      this.Messaging.requestToken.subscribe( (token) => {
+      this.Messaging.getToken.subscribe( (token) => {
         console.log('Permission granted! Save to the server!', token);
         const data = {};
         data[token] = true;
@@ -95,9 +99,10 @@ export class NotificationsService {
   }
 
   public deleteToken() {
-    this.disable();
-    this.Messaging.getToken.subscribe(token => {
-      this.Messaging.deleteToken(token);
-    });
+    this.Messaging.getToken
+      .pipe(mergeMap(token => this.Messaging.deleteToken(token)))
+      .subscribe(
+        (token) => { console.log('Token deleted!'); },
+      );
   }
 }
