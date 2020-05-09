@@ -188,7 +188,8 @@ async function notify(gameID: string, message: string, uids:string[]) {
                         title: message,
                         body: "open this notification to view the game",
                         icon: "/assets/icons/icon-128x128.png",
-                        badge: "/assets/icons/badge-72x72.png"
+                        badge: "/assets/icons/badge-72x72.png",
+                        tag: gameID
                     }
                 },
                 tokens
