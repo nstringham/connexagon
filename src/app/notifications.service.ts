@@ -50,7 +50,7 @@ export class NotificationsService {
           this.snackBar.open(message.notification.title, 'View', {
             verticalPosition: 'bottom',
             horizontalPosition: 'left',
-            duration: 6000000,
+            duration: 6000,
           }).onAction().pipe(first()).subscribe(() => {
             this.router.navigateByUrl(message.fcmOptions.link);
           });
