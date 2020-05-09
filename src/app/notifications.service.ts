@@ -28,7 +28,7 @@ export class NotificationsService {
     this.isEnabled = this.fireAuth.authState.pipe(switchMap(user => {
       if (user?.uid) {
         return this.aFirestore.doc<string[]>('users/' + user.uid + '/private/tokens').valueChanges().pipe(switchMap((tokens => {
-          if (tokens && Notification.permission === 'granted') {
+          if (tokens && 'Notification' in window && Notification.permission === 'granted') {
             return this.Messaging.getToken.pipe(map(token => Object.keys(tokens).includes(token)));
           } else {
             return of(false);
@@ -39,7 +39,7 @@ export class NotificationsService {
       }
     }));
     this.fireAuth.authState.subscribe(user => {
-      if (user == null && Notification.permission === 'granted') {
+      if (user == null && 'Notification' in window && Notification.permission === 'granted') {
         this.deleteToken();
       }
     });
@@ -66,17 +66,21 @@ export class NotificationsService {
   }
 
   public enable() {
-    if (Notification.permission === 'granted' || confirm('Would you like to receive notifications when it\'s your turn?')) {
-      this.Messaging.getToken.subscribe( (token) => {
-        console.log('Permission granted! Save to the server!', token);
-        const data = {};
-        data[token] = true;
-        this.aFirestore.doc('users/' + this.authService.currentUID + '/private/tokens').set(data, {merge: true});
-      }, (error) => {
-        if (error.code === 'messaging/permission-blocked') {
-          alert('Your browser is blocking notifications, so you will not be notified when it is your turn.');
-        }
-      });
+    if ('Notification' in window) {
+      if (Notification.permission === 'granted' || confirm('Would you like to receive notifications when it\'s your turn?')) {
+        this.Messaging.getToken.subscribe( (token) => {
+          console.log('Permission granted! Save to the server!', token);
+          const data = {};
+          data[token] = true;
+          this.aFirestore.doc('users/' + this.authService.currentUID + '/private/tokens').set(data, {merge: true});
+        }, (error) => {
+          if (error.code === 'messaging/permission-blocked') {
+            alert('Your browser is blocking notifications, so you will not be notified when it is your turn.');
+          }
+        });
+      }
+    } else {
+      alert('Your browser does not support notifications');
     }
   }
 

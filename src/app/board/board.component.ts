@@ -79,6 +79,13 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
           this.dialogRef = this.dialog.open(DialogComponent, winnerAlert(name, color));
         }
       });
+      navigator.serviceWorker.register('firebase-messaging-sw.js').then((registration) => {
+        registration.getNotifications({tag: paramMap.get('id')}).then((notifications) => {
+          notifications.forEach((notification) => {
+            notification.close();
+          });
+        });
+      });
     }));
   }
 
