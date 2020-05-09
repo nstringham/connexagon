@@ -7,10 +7,12 @@ div.canvas-wraper {
     left: 0;
     display: flex;
     canvas {
-        height: 100%;
-        width: 100vw;
+        --height: calc(100vh - var(--header-height));
+        --width: 100vw;
+        height: var(--height);
+        width: var(--width);
         @supports (height: min(0px, 0px)) {
-            --vmin: min(calc(var(--scale-factor) * 100vw), calc(calc(var(--scale-factor) * 100vh) - var(--header-height)));
+            --vmin: min(var(--height), var(--width));
             height: var(--vmin);
             width: var(--vmin);
         }
