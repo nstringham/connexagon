@@ -4,7 +4,7 @@ import { LoginComponent } from './login/login.component';
 import { AuthService } from './auth.service';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Platform } from '@angular/cdk/platform';
-import { Location, NgIf } from '@angular/common';
+import { Location } from '@angular/common';
 import { NotificationsService } from './notifications.service';
 
 @Component({
@@ -51,8 +51,8 @@ export class AppComponent implements OnInit {
 
   install() {
     if (this.deferredInstallPrompt) {
-      this.deferredInstallPrompt.prompt();
-      this.deferredInstallPrompt.userChoice.then(choiceResult => {
+      this.deferredInstallPrompt.prompt().then(choiceResult => {
+        console.log(choiceResult);
         this.deferredInstallPrompt = null;
       });
     }
