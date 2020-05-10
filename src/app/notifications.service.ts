@@ -57,7 +57,7 @@ export class NotificationsService {
         } else if (!message.notification.title.includes('Over')) {
           this.snackBar.open(message.notification.title, null, {
             verticalPosition: 'bottom',
-            horizontalPosition: 'center',
+            horizontalPosition: 'left',
             duration: 4000,
           });
         }
