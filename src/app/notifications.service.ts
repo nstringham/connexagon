@@ -6,8 +6,8 @@ import { AngularFireMessaging } from '@angular/fire/messaging';
 import { Observable, of } from 'rxjs';
 import { switchMap, map, first, mergeMap } from 'rxjs/operators';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { ToastService } from './toast.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,9 +19,9 @@ export class NotificationsService {
   constructor(
     private Messaging: AngularFireMessaging,
     private authService: AuthService,
+    private toast: ToastService,
     private aFirestore: AngularFirestore,
     private fireAuth: AngularFireAuth,
-    private snackBar: MatSnackBar,
     private router: Router,
     private zone: NgZone
   ) {
@@ -47,19 +47,9 @@ export class NotificationsService {
     this.Messaging.onMessage((message) => {
       this.zone.run(() => {
         if (message.fcmOptions.link !== this.router.url) {
-          this.snackBar.open(message.notification.title, 'View', {
-            verticalPosition: 'bottom',
-            horizontalPosition: 'left',
-            duration: 6000,
-          }).onAction().pipe(first()).subscribe(() => {
-            this.router.navigateByUrl(message.fcmOptions.link);
-          });
+          this.toast.toast(message.notification.title, message.fcmOptions.link);
         } else if (!message.notification.title.includes('Over')) {
-          this.snackBar.open(message.notification.title, null, {
-            verticalPosition: 'bottom',
-            horizontalPosition: 'left',
-            duration: 4000,
-          });
+          this.toast.toast(message.notification.title);
         }
       });
     });
