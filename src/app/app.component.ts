@@ -4,7 +4,7 @@ import { LoginComponent } from './login/login.component';
 import { AuthService } from './auth.service';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Platform } from '@angular/cdk/platform';
-import { Location } from '@angular/common';
+import { Location, NgIf } from '@angular/common';
 import { NotificationsService } from './notifications.service';
 
 @Component({
@@ -47,5 +47,14 @@ export class AppComponent implements OnInit {
         this.dialog.close();
       }
     });
+  }
+
+  install() {
+    if (this.deferredInstallPrompt) {
+      this.deferredInstallPrompt.prompt();
+      this.deferredInstallPrompt.userChoice.then(choiceResult => {
+        this.deferredInstallPrompt = null;
+      });
+    }
   }
 }
