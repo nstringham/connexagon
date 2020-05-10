@@ -8,6 +8,7 @@ import { DialogComponent, winnerAlert } from '../dialog/dialog.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Pallet, PalletService, Color } from '../pallet.service';
 import { Timestamp } from '@firebase/firestore-types';
+import { ToastService } from '../toast.service';
 
 @Component({
   selector: 'app-board',
@@ -40,10 +41,11 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
     private route: ActivatedRoute,
     private fireAuth: AngularFireAuth,
     private firestore: AngularFirestore,
+    private toast: ToastService,
     public dialog: MatDialog,
     public palletService: PalletService
   ) {
-    this.subscriptions.push(fireAuth.authState.subscribe((user: User) => {
+    this.subscriptions.push(this.fireAuth.authState.subscribe((user: User) => {
       this.user = user;
       this.updateIsTurn();
     }));
@@ -77,6 +79,10 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
             color = this.board.pallet[player.color];
           }
           this.dialogRef = this.dialog.open(DialogComponent, winnerAlert(name, color));
+        } else {
+          if (this.isTurn) {
+            this.toast.toast('it\'s your isTurn.');
+          }
         }
       });
       navigator.serviceWorker.register('firebase-messaging-sw.js').then((registration) => {
