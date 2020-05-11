@@ -48,8 +48,6 @@ export class NotificationsService {
       this.zone.run(() => {
         if (message.fcmOptions.link !== this.router.url) {
           this.toast.toast(message.notification.title, message.fcmOptions.link);
-        } else if (!message.notification.title.includes('Over')) {
-          this.toast.toast(message.notification.title);
         }
       });
     });
