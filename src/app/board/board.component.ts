@@ -42,7 +42,7 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
     private fireAuth: AngularFireAuth,
     private firestore: AngularFirestore,
     private toast: ToastService,
-    public dialog: MatDialog,
+    public matDialog: MatDialog,
     public palletService: PalletService
   ) {
     this.subscriptions.push(this.fireAuth.authState.subscribe((user: User) => {
@@ -78,7 +78,7 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
             name = '🏆' + (player.nickname);
             color = this.board.pallet[player.color];
           }
-          this.dialogRef = this.dialog.open(DialogComponent, winnerAlert(name, color));
+          this.dialogRef = this.matDialog.open(DialogComponent, winnerAlert(name, color));
         } else {
           if (this.isTurn && !game.move) {
             this.toast.toast('it\'s your isTurn.');
