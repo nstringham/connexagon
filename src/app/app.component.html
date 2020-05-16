@@ -8,8 +8,11 @@
     </div>
     <span class="title">{{title}}</span>
     <span style="flex: 1 1 auto;"></span>
-    <div class="icon-button-warper">
-      <button mat-icon-button *ngIf="deferredInstallPrompt" (click)="install()" aria-label="Download App">
+      <button mat-icon-button *ngIf="shareService.shareable | async" (click)="shareService.share()" aria-label="Share">
+        <mat-icon>share</mat-icon>
+      </button>
+    <div *ngIf="deferredInstallPrompt" class="icon-button-warper">
+      <button mat-icon-button (click)="install()" aria-label="Download App">
         <mat-icon>get_app</mat-icon>
       </button>
     </div>

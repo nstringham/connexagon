@@ -6,6 +6,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { Platform } from '@angular/cdk/platform';
 import { Location } from '@angular/common';
 import { NotificationsService } from './notifications.service';
+import { ShareService } from './share.service';
 
 @Component({
   selector: 'app-root',
@@ -29,9 +30,10 @@ export class AppComponent implements OnInit {
   constructor(
     public authService: AuthService,
     public fireAuth: AngularFireAuth,
-    public matDialog: MatDialog,
     public platform: Platform,
     public location: Location,
+    public shareService: ShareService,
+    private matDialog: MatDialog,
     private notifications: NotificationsService,
   ) { }
 
