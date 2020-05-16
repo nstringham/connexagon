@@ -72,3 +72,8 @@ button.mat-fab {
 .mat-snack-bar-handset {
     margin-bottom: 72px !important;
 }
+
+.mat-icon-button .mat-button-wrapper {
+    display: flex;
+    justify-content: center;
+}
