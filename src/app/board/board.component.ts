@@ -170,6 +170,7 @@ class Board {
 
     this.ctx.lineWidth = 2 + this.length * 0.025;
     this.ctx.lineCap = 'round';
+    this.ctx.lineJoin = 'round';
     this.ctx.strokeStyle = this.pallet.main;
     this.ctx.beginPath();
 
