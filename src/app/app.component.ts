@@ -41,10 +41,7 @@ export class AppComponent implements OnInit {
     this.fireAuth.authState.subscribe(user => {
       console.log('logged in as: ', user);
       if (user == null) {
-        this.dialog = this.matDialog.open(LoginComponent);
-        this.dialog.backdropClick().subscribe(() => {
-          this.authService.logInAnonymous();
-        });
+        this.dialog = this.matDialog.open(LoginComponent, {disableClose: true});
       } else if (this.dialog) {
         this.dialog.close();
       }
