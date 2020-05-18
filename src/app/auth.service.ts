@@ -6,6 +6,7 @@ import { User } from 'firebase';
 import { switchMap, map, filter } from 'rxjs/operators';
 import { AngularFirestore, DocumentSnapshot, Action, DocumentChangeAction } from '@angular/fire/firestore';
 import { Game } from './board/board.component';
+import { ModalService } from './modal.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,8 @@ export class AuthService {
   public currentUID: string;
   constructor(
     private fireAuth: AngularFireAuth,
-    private firestore: AngularFirestore
+    private firestore: AngularFirestore,
+    private modal: ModalService
   ) {
     this.userDoc$ = this.fireAuth.authState.pipe(filter(user => user != null), switchMap((user: User) => {
       return firestore.doc<UserData>('users/' + user.uid).snapshotChanges().pipe(map(( action: Action<DocumentSnapshot<UserData>>) => {
@@ -31,7 +33,7 @@ export class AuthService {
 
     this.userDoc$.subscribe(async (snapshot: DocumentSnapshot<UserData>) => {
       if (!snapshot.exists){
-        snapshot.ref.set({nickname: this.promptNickname((await fireAuth.currentUser).displayName)});
+        snapshot.ref.set({nickname: await this.promptNickname((await fireAuth.currentUser).displayName)});
       }
     });
 
@@ -46,9 +48,12 @@ export class AuthService {
     const provider = new auth.GoogleAuthProvider();
     this.fireAuth.currentUser.then(async currentUser => {
       if (currentUser != null){
-        currentUser.linkWithPopup(provider).catch(error => {
+        currentUser.linkWithPopup(provider).catch(async error => {
           if (error.code === 'auth/credential-already-in-use'){
-            if (confirm(error.email + ' already has an account would you like to delete your current progress and use ' + error.email + ' instead?')){
+            if (await this.modal.confirm(
+              error.email + ' already has an account would you like to delete your current game and use ' + error.email + ' instead?',
+              'Are you sure?'
+            )){
               currentUser.delete();
               this.fireAuth.signInWithCredential(error.credential);
             }
@@ -72,11 +77,8 @@ export class AuthService {
     (await this.fireAuth.currentUser).delete();
   }
 
-  private promptNickname(nickname: string) {
-    if (nickname == null){
-      nickname = 'Anonymous';
-    }
-    return prompt('Enter your new nickname.', nickname);
+  private async promptNickname(nickname: string) {
+    return await this.modal.prompt('', nickname, 'Nickname', 'Choose a nickname');
   }
 }
 

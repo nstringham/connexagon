@@ -1,5 +1,6 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig } from '@angular/material/dialog';
+import {FormBuilder, Validators, FormGroup} from "@angular/forms";
 
 @Component({
   selector: 'app-dialog',
@@ -16,24 +17,51 @@ export class DialogComponent {
 }
 
 export interface DialogData {
-  type: 'alert' | 'confirm';
+  type: 'alert' | 'confirm' | 'prompt';
   preTitle?: {text: string, color: string, bold?: boolean};
   title: string;
   body?: string;
+  placeholder?: string;
+  lable?: string;
 }
 
-export function alert(title: string, body: string): MatDialogConfig {
+export function getPrompt(title: string, body: string, lable?: string, placeholder?: string): MatDialogConfig {
+  return {
+    data: {
+      type: 'prompt',
+      title,
+      body,
+      placeholder,
+      lable
+    },
+    minWidth: 250,
+    disableClose: true
+  };
+}
+
+export function getConfirm(title: string, body: string): MatDialogConfig {
+  return {
+    data: {
+      type: 'confirm',
+      title,
+      body
+    },
+    minWidth: 250
+  };
+}
+
+export function getAlert(title: string, body: string): MatDialogConfig {
   return {
     data: {
       type: 'alert',
       title,
       body
     },
-    minWidth: 300
+    minWidth: 250
   };
 }
 
-export function winnerAlert(name: string, color: string): MatDialogConfig {
+export function getWinnerAlert(name: string, color: string): MatDialogConfig {
   return {
     data: {
       type: 'alert',

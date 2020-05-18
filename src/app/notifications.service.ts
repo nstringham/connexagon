@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
 import { firestore } from 'firebase/app';
@@ -7,7 +7,7 @@ import { Observable, of } from 'rxjs';
 import { switchMap, map, first, mergeMap } from 'rxjs/operators';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
-import { ToastService } from './toast.service';
+import { ModalService } from './modal.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,11 +19,10 @@ export class NotificationsService {
   constructor(
     private Messaging: AngularFireMessaging,
     private authService: AuthService,
-    private toast: ToastService,
+    private modal: ModalService,
     private aFirestore: AngularFirestore,
     private fireAuth: AngularFireAuth,
-    private router: Router,
-    private zone: NgZone
+    private router: Router
   ) {
     this.isEnabled = this.fireAuth.authState.pipe(switchMap(user => {
       if (user?.uid) {
@@ -45,17 +44,16 @@ export class NotificationsService {
     });
 
     this.Messaging.onMessage((message) => {
-      this.zone.run(() => {
-        if (message.fcmOptions.link !== this.router.url) {
-          this.toast.toast(message.notification.title, message.fcmOptions.link);
-        }
-      });
+      if (message.fcmOptions.link !== this.router.url) {
+        this.modal.toast(message.notification.title, message.fcmOptions.link);
+      }
     });
   }
 
-  public enable() {
+  public async enable() {
     if ('Notification' in window) {
-      if (Notification.permission === 'granted' || confirm('Would you like to receive notifications when it\'s your turn?')) {
+      if (Notification.permission === 'granted'
+      || await this.modal.confirm('Would you like to receive notifications when it\'s your turn?')) {
         this.Messaging.getToken.subscribe( (token) => {
           console.log('Permission granted! Save to the server!', token);
           const data = {};
@@ -63,12 +61,12 @@ export class NotificationsService {
           this.aFirestore.doc('users/' + this.authService.currentUID + '/private/tokens').set(data, {merge: true});
         }, (error) => {
           if (error.code === 'messaging/permission-blocked') {
-            alert('Your browser is blocking notifications, so you will not be notified when it is your turn.');
+            this.modal.alert('Your browser is blocking notifications, so you will not be notified when it is your turn.');
           }
         });
       }
     } else {
-      alert('Your browser does not support notifications');
+      this.modal.alert('Your browser does not support notifications');
     }
   }
 

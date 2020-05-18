@@ -4,11 +4,11 @@ import { Subscription, fromEvent } from 'rxjs';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { User } from 'firebase';
-import { DialogComponent, winnerAlert } from '../dialog/dialog.component';
+import { DialogComponent, getWinnerAlert } from '../dialog/dialog.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Pallet, PalletService, Color } from '../pallet.service';
 import { Timestamp } from '@firebase/firestore-types';
-import { ToastService } from '../toast.service';
+import { ModalService } from '../modal.service';
 
 @Component({
   selector: 'app-board',
@@ -41,7 +41,7 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
     private route: ActivatedRoute,
     private fireAuth: AngularFireAuth,
     private firestore: AngularFirestore,
-    private toast: ToastService,
+    private modal: ModalService,
     public matDialog: MatDialog,
     public palletService: PalletService
   ) {
@@ -78,10 +78,10 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
             name = '🏆' + (player.nickname);
             color = this.board.pallet[player.color];
           }
-          this.dialogRef = this.matDialog.open(DialogComponent, winnerAlert(name, color));
+          this.dialogRef = this.matDialog.open(DialogComponent, getWinnerAlert(name, color));
         } else {
           if (this.isTurn && !game.move) {
-            this.toast.toast('it\'s your isTurn.');
+            this.modal.toast('it\'s your isTurn.');
           }
         }
       });

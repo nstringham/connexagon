@@ -1,5 +1,5 @@
 import { Injectable, OnInit } from '@angular/core';
-import { ToastService } from './toast.service';
+import { ModalService } from './modal.service';
 import { MatDialog } from '@angular/material/dialog';
 import { NavigationEnd, Router, ActivatedRoute } from '@angular/router';
 import { map, filter } from 'rxjs/operators';
@@ -14,7 +14,7 @@ export class ShareService{
   constructor(
     private router: Router,
     private matDialog: MatDialog,
-    private toastService: ToastService
+    private modal: ModalService
   ) {
     this.shareable = this.router.events.pipe(filter(event => event instanceof NavigationEnd), map(event => {
       return (event as NavigationEnd).urlAfterRedirects.match(/.*\/games\/\w*/) != null;
@@ -26,7 +26,7 @@ export class ShareService{
       (navigator as any).share({url: location.href});
     } else {
       navigator.clipboard.writeText(location.href).then(() => {
-        this.toastService.toast('Link copied to clipboard.');
+        this.modal.toast('Link copied to clipboard.');
       });
     }
   }
