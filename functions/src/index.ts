@@ -1,45 +1,55 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import * as types from './types';
+import { Game, isValidMove, colors} from './types';
 
 admin.initializeApp();
 
 const firestore = admin.firestore();
 const messaging = admin.messaging();
 
-export const makeTurn = functions.firestore.document('games/{gameID}').onUpdate((change, context) => {
-    const after = change.after.data();
-    const before = change.before.data();
-    if(after?.move){
-        return firestore.runTransaction(transaction => {
-            return transaction.get(change.after.ref).then(doc => {
-                const data = doc.data();
-                if(data?.move){
-                    data.board[data.move.position] = data.turn % data.players.length;
-                    delete data.move;
-                    data.winner = findWinner(data.board);
-                    if (data.winner === -1) {
-                        data.turn++;
-                    }
-                    data.modified = admin.firestore.Timestamp.now();
-                    transaction.set(doc.ref, data);
-                }
-            });
-        });
-    } else if(after && before && (after.turn !== before.turn || after.winner !== before.winner)) {
-        let uids: string[];
-        let message: string;
-        if (after.winner === -1) {
-            uids = [after.uids[after.turn % after.players.length]];
-            message = "Its your turn";
-        } else {
-            after.uids.splice(after.turn % after.players.length, 1);
-            uids = after.uids;
-            message = "Game Over";
-        }
-        return notify(change.after.id, message, uids);
+export const makeTurn = functions.firestore.document('games/{gameId}/moves/{userId}').onCreate((moveSnapshot, context) => {
+    const move = moveSnapshot.data();
+    const gameRef = moveSnapshot.ref.parent.parent;
+    if (!gameRef) {
+        return null;
     }
-    return null;
+    return firestore.runTransaction(transaction => {
+        return Promise.all([
+            transaction.get(gameRef).then(doc => {
+                const game = doc.data() as Game | undefined;
+                if (game && isValidMove(move, game) && context.params.userId === game.uids[game.turn % game.players.length]){
+                    game.board[move.position] = game.turn % game.players.length;
+                    game.winner = findWinner(game.board);
+                    if (game.winner === -1) {
+                        game.turn++;
+                    }
+                    game.modified = admin.firestore.Timestamp.now();
+                    transaction.set(doc.ref, game);
+                    return game;
+                } else {
+                    return null;
+                }
+            }),
+            moveSnapshot.ref.delete(),
+        ]);
+    }).then(result => {
+        const game = result[0];
+        if (game) {
+            let uids: string[];
+            let message: string;
+            if (game.winner === -1) {
+                uids = [game.uids[game.turn % game.players.length]];
+                message = "Its your turn";
+            } else {
+                game.uids.splice(game.turn % game.players.length, 1);
+                uids = game.uids;
+                message = "Game Over";
+            }
+            return notify(gameRef.id, message, uids);
+        } else {
+            return null;
+        }
+    });
 });
 
 export const handleGameQueues = functions.firestore.document('queues/{queueName}').onUpdate((change, context) => {
@@ -152,7 +162,7 @@ function findWinner(board: number[]): number{
 }
 
 async function makeGame(size: number, uids: string[]) {
-    const shuffledColors = shuffle(types.colors);
+    const shuffledColors = shuffle(colors);
     const shuffledUIDs = shuffle(uids);
     return firestore.collection('games').add({
         board: new Array(size * size).fill(-1),

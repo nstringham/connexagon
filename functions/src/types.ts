@@ -15,7 +15,6 @@ export interface Game {
     board: number[];
     players: Player[];
     turn: number;
-    move: Move | null;
     winner: number;
     modified: admin.firestore.Timestamp;
     uids: string[];
@@ -24,8 +23,12 @@ export interface Game {
 export type Player = {
     color: Color;
     nickname: string;
-};
+}
 
 export type Move = {
     position: number;
-};
+}
+
+export function isValidMove(move: any, game: Game): move is Move {
+    return game.board[move.position] === -1 && game.winner === -1;
+}

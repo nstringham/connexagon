@@ -1,19 +1,14 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-  	match /games/{game} {
+  	match /games/{gameId} {
     	allow read;
-      allow update:
-        if request.auth.uid == resource.data.uids[resource.data.turn % resource.data.players.size()]
-        && resource.data.winner == -1
-        && request.resource.data.diff(resource.data).addedKeys() == ["move"].toSet()
-        && request.resource.data.diff(resource.data).changedKeys() == [].toSet()
-        && request.resource.data.diff(resource.data).removedKeys() == [].toSet()
-        && request.resource.data.move.keys() == ["position"]
-        && resource.data.board[request.resource.data.move.position] == -1;
+      match /moves/{userId} {
+        allow create: if request.auth.uid == userId;
+      }
     }
     match /users/{userId} {
-      allow read;
+      allow read: if request.auth.uid == userId;
       allow create, update:
         if request.auth.uid == userId
         && request.resource.data.keys() == ["nickname"]
