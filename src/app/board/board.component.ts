@@ -168,7 +168,7 @@ class Board {
     this.center = new Point(this.ctx.canvas.width / 2, this.ctx.canvas.height / 2);
     this.length = Math.min(this.ctx.canvas.width, this.ctx.canvas.height) * 0.9;
 
-    this.ctx.lineWidth = 2 + this.length * 0.025;
+    this.ctx.lineWidth = (3 * window.devicePixelRatio) + this.length * 0.025;
     this.ctx.lineCap = 'round';
     this.ctx.lineJoin = 'round';
     this.ctx.strokeStyle = this.pallet.main;
