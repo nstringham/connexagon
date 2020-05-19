@@ -81,7 +81,7 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
           this.dialogRef = this.matDialog.open(DialogComponent, getWinnerAlert(name, color));
         } else {
           if (this.isTurn && !game.move) {
-            this.modal.toast('it\'s your isTurn.');
+            this.modal.toast('it\'s your turn.');
           }
         }
       });
