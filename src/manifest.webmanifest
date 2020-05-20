@@ -53,7 +53,7 @@
       "src": "assets/icons/icon-180x180.png",
       "sizes": "180x180",
       "type": "image/png",
-      "purpose": "ios"
+      "platform": "iOS"
     },
     {
       "src": "assets/icons/icon-384x384.png",
