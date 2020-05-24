@@ -32,11 +32,6 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private dialogRef: MatDialogRef<DialogComponent>;
 
-  update(move: Move) {
-    console.log({move});
-    this.gameDoc.update({move});
-  }
-
   constructor(
     private route: ActivatedRoute,
     private fireAuth: AngularFireAuth,
@@ -80,7 +75,7 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
           }
           this.dialogRef = this.matDialog.open(DialogComponent, getWinnerAlert(name, color));
         } else {
-          if (this.isTurn && !game.move) {
+          if (this.isTurn) {
             this.modal.toast('it\'s your turn.');
           }
         }
@@ -118,8 +113,8 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public canvasClickHandler(event: MouseEvent) {
     if (
-      this.canvas.nativeElement.height !== this.canvas.nativeElement.clientHeight ||
-      this.canvas.nativeElement.width !== this.canvas.nativeElement.clientWidth
+      Math.abs(this.canvas.nativeElement.height - this.canvas.nativeElement.clientHeight * window.devicePixelRatio) > 1 ||
+      Math.abs(this.canvas.nativeElement.width - this.canvas.nativeElement.clientWidth * window.devicePixelRatio) > 1
     ) {
       // this deals with a problem caused by samsung internet not using css min()
       this.resizeCanvas();
@@ -139,8 +134,9 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public submit() {
     if (this.board.move && this.isTurn) {
-      this.update(this.board.move);
-      delete this.board.move;
+      this.gameDoc.collection('moves').doc(this.user.uid).set(this.board.move).then(() => {
+        delete this.board.move;
+      });
     }
   }
 
@@ -202,9 +198,6 @@ class Board {
     for (let i = 0; i < this.game.board.length; i++) {
       this.drawLetter(this.game.board[i], i);
     }
-    if (this.game.move) {
-      this.drawLetter(this.game.turn % this.game.players.length, this.game.move.position);
-    }
     if (this.move) {
       this.drawLetter(this.game.turn % this.game.players.length, this.move.position);
     }
@@ -265,7 +258,6 @@ export interface Game {
   board: number[];
   players: Player[];
   turn: number;
-  move: Move | null;
   winner: number;
   modified: Timestamp;
   uids: string[];

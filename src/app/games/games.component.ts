@@ -44,7 +44,7 @@ export class GamesComponent implements OnInit, OnDestroy {
         const game = action.payload.doc.data();
         let gameArr: GameListElement[];
         if (game.winner === -1){
-          if (game.uids[game.turn % game.players.length] === authService.currentUID && game.move == null) {
+          if (game.uids[game.turn % game.players.length] === authService.currentUID) {
             gameArr = newGameList[0].games;
           } else {
             gameArr = newGameList[1].games;
