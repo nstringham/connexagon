@@ -134,9 +134,8 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public submit() {
     if (this.board.move && this.isTurn) {
-      this.gameDoc.collection('moves').doc(this.user.uid).set(this.board.move).then(() => {
-        delete this.board.move;
-      });
+      this.gameDoc.collection('moves').doc(this.user.uid).set(this.board.move);
+      delete this.board.move;
     }
   }
 
