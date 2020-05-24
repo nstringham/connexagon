@@ -25,9 +25,9 @@ export class NotificationsService {
     private router: Router
   ) {
     this.isEnabled = this.fireAuth.authState.pipe(switchMap(user => {
-      if (user?.uid) {
+      if (user?.uid && 'Notification' in window && Notification.permission === 'granted') {
         return this.aFirestore.doc<string[]>('users/' + user.uid + '/private/tokens').valueChanges().pipe(switchMap((tokens => {
-          if (tokens && 'Notification' in window && Notification.permission === 'granted') {
+          if (tokens) {
             return this.Messaging.getToken.pipe(map(token => Object.keys(tokens).includes(token)));
           } else {
             return of(false);
