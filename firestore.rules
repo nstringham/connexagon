@@ -15,6 +15,7 @@ service cloud.firestore {
         && request.resource.data.nickname is string
         && request.resource.data.nickname.size() < 20;
       match /private/tokens {
+        allow read: if request.auth.uid == userId;
         allow create, update: if request.auth.uid == userId  && request.resource.data.values().hasOnly([true]);
       }
     }
@@ -24,10 +25,6 @@ service cloud.firestore {
       && request.resource.data.diff(resource.data).addedKeys() == [request.auth.uid].toSet()
       && request.resource.data.diff(resource.data).changedKeys() == [].toSet()
       && request.resource.data.diff(resource.data).removedKeys() == [].toSet()
-    }
-    match /{document=**} {
-      allow read;
-      allow write: if false;
     }
   }
 }
