@@ -1,6 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { first } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent, getAlert, getConfirm, getPrompt } from './dialog/dialog.component';
@@ -23,7 +23,7 @@ export class ModalService {
         verticalPosition: 'bottom',
         horizontalPosition: 'left',
         duration: url ? 6000 : 4000,
-      }).onAction().pipe(first()).subscribe(() => {
+      }).onAction().pipe(take(1)).subscribe(() => {
         this.router.navigateByUrl(url);
       });
     });
