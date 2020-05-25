@@ -56,6 +56,8 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.subscriptions.push(this.route.paramMap.subscribe((paramMap: ParamMap) => {
       this.gameDoc = this.firestore.doc<Game>('games/' + paramMap.get('id'));
+      delete this.board.move;
+      this.gameSubscription?.unsubscribe();
       this.gameSubscription = this.gameDoc.valueChanges().subscribe(async (game: Game) => {
         console.log(game);
         this.board.game = game;
