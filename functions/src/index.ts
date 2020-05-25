@@ -116,7 +116,7 @@ export const deleteUserData = functions.auth.user().onDelete((user) => {
                 transaction.set(doc.ref, data);
             })});
         }),
-        firestore.doc('users/'+user.uid+'/private/settings').delete(),
+        firestore.doc('users/'+user.uid+'/private/tokens').delete(),
         firestore.doc('users/'+user.uid).delete()
     ]);
 });
