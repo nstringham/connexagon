@@ -13,9 +13,12 @@ import { ModalService } from './modal.service';
 })
 
 export class AuthService {
-  userDoc$: Observable<DocumentSnapshot<UserData>>;
-  games$: Observable<DocumentChangeAction<Game>[]>;
+  public userDoc$: Observable<DocumentSnapshot<UserData>>;
+  public games$: Observable<DocumentChangeAction<Game>[]>;
   public currentUID: string;
+
+  private beforeLogout: (() => Promise<any>)[] = [];
+
   constructor(
     private fireAuth: AngularFireAuth,
     private firestore: AngularFirestore,
@@ -32,7 +35,7 @@ export class AuthService {
     }));
 
     this.userDoc$.subscribe(async (snapshot: DocumentSnapshot<UserData>) => {
-      if (!snapshot.exists){
+      if (!snapshot?.data()?.nickname){
         snapshot.ref.set({nickname: await this.promptNickname((await fireAuth.currentUser).displayName)});
       }
     });
@@ -44,37 +47,50 @@ export class AuthService {
     });
   }
 
-  async logInGoogle(){
-    const provider = new auth.GoogleAuthProvider();
-    this.fireAuth.currentUser.then(async currentUser => {
-      if (currentUser != null){
-        currentUser.linkWithPopup(provider).catch(async error => {
-          if (error.code === 'auth/credential-already-in-use'){
-            if (await this.modal.confirm(
-              error.email + ' already has an account would you like to delete your current game and use ' + error.email + ' instead?',
-              'Are you sure?'
-            )){
-              currentUser.delete();
-              this.fireAuth.signInWithCredential(error.credential);
-            }
-          }
-        });
-      } else {
-        this.fireAuth.signInWithPopup(provider);
-      }
-    });
+  public getGoogleAuthProvider(){
+    return new auth.GoogleAuthProvider();
   }
 
-  async logInAnonymous(){
-    this.fireAuth.signInAnonymously();
+  async logIn(provider?: auth.AuthProvider) {
+    if (provider) {
+      this.fireAuth.currentUser.then(async currentUser => {
+        if (currentUser != null){
+          currentUser.linkWithPopup(provider).catch(async error => {
+            if (error.code === 'auth/credential-already-in-use'){
+              if (await this.modal.confirm(
+                error.email + ' already has an account would you like to delete your current game and use ' + error.email + ' instead?',
+                'Are you sure?'
+              )){
+                currentUser.delete();
+                this.fireAuth.signInWithCredential(error.credential);
+              }
+            }
+          });
+        } else {
+          this.fireAuth.signInWithPopup(provider);
+        }
+      });
+    } else {
+      this.fireAuth.signInAnonymously();
+    }
   }
 
   async logOut() {
+    await this.doBeforeLogout();
     this.fireAuth.signOut();
   }
 
   async deleteUser() {
+    await this.doBeforeLogout();
     (await this.fireAuth.currentUser).delete();
+  }
+
+  private async doBeforeLogout(){
+    await Promise.all(this.beforeLogout.map(callback => callback()));
+  }
+
+  addBeforeLogout(callback: () => Promise<any>){
+    this.beforeLogout.push(callback);
   }
 
   private async promptNickname(nickname: string) {

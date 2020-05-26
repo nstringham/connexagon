@@ -25,7 +25,7 @@
   </mat-toolbar>
 
   <mat-menu #menu="matMenu">
-    <button mat-menu-item *ngIf="!(fireAuth.authState | async)?.email" (click)="authService.logInGoogle()">
+    <button mat-menu-item *ngIf="!(fireAuth.authState | async)?.email" (click)="authService.logIn(authService.getGoogleAuthProvider())">
       <img class="google-icon" alt="" src="assets/img/google.svg">
       <span>Sign in with Google</span>
     </button>

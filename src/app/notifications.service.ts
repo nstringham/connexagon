@@ -25,9 +25,9 @@ export class NotificationsService {
     private router: Router
   ) {
     this.isEnabled = this.fireAuth.authState.pipe(switchMap(user => {
-      if (user?.uid && 'Notification' in window && Notification.permission === 'granted') {
+      if (user?.uid) {
         return this.aFirestore.doc<string[]>('users/' + user.uid + '/private/tokens').valueChanges().pipe(switchMap((tokens => {
-          if (tokens) {
+          if (tokens && 'Notification' in window && Notification.permission === 'granted') {
             return this.Messaging.getToken.pipe(map(token => Object.keys(tokens).includes(token)));
           } else {
             return of(false);
@@ -48,6 +48,9 @@ export class NotificationsService {
         this.modal.toast(message.notification.title, message.fcmOptions.link);
       }
     });
+
+
+    this.authService.addBeforeLogout(() => this.disable());
   }
 
   public async enable() {
@@ -70,12 +73,13 @@ export class NotificationsService {
     }
   }
 
-  public disable() {
-    this.Messaging.getToken.subscribe(token => {
+  public async disable() {
+    if ('Notification' in window && Notification.permission === 'granted'){
+      const token = await this.Messaging.getToken.toPromise();
       const data = {};
       data[token] = firestore.FieldValue.delete();
-      this.aFirestore.doc('users/' + this.authService.currentUID + '/private/tokens').set(data, {merge: true});
-    });
+      return this.aFirestore.doc('users/' + this.authService.currentUID + '/private/tokens').set(data, { merge: true });
+    }
   }
 
   public toggle() {
@@ -89,9 +93,7 @@ export class NotificationsService {
   }
 
   public deleteToken() {
-    this.Messaging.getToken
-      .pipe(mergeMap(token => this.Messaging.deleteToken(token)))
-      .subscribe(
+    this.Messaging.getToken.pipe(mergeMap(token => this.Messaging.deleteToken(token))).subscribe(
         (token) => { console.log('Token deleted!'); },
       );
   }

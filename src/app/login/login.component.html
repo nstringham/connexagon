@@ -1,8 +1,8 @@
-<button mat-raised-button (click)="authService.logInGoogle()" class="withGoogle">
+<button mat-raised-button (click)="logIn(authService.getGoogleAuthProvider())" class="withGoogle">
     <img class="provider-icon" alt="" src="assets/img/google.svg">
     Sign in with Google
 </button>
 <div class="spacer"></div>
-<button mat-raised-button (click)="authService.logInAnonymous()" color="primary">
+<button mat-raised-button (click)="logIn()" color="primary">
     Continue Anonymously
 </button>
