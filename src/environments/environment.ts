@@ -5,14 +5,14 @@
 export const environment = {
   production: false,
   firebaseConfig: {
-    apiKey: 'AIzaSyBwDm5gdkcV0Cqf9T1j4mw7vSaZ8fAJ4Jg',
-    authDomain: 'nates-tic-tac-toe.firebaseapp.com',
-    databaseURL: 'https://nates-tic-tac-toe.firebaseio.com',
-    projectId: 'nates-tic-tac-toe',
-    storageBucket: 'nates-tic-tac-toe.appspot.com',
-    messagingSenderId: '38705155237',
-    appId: '1:38705155237:web:b1b221005d75a6f29f914c',
-    measurementId: 'G-YTWREEN91Y'
+    apiKey: "AIzaSyBgo8L34F8JgmTIs-9cFvV3UA5PdvY1F9w",
+    authDomain: "connexagon.firebaseapp.com",
+    databaseURL: "https://connexagon.firebaseio.com",
+    projectId: "connexagon",
+    storageBucket: "connexagon.appspot.com",
+    messagingSenderId: "1096351441958",
+    appId: "1:1096351441958:web:0c08600c5b6b65f15bb2e7",
+    measurementId: "G-S5MBVH6X42"
   }
 };
 
