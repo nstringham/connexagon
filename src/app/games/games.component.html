@@ -4,14 +4,15 @@
     <div mat-subheader>{{gameList.display}}</div>
     <mat-list-item matRipple *ngFor="let game of gameList.games" [routerLink]="game.id" role="listitem">
       <div mat-line>
-        <span *ngFor="let player of game.players; let i = index" >
+        <span *ngFor="let player of game.players; let i = index">
           <span style="white-space: pre;" *ngIf="i > 0">{{i > 0 ? ', ' : ''}}</span>
-          <span [style.color]="(palletService.pallet$ | async)[player.color]" [style.font-weight]="player.winner ? 'bold' : 'normal'">
+          <span [style.color]="(palletService.pallet$ | async)[player.color]"
+            [style.font-weight]="player.winner ? 'bold' : 'normal'">
             {{player.winner ? '🏆' : ''}}{{player.nick}}
           </span>
         </span>
-      <div mat-line> {{game.modified | date:'medium'}} </div>
-    </div>
+      </div>
+      <div mat-line class="date"> {{game.modified | date:'medium'}} </div>
     </mat-list-item>
   </ng-container>
 </mat-list>
