@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "Tic-Tac-Toe": {
+    "Connexagon": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/Tic-Tac-Toe",
+            "outputPath": "dist/Connexagon",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -27,8 +27,7 @@
               "src/favicon.ico",
               "src/assets",
               "src/manifest.webmanifest",
-              "src/firebase-messaging-sw.js",
-              "src/.well-known"
+              "src/firebase-messaging-sw.js"
             ],
             "styles": [
               "src/styles.scss"
@@ -71,18 +70,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "Tic-Tac-Toe:build"
+            "browserTarget": "Connexagon:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "Tic-Tac-Toe:build:production"
+              "browserTarget": "Connexagon:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "Tic-Tac-Toe:build"
+            "browserTarget": "Connexagon:build"
           }
         },
         "test": {
@@ -120,11 +119,11 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "Tic-Tac-Toe:serve"
+            "devServerTarget": "Connexagon:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "Tic-Tac-Toe:serve:production"
+              "devServerTarget": "Connexagon:serve:production"
             }
           }
         },
@@ -135,7 +134,7 @@
       }
     }
   },
-  "defaultProject": "Tic-Tac-Toe",
+  "defaultProject": "Connexagon",
   "cli": {
     "analytics": "7f756532-6d13-40c9-8bc8-0f07c65cc388"
   }

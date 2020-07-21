@@ -1,6 +1,6 @@
 {
-  "name": "Tic-Tac-Toe",
-  "short_name": "Tic-Tac-Toe",
+  "name": "Connexagon",
+  "short_name": "Connexagon",
   "theme_color": "#1976d2",
   "background_color": "#1976d2",
   "display": "standalone",
@@ -10,6 +10,12 @@
     {
       "src": "assets/icons/badge-72x72.png",
       "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "badge"
+    },
+    {
+      "src": "assets/icons/badge-512x512.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "badge"
     },
@@ -48,12 +54,6 @@
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
-    },
-    {
-      "src": "assets/icons/icon-180x180.png",
-      "sizes": "180x180",
-      "type": "image/png",
-      "platform": "iOS"
     },
     {
       "src": "assets/icons/icon-384x384.png",

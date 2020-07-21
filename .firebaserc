@@ -1,14 +1,14 @@
 {
   "targets": {
-    "nates-tic-tac-toe": {
+    "connexagon": {
       "hosting": {
-        "Tic-Tac-Toe": [
-          "nates-tic-tac-toe"
+        "Connexagon": [
+          "connexagon"
         ]
       }
     }
   },
   "projects": {
-    "default": "nates-tic-tac-toe"
+    "default": "connexagon"
   }
 }

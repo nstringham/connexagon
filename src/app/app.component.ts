@@ -14,7 +14,7 @@ import { ShareService } from './share.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  title = 'Tic-Tac-Toe';
+  title = 'Connexagon';
 
   dialog: MatDialogRef<LoginComponent>;
 
@@ -41,7 +41,7 @@ export class AppComponent implements OnInit {
     this.fireAuth.authState.subscribe(user => {
       console.log('logged in as: ', user);
       if (user == null) {
-        this.dialog = this.matDialog.open(LoginComponent, {disableClose: true});
+        this.dialog = this.matDialog.open(LoginComponent, { disableClose: true });
       } else if (this.dialog) {
         this.dialog.close();
       }

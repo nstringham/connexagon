@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist\\Tic-Tac-Toe",
+    "public": "dist\\Connexagon",
     "ignore": [
       "firebase.json",
       "**/.*",
