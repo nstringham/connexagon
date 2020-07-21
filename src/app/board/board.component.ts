@@ -240,8 +240,8 @@ class Board {
   }
 
   getPosition(x: number, y: number): number {
-    x = x - this.center.x;
-    y = y - this.center.y;
+    x -= this.center.x;
+    y -= this.center.y;
     if (Math.abs(x) > this.length / 2 || Math.abs(y) > this.length / 2) {
       return -1;
     }
