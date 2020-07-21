@@ -2,24 +2,28 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
   	match /games/{gameId} {
-    	allow read;
+    	allow get;
+      allow list:
+        if request.query.limit <= 25
+        && request.auth.uid in resource.data.uids;
       match /moves/{userId} {
         allow create: if request.auth.uid == userId;
       }
     }
     match /users/{userId} {
-      allow read: if request.auth.uid == userId;
+      allow get: if request.auth.uid == userId;
       allow create, update:
         if request.auth.uid == userId
         && request.resource.data.keys() == ["nickname"]
         && request.resource.data.nickname is string
         && request.resource.data.nickname.size() < 20;
       match /private/tokens {
-        allow read: if request.auth.uid == userId;
+        allow get: if request.auth.uid == userId;
         allow create, update: if request.auth.uid == userId  && request.resource.data.values().hasOnly([true]);
       }
     }
     match /queues/{queueName} {
+      allow get;
       allow update:
       if request.resource.data[request.auth.uid] == true
       && request.resource.data.diff(resource.data).addedKeys() == [request.auth.uid].toSet()

@@ -27,7 +27,8 @@
               "src/favicon.ico",
               "src/assets",
               "src/manifest.webmanifest",
-              "src/firebase-messaging-sw.js"
+              "src/firebase-messaging-sw.js",
+              "src/googled56d606e8824da0f.html"
             ],
             "styles": [
               "src/styles.scss"

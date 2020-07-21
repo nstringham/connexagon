@@ -56,6 +56,8 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.subscriptions.push(this.route.paramMap.subscribe((paramMap: ParamMap) => {
       this.gameDoc = this.firestore.doc<Game>('games/' + paramMap.get('id'));
+      delete this.board.move;
+      this.gameSubscription?.unsubscribe();
       this.gameSubscription = this.gameDoc.valueChanges().subscribe(async (game: Game) => {
         console.log(game);
         this.board.game = game;
@@ -134,9 +136,8 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public submit() {
     if (this.board.move && this.isTurn) {
-      this.gameDoc.collection('moves').doc(this.user.uid).set(this.board.move).then(() => {
-        delete this.board.move;
-      });
+      this.gameDoc.collection('moves').doc(this.user.uid).set(this.board.move);
+      delete this.board.move;
     }
   }
 
@@ -239,8 +240,8 @@ class Board {
   }
 
   getPosition(x: number, y: number): number {
-    x = x - this.center.x;
-    y = y - this.center.y;
+    x -= this.center.x;
+    y -= this.center.y;
     if (Math.abs(x) > this.length / 2 || Math.abs(y) > this.length / 2) {
       return -1;
     }
