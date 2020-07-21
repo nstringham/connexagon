@@ -18,7 +18,8 @@ mat-list {
             break-after: column;
             opacity: 0;
         }
-        div { // mat-subheader
+        div {
+            // mat-subheader
             margin-top: 0px !important;
         }
     }
@@ -32,5 +33,12 @@ mat-list-item {
     &:focus {
         outline: none !important;
         background-color: rgba(128, 128, 128, 0.24);
+    }
+}
+
+div.date {
+    color: rgba(0, 0, 0, 0.4);
+    @media (prefers-color-scheme: dark) {
+        color: rgba(255, 255, 255, 0.5);
     }
 }
