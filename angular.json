@@ -28,7 +28,8 @@
               "src/assets",
               "src/manifest.webmanifest",
               "src/firebase-messaging-sw.js",
-              "src/.well-known"
+              "src/.well-known",
+              "src/googled56d606e8824da0f.html"
             ],
             "styles": [
               "src/styles.scss"
