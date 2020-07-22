@@ -2,7 +2,8 @@
   <ng-container *ngFor="let gameList of gameLists; let i = index">
     <mat-divider *ngIf="i > 0"></mat-divider>
     <div mat-subheader>{{gameList.display}}</div>
-    <mat-list-item matRipple *ngFor="let game of gameList.games" [routerLink]="game.id" role="listitem">
+    <mat-list-item matRipple *ngFor="let game of gameList.games" [routerLink]="game.id" role="listitem"
+      (keydown.enter)="$event.target.click()">
       <div mat-line>
         <span *ngFor="let player of game.players; let i = index">
           <span style="white-space: pre;" *ngIf="i > 0">{{i > 0 ? ', ' : ''}}</span>
