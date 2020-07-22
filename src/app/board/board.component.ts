@@ -9,6 +9,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Pallet, PalletService, Color } from '../pallet.service';
 import { Timestamp } from '@firebase/firestore-types';
 import { ModalService } from '../modal.service';
+import { FindValueSubscriber } from 'rxjs/internal/operators/find';
 
 @Component({
   selector: 'app-board',
@@ -62,7 +63,7 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
         console.log(game);
         this.board.game = game;
         this.updateIsTurn();
-        this.board.drawLetters();
+        this.board.redraw();
         this?.dialogRef?.close();
         if (game.winner !== -1) {
           let name: string;
@@ -83,7 +84,7 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       });
       navigator.serviceWorker.register('firebase-messaging-sw.js').then((registration) => {
-        registration.getNotifications({tag: paramMap.get('id')}).then((notifications) => {
+        registration.getNotifications({ tag: paramMap.get('id') }).then((notifications) => {
           notifications.forEach((notification) => {
             notification.close();
           });
@@ -121,17 +122,11 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
       // this deals with a problem caused by samsung internet not using css min()
       this.resizeCanvas();
     }
-    const x = event.x - this.canvas.nativeElement.getBoundingClientRect().left;
-    const y = event.y - this.canvas.nativeElement.getBoundingClientRect().top;
+    const canvas = event.target as Element;
+    const x = event.x - canvas.getBoundingClientRect().left;
+    const y = event.y - canvas.getBoundingClientRect().top;
     const position = this.board.getPosition(x * window.devicePixelRatio, y * window.devicePixelRatio);
-    if (this.board.game.board[position] === -1) {
-      if (this.isTurn && this.board.game.winner === -1){
-        this.board.move = {position};
-        this.board.drawLetters();
-      } else {
-        console.log('not turn');
-      }
-    }
+    this.board.clickHex(position);
   }
 
   public submit() {
@@ -141,7 +136,7 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  private updateIsTurn(){
+  private updateIsTurn() {
     try {
       this.isTurn = this.board.game.uids[this.board.game.turn % this.board.game.players.length] === this.user.uid;
     } catch (error) {
@@ -154,10 +149,42 @@ class Board {
   pallet: Pallet;
   game: Game;
   move: Move;
+  gridSize: number;
   private center: Point;
   private length: number;
 
-  constructor(private ctx: CanvasRenderingContext2D) { }
+  table: number[][];
+  hexagons: { color: Color | 'background'; highlighted: boolean; }[];
+  spacing: number;
+
+  constructor(private ctx: CanvasRenderingContext2D) {
+    this.gridSize = 7; // TODO make dynamic
+
+    const rows: number[][] = [];
+    for (let row = 0, id = 0; row < this.gridSize * 2 - 1; row++) {
+      rows[row] = [];
+      for (let column = 0; column < (this.gridSize * 2 - 1) - Math.abs(row - (this.gridSize - 1)); column++) {
+        rows[row][column] = id++;
+      }
+    }
+    this.table = rows;
+
+    this.hexagons = Array(3 * (this.gridSize - 1) * this.gridSize + 1).fill(null)
+      .map(() => ({ color: 'background', highlighted: false }));
+
+  }
+
+  tableFocusHandler(id: number, focus: boolean) {
+    this.hexagons[id].highlighted = focus;
+    window.requestAnimationFrame(() => this.redraw());
+  }
+
+  clickHex(position) {
+    if (this.hexagons[position]) {
+      this.hexagons[position].color = 'red';
+      window.requestAnimationFrame(() => this.redraw());
+    }
+  }
 
   redraw() {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
@@ -165,89 +192,58 @@ class Board {
     this.center = new Point(this.ctx.canvas.width / 2, this.ctx.canvas.height / 2);
     this.length = Math.min(this.ctx.canvas.width, this.ctx.canvas.height) * 0.9;
 
-    this.ctx.lineWidth = (3 * window.devicePixelRatio) + this.length * 0.025;
-    this.ctx.lineCap = 'round';
-    this.ctx.lineJoin = 'round';
-    this.ctx.strokeStyle = this.pallet.main;
-    this.ctx.beginPath();
-
-    this.ctx.moveTo(this.center.x - this.length / 2, this.center.y - this.length / 6);
-    this.ctx.lineTo(this.center.x + this.length / 2, this.center.y - this.length / 6);
-
-    this.ctx.moveTo(this.center.x - this.length / 2, this.center.y + this.length / 6);
-    this.ctx.lineTo(this.center.x + this.length / 2, this.center.y + this.length / 6);
-
-    this.ctx.moveTo(this.center.x + this.length / 6, this.center.y - this.length / 2);
-    this.ctx.lineTo(this.center.x + this.length / 6, this.center.y + this.length / 2);
-
-    this.ctx.moveTo(this.center.x - this.length / 6, this.center.y - this.length / 2);
-    this.ctx.lineTo(this.center.x - this.length / 6, this.center.y + this.length / 2);
-
-    this.ctx.stroke();
+    this.spacing = (this.length * 0.5) / (this.gridSize * 2 - 1);
+    this.ctx.lineWidth = this.spacing * 0.1;
 
 
-    if (this.game != null) {
-      this.drawLetters();
-    }
-  }
-
-  drawLetters() {
-    if (!this.center){
-      this.redraw();
-      return;
-    }
-    for (let i = 0; i < this.game.board.length; i++) {
-      this.drawLetter(this.game.board[i], i);
-    }
-    if (this.move) {
-      this.drawLetter(this.game.turn % this.game.players.length, this.move.position);
-    }
-  }
-
-  drawLetter(player: number, position: number) {
-
-    const center = new Point(
-      this.center.x + (((position % 3) - 1) * this.length / 3),
-      this.center.y + ((Math.floor(position / 3) - 1) * this.length / 3)
-    );
-    const radius = this.length / 6 - this.ctx.lineWidth * 1.8;
-
-    this.ctx.clearRect(
-      center.x - (radius + this.ctx.lineWidth),
-      center.y - (radius + this.ctx.lineWidth),
-      (radius + this.ctx.lineWidth) * 2,
-      (radius + this.ctx.lineWidth) * 2
-    );
-
-    if (player < 0) {
-      return;
-    }
-
-    this.ctx.strokeStyle = this.pallet[this.game.players[player].color];
-    this.ctx.beginPath();
-    if (player === 0) {
-      this.ctx.moveTo(center.x + radius, center.y + radius);
-      this.ctx.lineTo(center.x - radius, center.y - radius);
-
-      this.ctx.moveTo(center.x + radius, center.y - radius);
-      this.ctx.lineTo(center.x - radius, center.y + radius);
-    } else if (player === 1) {
-      this.ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
-    } else {
-      this.ctx.rect(center.x - radius, center.y - radius, radius * 2, radius * 2);
-    }
-    this.ctx.stroke();
+    this.hexagons.forEach((hexagon, i) => {
+      let column = i - Math.floor(this.hexagons.length / 2);
+      let row = 0;
+      while (Math.abs(column) > (2 * this.gridSize - Math.abs(row)) / 2 - 0.5) {
+        const sign = column > 0 ? 1 : -1;
+        row += sign;
+        column -= (2 * this.gridSize - Math.abs(row) - 0.5) * sign;
+      }
+      this.ctx.fillStyle = this.pallet[hexagon.color];
+      this.ctx.fillHex(
+        this.center.x + (column * this.spacing * 2),
+        this.center.y + (row * hexRatio * this.spacing * 2),
+        this.spacing, true
+      );
+      if (hexagon.highlighted) {
+        this.ctx.strokeStyle = this.pallet.main;
+        this.ctx.stroke();
+      }
+    });
   }
 
   getPosition(x: number, y: number): number {
     x -= this.center.x;
     y -= this.center.y;
-    if (Math.abs(x) > this.length / 2 || Math.abs(y) > this.length / 2) {
+    let row = Math.floor((y / (hexRatio * this.spacing * 2)));
+    let column = Math.floor(x / this.spacing);
+    x -= column * this.spacing;
+    y -= row * hexRatio * this.spacing * 2;
+    const slopedLeft = (column + row + this.gridSize + this.gridSize) % 2 === 1;
+    if (Math.sqrt(
+      (x - (slopedLeft ? this.spacing : 0)) * (x - (slopedLeft ? this.spacing : 0))
+      + (y) * (y)
+    ) > Math.sqrt(
+      (x - (!slopedLeft ? this.spacing : 0)) * (x - (!slopedLeft ? this.spacing : 0))
+      + (y - (hexRatio * this.spacing * 2)) * (y - (hexRatio * this.spacing * 2))
+    )) {
+      row++;
+    }
+    if (Math.abs(column + 0.5) >= (this.gridSize * 2 - 1) - Math.abs(row) || Math.abs(row) > this.gridSize - 1) {
       return -1;
     }
-    x = Math.floor((x + (this.length / 2)) / (this.length / 3));
-    y = Math.floor((y + (this.length / 2)) / (this.length / 3));
-    return x + y * 3;
+    column = Math.floor((column + 1 - row) / 2);
+    while (row !== 0) {
+      const sign = row > 0 ? 1 : -1;
+      row -= sign;
+      column += sign * (2 * this.gridSize - 1 - Math.abs(row));
+    }
+    return column + Math.floor(this.hexagons.length / 2);
   }
 }
 
@@ -271,4 +267,31 @@ export type Player = {
 
 export type Move = {
   position: number;
+};
+
+const hexRatio = Math.sqrt(3) / 2;
+
+declare global {
+  interface CanvasRenderingContext2D {
+    fillHex: (x: number, y: number, radius: number, rotated?: boolean) => void;
+  }
+}
+
+CanvasRenderingContext2D.prototype.fillHex = function(x: number, y: number, radius: number, rotated?: boolean) {
+  const apothem = radius * hexRatio;
+
+  const points: [number, number][] = [
+    [radius, 0],
+    [(radius / 2), apothem],
+    [-(radius / 2), apothem],
+    [-radius, 0],
+    [-(radius / 2), -apothem],
+    [(radius / 2), -apothem]
+  ].map(point => rotated ? point.reverse() : point).map(point => [x + point[0], y + point[1]]);
+
+  this.beginPath();
+  this.moveTo(...points.shift());
+  points.forEach(point => this.lineTo(...point));
+  this.closePath();
+  this.fill();
 };

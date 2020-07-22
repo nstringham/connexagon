@@ -18,7 +18,7 @@ export class PalletService {
     );
   }
 
-  getPallet(isDark: boolean): Pallet{
+  getPallet(isDark: boolean): Pallet {
     if (isDark) {
       return {
         red: '#F44336',
@@ -27,7 +27,7 @@ export class PalletService {
         green: '#4CAF50',
         blue: '#2196F3',
         purple: '#673AB7',
-        background: '#121212',
+        background: 'rgba(225, 225, 225, 0.08)',
         main: '#dddddd'
       };
     } else {
@@ -38,7 +38,7 @@ export class PalletService {
         green: '#00C853',
         blue: '#2962FF',
         purple: '#6200EA',
-        background: 'white',
+        background: 'rgba(0, 0, 0, 0.08)',
         main: 'black'
       };
     }
