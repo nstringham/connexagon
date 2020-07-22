@@ -12,13 +12,10 @@ div.canvas-warper {
     canvas {
         --height: calc(100vh - var(--header-height));
         --width: 100vw;
-        height: var(--height);
-        width: var(--width);
-        @supports (height: min(0px, 0px)) {
-            --vmin: min(calc(var(--height) / #{$HEX_RATIO}), var(--width));
-            height: calc(var(--vmin) * #{$HEX_RATIO});
-            width: var(--vmin);
-        }
+        --vmin: min(calc(var(--height) / #{$HEX_RATIO}), var(--width));
+        height: calc(var(--vmin) * #{$HEX_RATIO});
+        width: var(--vmin);
+        width: var(--vmin);
         margin: auto;
     }
 }
