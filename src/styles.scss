@@ -11,10 +11,10 @@
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$Tic-Tac-Toe-primary-light: mat-palette($mat-blue);
-$Tic-Tac-Toe-accent-light: mat-palette($mat-blue, A200, A100, A400);
-$Tic-Tac-Toe-primary-dark: mat-palette($mat-blue);
-$Tic-Tac-Toe-accent-dark: mat-palette($mat-blue, A200, A100, A400);
+$Connexagon-primary-light: mat-palette($mat-blue);
+$Connexagon-accent-light: mat-palette($mat-blue, A200, A100, A400);
+$Connexagon-primary-dark: mat-palette($mat-blue);
+$Connexagon-accent-dark: mat-palette($mat-blue, A200, A100, A400);
 
 // Create the theme object (a Sass map containing all of the palettes).
 $Connexagon-theme-light: mat-light-theme($Connexagon-primary-light, $Connexagon-accent-light);
