@@ -9,13 +9,9 @@ div.canvas-wraper {
     canvas {
         --height: calc(100vh - var(--header-height));
         --width: 100vw;
-        height: var(--height);
-        width: var(--width);
-        @supports (height: min(0px, 0px)) {
-            --vmin: min(var(--height), var(--width));
-            height: var(--vmin);
-            width: var(--vmin);
-        }
+        --vmin: min(var(--height), var(--width));
+        height: var(--vmin);
+        width: var(--vmin);
         margin: auto;
     }
 }
