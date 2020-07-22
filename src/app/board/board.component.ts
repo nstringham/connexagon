@@ -174,6 +174,45 @@ class Board {
 
   }
 
+  canvasKeydown(event: KeyboardEvent) {
+    switch (event.key) {
+      case 'ArrowLeft':
+        (document.activeElement.parentElement.previousElementSibling?.firstElementChild as HTMLElement)?.focus();
+        break;
+      case 'ArrowRight':
+        (document.activeElement.parentElement.nextElementSibling?.firstElementChild as HTMLElement)?.focus();
+        break;
+      case 'ArrowUp':
+        {
+          const row = document.activeElement.parentElement.parentElement;
+          if (row.previousElementSibling) {
+            let index = Array.from(row.children)
+              .indexOf(document.activeElement.parentElement);
+            if (row.previousElementSibling.children.length < row.children.length) {
+              index--;
+            }
+            index = Math.max(0, Math.min(index, row.previousElementSibling.children.length));
+            (row.previousElementSibling.children.item(index).firstElementChild as HTMLElement).focus();
+          }
+        }
+        break;
+      case 'ArrowDown':
+        {
+          const row = document.activeElement.parentElement.parentElement;
+          if (row.nextElementSibling) {
+            let index = Array.from(row.children)
+              .indexOf(document.activeElement.parentElement);
+            if (row.nextElementSibling.children.length > row.children.length) {
+              index++;
+            }
+            index = Math.max(0, Math.min(index, row.nextElementSibling.children.length - 1));
+            (row.nextElementSibling.children.item(index).firstElementChild as HTMLElement).focus();
+          }
+        }
+        break;
+    }
+  }
+
   tableFocusHandler(id: number, focus: boolean) {
     this.hexagons[id].highlighted = focus;
     window.requestAnimationFrame(() => this.redraw());
@@ -181,7 +220,12 @@ class Board {
 
   clickHex(position) {
     if (this.hexagons[position]) {
-      this.hexagons[position].color = 'red';
+      if (this.hexagons[position].color === 'background') {
+        this.hexagons[position].color = 'red';
+      } else {
+        this.hexagons[position].color = 'background';
+      }
+
       window.requestAnimationFrame(() => this.redraw());
     }
   }
@@ -190,7 +234,7 @@ class Board {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
     this.center = new Point(this.ctx.canvas.width / 2, this.ctx.canvas.height / 2);
-    this.length = Math.min(this.ctx.canvas.width, this.ctx.canvas.height) * 0.9;
+    this.length = Math.min(this.ctx.canvas.width, this.ctx.canvas.height / HEX_RATIO) * 0.9;
 
     this.spacing = (this.length * 0.5) / (this.gridSize * 2 - 1);
     this.ctx.lineWidth = this.spacing * 0.1;
@@ -207,7 +251,7 @@ class Board {
       this.ctx.fillStyle = this.pallet[hexagon.color];
       this.ctx.fillHex(
         this.center.x + (column * this.spacing * 2),
-        this.center.y + (row * hexRatio * this.spacing * 2),
+        this.center.y + (row * HEX_RATIO * this.spacing * 2),
         this.spacing, true
       );
       if (hexagon.highlighted) {
@@ -220,17 +264,17 @@ class Board {
   getPosition(x: number, y: number): number {
     x -= this.center.x;
     y -= this.center.y;
-    let row = Math.floor((y / (hexRatio * this.spacing * 2)));
+    let row = Math.floor((y / (HEX_RATIO * this.spacing * 2)));
     let column = Math.floor(x / this.spacing);
     x -= column * this.spacing;
-    y -= row * hexRatio * this.spacing * 2;
+    y -= row * HEX_RATIO * this.spacing * 2;
     const slopedLeft = (column + row + this.gridSize + this.gridSize) % 2 === 1;
     if (Math.sqrt(
       (x - (slopedLeft ? this.spacing : 0)) * (x - (slopedLeft ? this.spacing : 0))
       + (y) * (y)
     ) > Math.sqrt(
       (x - (!slopedLeft ? this.spacing : 0)) * (x - (!slopedLeft ? this.spacing : 0))
-      + (y - (hexRatio * this.spacing * 2)) * (y - (hexRatio * this.spacing * 2))
+      + (y - (HEX_RATIO * this.spacing * 2)) * (y - (HEX_RATIO * this.spacing * 2))
     )) {
       row++;
     }
@@ -269,7 +313,7 @@ export type Move = {
   position: number;
 };
 
-const hexRatio = Math.sqrt(3) / 2;
+export const HEX_RATIO = Math.sqrt(3) / 2;
 
 declare global {
   interface CanvasRenderingContext2D {
@@ -278,7 +322,7 @@ declare global {
 }
 
 CanvasRenderingContext2D.prototype.fillHex = function(x: number, y: number, radius: number, rotated?: boolean) {
-  const apothem = radius * hexRatio;
+  const apothem = radius * HEX_RATIO;
 
   const points: [number, number][] = [
     [radius, 0],

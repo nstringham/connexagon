@@ -1,3 +1,6 @@
+@use "sass:math";
+$HEX_RATIO: math.sqrt(3) / 2;
+
 div.canvas-warper {
     --header-height: 64px;
     position: fixed;
@@ -12,8 +15,8 @@ div.canvas-warper {
         height: var(--height);
         width: var(--width);
         @supports (height: min(0px, 0px)) {
-            --vmin: min(var(--height), var(--width));
-            height: var(--vmin);
+            --vmin: min(calc(var(--height) / #{$HEX_RATIO}), var(--width));
+            height: calc(var(--vmin) * #{$HEX_RATIO});
             width: var(--vmin);
         }
         margin: auto;

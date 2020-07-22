@@ -1,5 +1,5 @@
 <div class="canvas-warper">
-    <canvas (click)="canvasClickHandler($event)" #canvas>
+    <canvas (click)="canvasClickHandler($event)" (keydown)="board.canvasKeydown($event)" #canvas>
         <table>
             <tr *ngFor="let row of board.table">
                 <td *ngFor="let id of row">
