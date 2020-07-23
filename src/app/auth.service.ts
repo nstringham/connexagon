@@ -61,13 +61,15 @@ export class AuthService {
         if (currentUser != null) {
           return currentUser.linkWithPopup(provider).catch(async error => {
             if (error.code === 'auth/credential-already-in-use') {
-              if (await this.modal.confirm(
-                error.email + ' already has an account would you like to delete your current game and use ' + error.email + ' instead?',
+              if (currentUser.isAnonymous && await this.modal.confirm(
+                'delete your current games and sign?',
                 'Are you sure?'
               )) {
                 currentUser.delete();
               }
               return this.fireAuth.signInWithCredential(error.credential);
+            } else {
+              throw error;
             }
           });
         } else {
