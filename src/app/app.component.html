@@ -34,7 +34,7 @@
       <span>Sign in with Google</span>
     </button>
     <button mat-menu-item *ngIf="!providers?.includes('twitter.com')"
-      (click)="authService.logIn(authService.getGoogleAuthProvider())">
+      (click)="authService.logIn(authService.getTwitterAuthProvider())">
       <img class="provider-icon" aria-hidden="true" [src]="twitterIcon">
       <span>Sign in with Twitter</span>
     </button>
