@@ -1,4 +1,4 @@
-.app-wraper{
+.app-wraper {
     display: flex;
     flex-flow: column;
     height: 100vh;
@@ -16,18 +16,12 @@
     overflow: auto;
     flex: 1;
 }
-.google-icon {
-    width: 18px;
-    height: 18px;
-    vertical-align: middle;
-    padding-right: 8px;;
-}
 .account-photo {
     width: 32px;
     height: 32px;
     border-radius: 100%;
 }
-.title{
+.title {
     user-select: none;
     -webkit-user-select: none;
 }

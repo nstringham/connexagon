@@ -25,7 +25,7 @@ export class AuthService {
     private modal: ModalService
   ) {
     this.userDoc$ = this.fireAuth.authState.pipe(filter(user => user != null), switchMap((user: User) => {
-      return firestore.doc<UserData>('users/' + user.uid).snapshotChanges().pipe(map(( action: Action<DocumentSnapshot<UserData>>) => {
+      return firestore.doc<UserData>('users/' + user.uid).snapshotChanges().pipe(map((action: Action<DocumentSnapshot<UserData>>) => {
         return action.payload;
       }));
     }));
@@ -35,8 +35,8 @@ export class AuthService {
     }));
 
     this.userDoc$.subscribe(async (snapshot: DocumentSnapshot<UserData>) => {
-      if (!snapshot?.data()?.nickname){
-        snapshot.ref.set({nickname: await this.promptNickname((await fireAuth.currentUser).displayName)});
+      if (!snapshot?.data()?.nickname) {
+        snapshot.ref.set({ nickname: await this.promptNickname((await fireAuth.currentUser).displayName) });
       }
     });
 
@@ -47,20 +47,24 @@ export class AuthService {
     });
   }
 
-  public getGoogleAuthProvider(){
+  public getGoogleAuthProvider() {
     return new auth.GoogleAuthProvider();
+  }
+
+  public getTwitterAuthProvider() {
+    return new auth.TwitterAuthProvider();
   }
 
   async logIn(provider?: auth.AuthProvider) {
     if (provider) {
       this.fireAuth.currentUser.then(async currentUser => {
-        if (currentUser != null){
+        if (currentUser != null) {
           currentUser.linkWithPopup(provider).catch(async error => {
-            if (error.code === 'auth/credential-already-in-use'){
+            if (error.code === 'auth/credential-already-in-use') {
               if (await this.modal.confirm(
                 error.email + ' already has an account would you like to delete your current game and use ' + error.email + ' instead?',
                 'Are you sure?'
-              )){
+              )) {
                 currentUser.delete();
                 this.fireAuth.signInWithCredential(error.credential);
               }
@@ -85,11 +89,11 @@ export class AuthService {
     (await this.fireAuth.currentUser).delete();
   }
 
-  private async doBeforeLogout(){
+  private async doBeforeLogout() {
     await Promise.all(this.beforeLogout.map(callback => callback()));
   }
 
-  addBeforeLogout(callback: () => Promise<any>){
+  addBeforeLogout(callback: () => Promise<any>) {
     this.beforeLogout.push(callback);
   }
 

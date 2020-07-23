@@ -1,8 +1,13 @@
-<button mat-raised-button (click)="logIn(authService.getGoogleAuthProvider())" class="withGoogle">
+<button mat-raised-button (click)="logIn(authService.getGoogleAuthProvider())" class="alwaysWhite">
     <img class="provider-icon" alt="" src="assets/img/google.svg">
-    Sign in with Google
+    <span>Sign in with Google</span>
+</button>
+<div class="spacer"></div>
+<button mat-raised-button (click)="logIn(authService.getTwitterAuthProvider())" class="alwaysWhite">
+    <img class="provider-icon" alt="" src="assets/img/twitter-blue.svg">
+    <span>Sign in with Twitter</span>
 </button>
 <div class="spacer"></div>
 <button mat-raised-button (click)="logIn()" color="primary">
-    Continue Anonymously
+    <span>Continue Anonymously</span>
 </button>
