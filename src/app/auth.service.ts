@@ -62,7 +62,7 @@ export class AuthService {
           return currentUser.linkWithPopup(provider).catch(async error => {
             if (error.code === 'auth/credential-already-in-use') {
               if (currentUser.isAnonymous && await this.modal.confirm(
-                'delete your current games and sign?',
+                'delete your current games and sign in?',
                 'Are you sure?'
               )) {
                 currentUser.delete();
@@ -73,7 +73,34 @@ export class AuthService {
             }
           });
         } else {
-          return this.fireAuth.signInWithPopup(provider);
+          return this.fireAuth.signInWithPopup(provider).catch(async error => {
+            if (error.code === 'auth/account-exists-with-different-credential') {
+              console.error(error);
+              return Promise.all([
+                this.modal.alert('It looks like you\'ve used that email before with a different sign in method'),
+                this.fireAuth.fetchSignInMethodsForEmail(error.email)
+              ]).then(result => {
+                let existingProvider;
+                switch (result[1][0]) {
+                  case 'google.com':
+                    existingProvider = this.getGoogleAuthProvider();
+                    break;
+                  case 'twitter.com':
+                    existingProvider = this.getTwitterAuthProvider();
+                    break;
+                  default:
+                    console.error('unknown provider:', result[1][0]);
+                    break;
+                }
+                return this.fireAuth.signInWithPopup(existingProvider).then(() => {
+                  return this.fireAuth.currentUser.then(newUser => {
+                    newUser.linkWithCredential(error.credential);
+                  });
+                });
+              });
+            }
+            throw error;
+          });
         }
       });
     } else {
