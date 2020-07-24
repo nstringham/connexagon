@@ -21,17 +21,17 @@ $Tic-Tac-Toe-theme-light: mat-light-theme($Tic-Tac-Toe-primary-light, $Tic-Tac-T
 $Tic-Tac-Toe-theme-dark: mat-dark-theme($Tic-Tac-Toe-primary-dark, $Tic-Tac-Toe-accent-dark);
 
 @mixin my-component-theme($theme) {
-    $primary: map-get($theme, primary);
-    $accent: map-get($theme, accent);
-    $warn: map-get($theme, warn);
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
 
-    .warn-color {
-        color: mat-color($warn);
-    }
+  .warn-color {
+    color: mat-color($warn);
+  }
 
-    .primary-background {
-        background-color: mat-color($primary);
-    }
+  .primary-background {
+    background-color: mat-color($primary);
+  }
 }
 
 // Include theme styles for core and each component used in your app.
@@ -40,49 +40,58 @@ $Tic-Tac-Toe-theme-dark: mat-dark-theme($Tic-Tac-Toe-primary-dark, $Tic-Tac-Toe-
 @include angular-material-theme($Tic-Tac-Toe-theme-light);
 @include my-component-theme($Tic-Tac-Toe-theme-light);
 @media (prefers-color-scheme: dark) {
-    @include angular-material-theme($Tic-Tac-Toe-theme-dark);
-    @include my-component-theme($Tic-Tac-Toe-theme-dark);
-    body {
-        color: white;
-        background-color: #121212;
-    }
+  @include angular-material-theme($Tic-Tac-Toe-theme-dark);
+  @include my-component-theme($Tic-Tac-Toe-theme-dark);
+  body {
+    color: white;
+    background-color: #121212;
+  }
 }
 
 /* You can add global styles to this file, and also import other style files */
 
 html,
 body {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }
 body {
-    margin: 0;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 button.mat-fab {
-    position: fixed;
-    bottom: 16px;
-    right: 16px;
-    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-    right: calc(16px + env(safe-area-inset-right, 0px));
-    .mat-spinner circle {
-        stroke: #fff;
-    }
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  right: calc(16px + env(safe-area-inset-right, 0px));
+  .mat-spinner circle {
+    stroke: #fff;
+  }
 }
 
 .mat-snack-bar-handset {
-    margin-bottom: 72px !important;
+  margin-bottom: 72px !important;
 }
 
 .mat-icon-button .mat-button-wrapper {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 .provider-icon {
-    width: 18px;
-    height: 18px;
-    vertical-align: middle;
-    padding-right: 8px;
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+  padding-right: 8px;
+}
+
+a {
+  color: inherit;
+
+  &:focus,
+  &:hover {
+    opacity: 0.8;
+  }
 }
