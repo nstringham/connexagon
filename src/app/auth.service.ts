@@ -75,7 +75,6 @@ export class AuthService {
         } else {
           return this.fireAuth.signInWithPopup(provider).catch(async error => {
             if (error.code === 'auth/account-exists-with-different-credential') {
-              console.error(error);
               return Promise.all([
                 this.modal.alert('It looks like you\'ve used that email before with a different sign in method'),
                 this.fireAuth.fetchSignInMethodsForEmail(error.email)
