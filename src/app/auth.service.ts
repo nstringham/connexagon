@@ -25,7 +25,7 @@ export class AuthService {
     private modal: ModalService
   ) {
     this.userDoc$ = this.fireAuth.authState.pipe(filter(user => user != null), switchMap((user: User) => {
-      return firestore.doc<UserData>('users/' + user.uid).snapshotChanges().pipe(map(( action: Action<DocumentSnapshot<UserData>>) => {
+      return firestore.doc<UserData>('users/' + user.uid).snapshotChanges().pipe(map((action: Action<DocumentSnapshot<UserData>>) => {
         return action.payload;
       }));
     }));
@@ -35,8 +35,8 @@ export class AuthService {
     }));
 
     this.userDoc$.subscribe(async (snapshot: DocumentSnapshot<UserData>) => {
-      if (!snapshot?.data()?.nickname){
-        snapshot.ref.set({nickname: await this.promptNickname((await fireAuth.currentUser).displayName)});
+      if (!snapshot?.data()?.nickname) {
+        snapshot.ref.set({ nickname: await this.promptNickname((await fireAuth.currentUser).displayName) });
       }
     });
 
@@ -47,31 +47,64 @@ export class AuthService {
     });
   }
 
-  public getGoogleAuthProvider(){
+  public getGoogleAuthProvider() {
     return new auth.GoogleAuthProvider();
+  }
+
+  public getTwitterAuthProvider() {
+    return new auth.TwitterAuthProvider();
   }
 
   async logIn(provider?: auth.AuthProvider) {
     if (provider) {
-      this.fireAuth.currentUser.then(async currentUser => {
-        if (currentUser != null){
-          currentUser.linkWithPopup(provider).catch(async error => {
-            if (error.code === 'auth/credential-already-in-use'){
-              if (await this.modal.confirm(
-                error.email + ' already has an account would you like to delete your current game and use ' + error.email + ' instead?',
+      return this.fireAuth.currentUser.then(async currentUser => {
+        if (currentUser != null) {
+          return currentUser.linkWithPopup(provider).catch(async error => {
+            if (error.code === 'auth/credential-already-in-use') {
+              if (currentUser.isAnonymous && await this.modal.confirm(
+                'delete your current games and sign in?',
                 'Are you sure?'
-              )){
+              )) {
                 currentUser.delete();
-                this.fireAuth.signInWithCredential(error.credential);
               }
+              return this.fireAuth.signInWithCredential(error.credential);
+            } else {
+              throw error;
             }
           });
         } else {
-          this.fireAuth.signInWithPopup(provider);
+          return this.fireAuth.signInWithPopup(provider).catch(async error => {
+            if (error.code === 'auth/account-exists-with-different-credential') {
+              console.error(error);
+              return Promise.all([
+                this.modal.alert('It looks like you\'ve used that email before with a different sign in method'),
+                this.fireAuth.fetchSignInMethodsForEmail(error.email)
+              ]).then(result => {
+                let existingProvider;
+                switch (result[1][0]) {
+                  case 'google.com':
+                    existingProvider = this.getGoogleAuthProvider();
+                    break;
+                  case 'twitter.com':
+                    existingProvider = this.getTwitterAuthProvider();
+                    break;
+                  default:
+                    console.error('unknown provider:', result[1][0]);
+                    break;
+                }
+                return this.fireAuth.signInWithPopup(existingProvider).then(() => {
+                  return this.fireAuth.currentUser.then(newUser => {
+                    newUser.linkWithCredential(error.credential);
+                  });
+                });
+              });
+            }
+            throw error;
+          });
         }
       });
     } else {
-      this.fireAuth.signInAnonymously();
+      return this.fireAuth.signInAnonymously();
     }
   }
 
@@ -85,11 +118,11 @@ export class AuthService {
     (await this.fireAuth.currentUser).delete();
   }
 
-  private async doBeforeLogout(){
+  private async doBeforeLogout() {
     await Promise.all(this.beforeLogout.map(callback => callback()));
   }
 
-  addBeforeLogout(callback: () => Promise<any>){
+  addBeforeLogout(callback: () => Promise<any>) {
     this.beforeLogout.push(callback);
   }
 

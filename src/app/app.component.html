@@ -8,9 +8,9 @@
     </div>
     <span class="title">{{title}}</span>
     <span style="flex: 1 1 auto;"></span>
-      <button mat-icon-button *ngIf="shareService.shareable | async" (click)="shareService.share()" aria-label="Share">
-        <mat-icon>share</mat-icon>
-      </button>
+    <button mat-icon-button *ngIf="shareService.shareable | async" (click)="shareService.share()" aria-label="Share">
+      <mat-icon>share</mat-icon>
+    </button>
     <div *ngIf="deferredInstallPrompt" class="icon-button-warper">
       <button mat-icon-button (click)="install()" aria-label="Download App">
         <mat-icon>get_app</mat-icon>
@@ -18,22 +18,32 @@
     </div>
     <div class="icon-button-warper">
       <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Account">
-        <img class="account-photo" *ngIf="(fireAuth.authState | async)?.photoURL as photoURL else account_circle" src="{{photoURL}}">
-        <ng-template #account_circle><mat-icon>account_circle</mat-icon></ng-template>
+        <img class="account-photo" *ngIf="(fireAuth.authState | async)?.photoURL as photoURL else account_circle"
+          src="{{photoURL}}">
+        <ng-template #account_circle>
+          <mat-icon>account_circle</mat-icon>
+        </ng-template>
       </button>
     </div>
   </mat-toolbar>
 
   <mat-menu #menu="matMenu">
-    <button mat-menu-item *ngIf="!(fireAuth.authState | async)?.email" (click)="authService.logIn(authService.getGoogleAuthProvider())">
-      <img class="google-icon" alt="" src="assets/img/google.svg">
+    <button mat-menu-item *ngIf="!providers?.includes('google.com')"
+      (click)="authService.logIn(authService.getGoogleAuthProvider())">
+      <img class="provider-icon" aria-hidden="true" src="assets/img/google.svg">
       <span>Sign in with Google</span>
     </button>
-    <button mat-menu-item *ngIf="(fireAuth.authState | async)?.email" (click)="authService.logOut()">
+    <button mat-menu-item *ngIf="!providers?.includes('twitter.com')"
+      (click)="authService.logIn(authService.getTwitterAuthProvider())">
+      <img class="provider-icon" aria-hidden="true" [src]="twitterIcon">
+      <span>Sign in with Twitter</span>
+    </button>
+    <button mat-menu-item *ngIf="(fireAuth.authState | async)?.isAnonymous === false" (click)="authService.logOut()">
       <mat-icon>exit_to_app</mat-icon>
       <span>Log Out</span>
     </button>
-    <button mat-menu-item *ngIf="(fireAuth.authState | async)?.email" (click)="authService.deleteUser()" class="warn-color">
+    <button mat-menu-item *ngIf="(fireAuth.authState | async)?.isAnonymous === false" (click)="authService.deleteUser()"
+      class="warn-color">
       <mat-icon color="warn">delete_forever</mat-icon>
       <span>Delete Account</span>
     </button>

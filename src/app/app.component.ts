@@ -18,7 +18,8 @@ export class AppComponent implements OnInit {
 
   dialog: MatDialogRef<LoginComponent>;
 
-  public navigator = window.navigator;
+  twitterIcon: string = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'assets/img/twitter-white.svg' : 'assets/img/twitter-blue.svg';
+  providers: string[];
 
   public deferredInstallPrompt: any;
   @HostListener('window:beforeinstallprompt', ['$event'])
@@ -35,7 +36,11 @@ export class AppComponent implements OnInit {
     public shareService: ShareService,
     private matDialog: MatDialog,
     private notifications: NotificationsService,
-  ) { }
+  ) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+      this.twitterIcon = event.matches ? 'assets/img/twitter-white.svg' : 'assets/img/twitter-blue.svg';
+    });
+  }
 
   ngOnInit(): void {
     this.fireAuth.authState.subscribe(user => {
@@ -45,6 +50,7 @@ export class AppComponent implements OnInit {
       } else if (this.dialog) {
         this.dialog.close();
       }
+      this.providers = user?.providerData.map(data => data.providerId);
     });
   }
 

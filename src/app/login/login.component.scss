@@ -1,16 +1,14 @@
 button {
-    width: 100%;
+  width: 100%;
+  margin-bottom: 16px;
 }
-.withGoogle{
-    background-color: white;
-    color: black;
+
+.alwaysWhite {
+  background-color: white;
+  color: black;
 }
-.provider-icon {
-    width: 18px;
-    height: 18px;
-    vertical-align: middle;
-    padding-right: 8px;;
-}
-.spacer{
-    height: 16px;
+
+.legal {
+  font-size: x-small;
+  margin-bottom: 0;
 }
