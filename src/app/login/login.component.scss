@@ -1,10 +1,14 @@
 button {
-    width: 100%;
+  width: 100%;
+  margin-bottom: 16px;
 }
+
 .alwaysWhite {
-    background-color: white;
-    color: black;
+  background-color: white;
+  color: black;
 }
-.spacer {
-    height: 16px;
+
+.legal {
+  font-size: x-small;
+  margin-bottom: 0;
 }
