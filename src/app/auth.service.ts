@@ -47,12 +47,15 @@ export class AuthService {
     });
   }
 
-  public getGoogleAuthProvider() {
-    return new auth.GoogleAuthProvider();
-  }
-
-  public getTwitterAuthProvider() {
-    return new auth.TwitterAuthProvider();
+  public getAuthProviderByID(id: string): auth.AuthProvider {
+    switch (id) {
+      case 'google.com':
+        return new auth.GoogleAuthProvider();
+      case 'twitter.com':
+        return new auth.TwitterAuthProvider();
+      default:
+        console.error('unknown provider:', id);
+    }
   }
 
   async logIn(provider?: auth.AuthProvider) {
@@ -79,19 +82,7 @@ export class AuthService {
                 this.modal.alert('It looks like you\'ve used that email before with a different sign in method'),
                 this.fireAuth.fetchSignInMethodsForEmail(error.email)
               ]).then(result => {
-                let existingProvider;
-                switch (result[1][0]) {
-                  case 'google.com':
-                    existingProvider = this.getGoogleAuthProvider();
-                    break;
-                  case 'twitter.com':
-                    existingProvider = this.getTwitterAuthProvider();
-                    break;
-                  default:
-                    console.error('unknown provider:', result[1][0]);
-                    break;
-                }
-                return this.fireAuth.signInWithPopup(existingProvider).then(() => {
+                return this.fireAuth.signInWithPopup(this.getAuthProviderByID(result[1][0])).then(() => {
                   return this.fireAuth.currentUser.then(newUser => {
                     newUser.linkWithCredential(error.credential);
                   });
@@ -114,7 +105,16 @@ export class AuthService {
 
   async deleteUser() {
     await this.doBeforeLogout();
-    (await this.fireAuth.currentUser).delete();
+    const currentUser = await this.fireAuth.currentUser;
+    return currentUser.delete().catch(async error => {
+      if (error.code === 'auth/requires-recent-login') {
+        await this.modal.alert('Confirm your identity by logging in.');
+        await this.fireAuth.signInWithPopup(this.getAuthProviderByID(currentUser.providerData[0].providerId));
+        return this.deleteUser();
+      } else {
+        throw error;
+      }
+    });
   }
 
   private async doBeforeLogout() {

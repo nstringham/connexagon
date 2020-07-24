@@ -1,4 +1,4 @@
-<div class="app-wraper">
+<div class="app-warper">
   <div class="status-bar-fill" *ngIf="platform.IOS"></div>
   <mat-toolbar id="toolbar" role="heading" color="primary">
     <div *ngIf="this.location.path()" class="icon-button-warper nav-icon">
@@ -29,13 +29,13 @@
 
   <mat-menu #menu="matMenu">
     <button mat-menu-item *ngIf="!providers?.includes('google.com')"
-      (click)="authService.logIn(authService.getGoogleAuthProvider())">
-      <img class="provider-icon" aria-hidden="true" src="assets/img/google.svg">
+      (click)="authService.logIn(authService.getAuthProviderByID('google.com'))">
+      <img class="mat-icon" aria-hidden="true" src="assets/img/google.svg">
       <span>Sign in with Google</span>
     </button>
     <button mat-menu-item *ngIf="!providers?.includes('twitter.com')"
-      (click)="authService.logIn(authService.getTwitterAuthProvider())">
-      <img class="provider-icon" aria-hidden="true" [src]="twitterIcon">
+      (click)="authService.logIn(authService.getAuthProviderByID('twitter.com'))">
+      <img class="mat-icon" aria-hidden="true" [src]="twitterIcon">
       <span>Sign in with Twitter</span>
     </button>
     <button mat-menu-item *ngIf="(fireAuth.authState | async)?.isAnonymous === false" (click)="authService.logOut()">

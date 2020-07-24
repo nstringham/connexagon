@@ -1,44 +1,44 @@
-.app-wraper {
-    display: flex;
-    flex-flow: column;
-    height: 100vh;
+.app-warper {
+  display: flex;
+  flex-flow: column;
+  height: 100vh;
 }
 .status-bar-fill {
-    background-color: #1976d2;
-    width: 100vw;
-    height: env(safe-area-inset-top, 0px);
-    z-index: 1000;
+  background-color: #1976d2;
+  width: 100vw;
+  height: env(safe-area-inset-top, 0px);
+  z-index: 1000;
 }
 .container {
-    margin-bottom: env(safe-area-inset-bottom, 0px);
-    margin-left: env(safe-area-inset-left, 0px);
-    margin-right: env(safe-area-inset-right, 0px);
-    overflow: auto;
-    flex: 1;
+  margin-bottom: env(safe-area-inset-bottom, 0px);
+  margin-left: env(safe-area-inset-left, 0px);
+  margin-right: env(safe-area-inset-right, 0px);
+  overflow: auto;
+  flex: 1;
 }
 .account-photo {
-    width: 32px;
-    height: 32px;
-    border-radius: 100%;
+  width: 32px;
+  height: 32px;
+  border-radius: 100%;
 }
 .title {
-    user-select: none;
-    -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .icon-button-warper {
-    height: 24px;
-    width: 24px;
-    position: relative;
-    margin-left: 24px;
+  height: 24px;
+  width: 24px;
+  position: relative;
+  margin-left: 24px;
 
-    &.nav-icon {
-        margin-right: 32px;
-        margin-left: 0px;
-    }
+  &.nav-icon {
+    margin-right: 32px;
+    margin-left: 0px;
+  }
 
-    button {
-        position: absolute;
-        top: -8px;
-        left: -8px;
-    }
+  button {
+    position: absolute;
+    top: -8px;
+    left: -8px;
+  }
 }

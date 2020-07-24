@@ -1,10 +1,10 @@
 <h2>How do you want to continue?</h2>
-<button mat-raised-button (click)="logIn(authService.getGoogleAuthProvider())" class="alwaysWhite">
+<button mat-raised-button (click)="logIn(authService.getAuthProviderByID('google.com'))" class="alwaysWhite">
   <img class="provider-icon" alt="" src="assets/img/google.svg">
   <span>Sign in with Google</span>
 </button>
 <div class="spacer"></div>
-<button mat-raised-button (click)="logIn(authService.getTwitterAuthProvider())" class="alwaysWhite">
+<button mat-raised-button (click)="logIn(authService.getAuthProviderByID('twitter.com'))" class="alwaysWhite">
   <img class="provider-icon" alt="" src="assets/img/twitter-blue.svg">
   <span>Sign in with Twitter</span>
 </button>
