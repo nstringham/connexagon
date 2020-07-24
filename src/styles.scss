@@ -40,21 +40,12 @@ $Connexagon-theme-dark: mat-dark-theme($Connexagon-primary-dark, $Connexagon-acc
 @include angular-material-theme($Connexagon-theme-light);
 @include my-component-theme($Connexagon-theme-light);
 @media (prefers-color-scheme: dark) {
-<<<<<<< HEAD
-    @include angular-material-theme($Connexagon-theme-dark);
-    @include my-component-theme($Connexagon-theme-dark);
-    body {
-        color: white;
-        background-color: #121212;
-    }
-=======
-  @include angular-material-theme($Tic-Tac-Toe-theme-dark);
-  @include my-component-theme($Tic-Tac-Toe-theme-dark);
+  @include angular-material-theme($Connexagon-theme-dark);
+  @include my-component-theme($Connexagon-theme-dark);
   body {
     color: white;
     background-color: #121212;
   }
->>>>>>> d55faf165481e16996d3fb64637f539f3720e61c
 }
 
 /* You can add global styles to this file, and also import other style files */
