@@ -80,6 +80,27 @@ export const handleGameQueues = functions.firestore.document('queues/{queueName}
   return null;
 });
 
+export const skipTurn = functions.https.onCall((id, context) => {
+  if (context.auth?.uid && typeof id === 'string') {
+    return firestore.runTransaction(transaction => {
+      return transaction.get(firestore.doc(`games/${id}`)).then(doc => {
+        const data = doc.data() as Game;
+        if (context.auth?.uid && data.uids.includes(context.auth?.uid)) {
+          if (data.modified.toMillis() < admin.firestore.Timestamp.now().toMillis() - 6.048e+8) {
+            return transaction.set(doc.ref, { turn: data.turn + 1, modified: admin.firestore.Timestamp.now() }, { merge: true });
+          } else {
+            throw new functions.https.HttpsError('failed-precondition', 'turn must be a week old to report it as late');
+          }
+        } else {
+          throw new functions.https.HttpsError('permission-denied', 'must be in a game to report a turn in it as late');
+        }
+      });
+    });
+  } else {
+    throw new functions.https.HttpsError('unauthenticated', 'must be logged in to report a late turn');
+  }
+});
+
 export const handleUserDataChange = functions.firestore.document('users/{uid}').onUpdate((change, context) => {
   const nickname: string | undefined = change.after.data()?.nickname;
   if (nickname && nickname !== change.before.data()?.nickname) {

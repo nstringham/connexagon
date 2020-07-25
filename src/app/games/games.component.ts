@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { Game } from '../board/board.component';
 import { Color, PalletService } from '../pallet.service';
 import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
+import { AngularFireFunctions } from '@angular/fire/functions';
 
 @Component({
   selector: 'app-games',
@@ -17,37 +18,42 @@ export class GamesComponent implements OnInit, OnDestroy {
   private gamesSubscription: Subscription;
 
   public spinner: {
-    visable: boolean,
+    visible: boolean,
     mode: ProgressSpinnerMode,
     value: number
   } = {
-    visable: false,
-    mode: 'indeterminate',
-    value: 0
-  };
+      visible: false,
+      mode: 'indeterminate',
+      value: 0
+    };
 
-  public gameLists: {games: GameListElement[], display: string}[] = [
-    {games: [], display: 'Your Turn'},
-    {games: [], display: 'Current Games'},
-    {games: [], display: 'Finished Games'}
+  public gameLists: { games: GameListElement[], display: string }[] = [
+    { games: [], display: 'Your Turn' },
+    { games: [], display: 'Current Games' },
+    { games: [], display: 'Finished Games' }
   ];
 
   constructor(
     private route: ActivatedRoute,
     public authService: AuthService,
     private firestore: AngularFirestore,
+    private functions: AngularFireFunctions,
     public palletService: PalletService
   ) {
     this.gamesSubscription = authService.games$.subscribe((actions: DocumentChangeAction<Game>[]) => {
-      const newGameList = this.gameLists.map((element => ({games: [], display: element.display})));
+      const newGameList = this.gameLists.map((element => ({ games: [], display: element.display })));
+      const skipTurn = functions.httpsCallable('skipTurn');
       actions.forEach(action => {
         const game = action.payload.doc.data();
         let gameArr: GameListElement[];
-        if (game.winner === -1){
+        if (game.winner === -1) {
           if (game.uids[game.turn % game.players.length] === authService.currentUID) {
             gameArr = newGameList[0].games;
           } else {
             gameArr = newGameList[1].games;
+            if (game.modified.toMillis() < new Date().getTime() - 6.048e+8) {
+              skipTurn(action.payload.doc.id).subscribe();
+            }
           }
         } else {
           gameArr = newGameList[2].games;
@@ -79,7 +85,7 @@ export class GamesComponent implements OnInit, OnDestroy {
   }
 
   public joinQueue() {
-    this.spinner.visable = true;
+    this.spinner.visible = true;
     this.spinner.mode = 'indeterminate';
     const data = {};
     data[this.authService.currentUID] = true;
@@ -95,7 +101,7 @@ export class GamesComponent implements OnInit, OnDestroy {
           this.spinner.value = 100 * keys.length / 2;
         } else {
           this.spinner.mode = 'indeterminate';
-          this.spinner.visable = false;
+          this.spinner.visible = false;
           subscription.unsubscribe();
         }
       }
@@ -104,7 +110,7 @@ export class GamesComponent implements OnInit, OnDestroy {
 }
 
 type GameListElement = {
-  players: {nick: string, color: Color, winner: boolean}[],
+  players: { nick: string, color: Color, winner: boolean }[],
   modified: Date,
   id: string,
 };
