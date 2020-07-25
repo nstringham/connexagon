@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { Game } from '../board/board.component';
 import { Color, PalletService } from '../pallet.service';
 import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
+import { AngularFireFunctions } from '@angular/fire/functions';
 
 @Component({
   selector: 'app-games',
@@ -36,10 +37,12 @@ export class GamesComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     public authService: AuthService,
     private firestore: AngularFirestore,
+    private functions: AngularFireFunctions,
     public palletService: PalletService
   ) {
     this.gamesSubscription = authService.games$.subscribe((actions: DocumentChangeAction<Game>[]) => {
       const newGameList = this.gameLists.map((element => ({ games: [], display: element.display })));
+      const skipTurn = functions.httpsCallable('skipTurn');
       actions.forEach(action => {
         const game = action.payload.doc.data();
         let gameArr: GameListElement[];
@@ -48,6 +51,9 @@ export class GamesComponent implements OnInit, OnDestroy {
             gameArr = newGameList[0].games;
           } else {
             gameArr = newGameList[1].games;
+            if (game.modified.toMillis() < new Date().getTime() - 6.048e+8) {
+              skipTurn(action.payload.doc.id).subscribe();
+            }
           }
         } else {
           gameArr = newGameList[2].games;
