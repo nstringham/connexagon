@@ -1,17 +1,16 @@
 <div class="canvas-warper">
-    <canvas (click)="canvasClickHandler($event)" (keydown)="board.canvasKeydown($event)" #canvas>
-        <table>
-            <tr *ngFor="let row of board.table">
-                <td *ngFor="let id of row">
-                    <button [id]="id" tabindex="0" (focus)="board.tableFocusHandler(id, true)"
-                        (blur)="board.tableFocusHandler(id, false)" (click)="board.clickHex(id)">
-                    </button>
-                </td>
-            </tr>
-        </table>
-    </canvas>
+  <canvas (click)="canvasClickHandler($event)" (keydown)="board.canvasKeydown($event)" #canvas>
+    <table (focusout)="board.tableFocusHandler(-1)">
+      <tr *ngFor="let row of board.table">
+        <td *ngFor="let id of row">
+          <button [id]="id" tabindex="0" (focus)="board.tableFocusHandler(id)" (click)="board.clickHex(id)">
+          </button>
+        </td>
+      </tr>
+    </table>
+  </canvas>
 </div>
 <button mat-fab color="primary" (click)="submit()" aria-label="submit"
-    [disabled]="!(isTurn && board.move && board.game.winner === -1)">
-    <mat-icon>done</mat-icon>
+  [disabled]="!(isTurn && board.move?.positions?.length === 2)">
+  <mat-icon>done</mat-icon>
 </button>

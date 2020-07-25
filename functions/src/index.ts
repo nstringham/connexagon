@@ -18,7 +18,9 @@ export const makeTurn = functions.firestore.document('games/{gameId}/moves/{user
       transaction.get(gameRef).then(doc => {
         const game = doc.data() as Game | undefined;
         if (game && isValidMove(move, game) && context.params.userId === game.uids[game.turn % game.players.length]) {
-          game.board[move.position] = game.turn % game.players.length;
+          move.positions.forEach(position => {
+            game.board[position] = game.turn % game.players.length;
+          });
           game.winner = findWinner(game.board);
           if (game.winner === -1) {
             game.turn++;
@@ -125,49 +127,16 @@ export const deleteUserData = functions.auth.user().onDelete((user) => {
 
 
 function findWinner(board: number[]): number {
-  const sqrt = Math.sqrt(board.length);
-  for (let i = 0; i < sqrt; i++) {
-    let row = true;
-    let col = true;
-    for (let j = 1; j < sqrt; j++) {
-      if (board[i * sqrt] !== board[j + i * sqrt]) {
-        row = false;
-      }
-      if (board[i] !== board[i + j * sqrt]) {
-        col = false;
-      }
-    }
-    if (row && board[i * sqrt] !== -1) {
-      return board[i * sqrt];
-    }
-    if (col && board[i] !== -1) {
-      return board[i];
-    }
-  }
-  let diagonal = true;
-  let backDiagonal = true;
-  for (let i = 1; i < sqrt; i++) {
-    if (board[0] !== board[i + i * sqrt]) {
-      diagonal = false;
-    }
-    if (board[sqrt - 1] !== board[(i + 1) * (sqrt - 1)]) {
-      backDiagonal = false;
-    }
-  }
-  if (diagonal && board[0] !== -1) {
-    return board[0];
-  }
-  if (backDiagonal && board[sqrt - 1] !== -1) {
-    return board[sqrt - 1];
-  }
   return board.includes(-1) ? -1 : -2;
 }
 
 async function makeGame(size: number, uids: string[]) {
   const shuffledColors = shuffle(colors);
   const shuffledUIDs = shuffle(uids);
+  const board = new Array(3 * (size - 1) * size + 1).fill(-1);
+  board[(board.length - 1) / 2] = -2;
   return firestore.collection('games').add({
-    board: new Array(3 * (size - 1) * size + 1).fill(-1),
+    board,
     players: await Promise.all(shuffledUIDs.map(async (uid, i) => ({
       color: shuffledColors[i],
       nickname: (await firestore.doc('users/' + uid).get()).data()?.nickname || '[No Name]'

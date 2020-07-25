@@ -114,7 +114,7 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.board.redraw();
   }
 
-  public canvasClickHandler(event: MouseEvent) {
+  public canvasClickHandler(click: MouseEvent | number) {
     if (
       Math.abs(this.canvas.nativeElement.height - this.canvas.nativeElement.clientHeight * window.devicePixelRatio) > 1 ||
       Math.abs(this.canvas.nativeElement.width - this.canvas.nativeElement.clientWidth * window.devicePixelRatio) > 1
@@ -122,15 +122,23 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
       // this deals with a problem caused by samsung internet not using css min()
       this.resizeCanvas();
     }
-    const canvas = event.target as Element;
-    const x = event.x - canvas.getBoundingClientRect().left;
-    const y = event.y - canvas.getBoundingClientRect().top;
-    const position = this.board.getPosition(x * window.devicePixelRatio, y * window.devicePixelRatio);
-    this.board.clickHex(position);
+    if (this.isTurn) {
+      if (typeof click === 'number') {
+        this.board.clickHex(click);
+      } else {
+        const canvas = click.target as Element;
+        const x = click.x - canvas.getBoundingClientRect().left;
+        const y = click.y - canvas.getBoundingClientRect().top;
+        const position = this.board.getPosition(x * window.devicePixelRatio, y * window.devicePixelRatio);
+        this.board.clickHex(position);
+      }
+    } else {
+      console.log('not turn');
+    }
   }
 
   public submit() {
-    if (this.board.move && this.isTurn) {
+    if (this.board.move?.positions?.length === 2 && this.isTurn) {
       this.gameDoc.collection('moves').doc(this.user.uid).set(this.board.move);
       delete this.board.move;
     }
@@ -138,7 +146,8 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private updateIsTurn() {
     try {
-      this.isTurn = this.board.game.uids[this.board.game.turn % this.board.game.players.length] === this.user.uid;
+      this.isTurn = this.board.game.uids[this.board.game.turn % this.board.game.players.length] === this.user.uid
+        && this.board.game.winner === -1;
     } catch (error) {
       this.isTurn = false;
     }
@@ -154,11 +163,12 @@ class Board {
   private length: number;
 
   table: number[][];
+  private focus = -1;
   hexagons: { color: Color | 'background'; highlighted: boolean; }[];
   spacing: number;
 
   constructor(private ctx: CanvasRenderingContext2D) {
-    this.gridSize = 7; // TODO make dynamic
+    this.gridSize = 3; // TODO make dynamic
 
     const rows: number[][] = [];
     for (let row = 0, id = 0; row < this.gridSize * 2 - 1; row++) {
@@ -213,21 +223,21 @@ class Board {
     }
   }
 
-  tableFocusHandler(id: number, focus: boolean) {
-    this.hexagons[id].highlighted = focus;
+  tableFocusHandler(id: number) {
+    this.focus = id;
     window.requestAnimationFrame(() => this.redraw());
   }
 
   clickHex(position) {
-    if (this.hexagons[position]) {
-      if (this.hexagons[position].color === 'background') {
-        this.hexagons[position].color = 'red';
-      } else {
-        this.hexagons[position].color = 'background';
+    if (this.move?.positions.includes(position)) {
+      this.move.positions = this.move.positions.filter(pos => pos !== position);
+    } else if (this.game.board[position] === -1) {
+      if (!this.move) {
+        this.move = { positions: [] };
       }
-
-      window.requestAnimationFrame(() => this.redraw());
+      this.move.positions.push(position);
     }
+    window.requestAnimationFrame(() => this.redraw());
   }
 
   redraw() {
@@ -239,26 +249,38 @@ class Board {
     this.spacing = (this.length * 0.5) / (this.gridSize * 2 - 1);
     this.ctx.lineWidth = this.spacing * 0.1;
 
-
-    this.hexagons.forEach((hexagon, i) => {
-      let column = i - Math.floor(this.hexagons.length / 2);
-      let row = 0;
-      while (Math.abs(column) > (2 * this.gridSize - Math.abs(row)) / 2 - 0.5) {
-        const sign = column > 0 ? 1 : -1;
-        row += sign;
-        column -= (2 * this.gridSize - Math.abs(row) - 0.5) * sign;
+    if (this.game) {
+      for (let i = 0; i < this.game.board.length; i++) {
+        let column = i - Math.floor(this.game.board.length / 2);
+        let row = 0;
+        while (Math.abs(column) > (2 * this.gridSize - Math.abs(row)) / 2 - 0.5) {
+          const sign = column > 0 ? 1 : -1;
+          row += sign;
+          column -= (2 * this.gridSize - Math.abs(row) - 0.5) * sign;
+        }
+        const center = {
+          x: this.center.x + (column * this.spacing * 2),
+          y: this.center.y + (row * HEX_RATIO * this.spacing * 2)
+        };
+        if (this.game.board[i] === -2) {
+          this.ctx.fillStyle = this.pallet.main;
+        } else {
+          this.ctx.fillStyle = this.pallet[this.game.players[this.game.board[i]]?.color || 'background'];
+        }
+        this.ctx.hex(center.x, center.y, this.spacing, true);
+        this.ctx.fill();
+        if (i === this.focus) {
+          this.ctx.hex(center.x, center.y, this.spacing * 1.05, true);
+          this.ctx.strokeStyle = this.pallet.main;
+          this.ctx.stroke();
+        }
+        if (this.move?.positions.includes(i)) {
+          this.ctx.hex(center.x, center.y, this.spacing * 0.95, true);
+          this.ctx.strokeStyle = this.pallet[this.game.players[this.game.turn % this.game.players.length].color];
+          this.ctx.stroke();
+        }
       }
-      this.ctx.fillStyle = this.pallet[hexagon.color];
-      this.ctx.fillHex(
-        this.center.x + (column * this.spacing * 2),
-        this.center.y + (row * HEX_RATIO * this.spacing * 2),
-        this.spacing, true
-      );
-      if (hexagon.highlighted) {
-        this.ctx.strokeStyle = this.pallet.main;
-        this.ctx.stroke();
-      }
-    });
+    }
   }
 
   getPosition(x: number, y: number): number {
@@ -310,18 +332,18 @@ export type Player = {
 };
 
 export type Move = {
-  position: number;
+  positions: number[];
 };
 
 export const HEX_RATIO = Math.sqrt(3) / 2;
 
 declare global {
   interface CanvasRenderingContext2D {
-    fillHex: (x: number, y: number, radius: number, rotated?: boolean) => void;
+    hex: (x: number, y: number, radius: number, rotated?: boolean) => void;
   }
 }
 
-CanvasRenderingContext2D.prototype.fillHex = function(x: number, y: number, radius: number, rotated?: boolean) {
+CanvasRenderingContext2D.prototype.hex = function(x: number, y: number, radius: number, rotated?: boolean) {
   const apothem = radius * HEX_RATIO;
 
   const points: [number, number][] = [
@@ -337,5 +359,4 @@ CanvasRenderingContext2D.prototype.fillHex = function(x: number, y: number, radi
   this.moveTo(...points.shift());
   points.forEach(point => this.lineTo(...point));
   this.closePath();
-  this.fill();
 };
