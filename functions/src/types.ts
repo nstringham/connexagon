@@ -12,7 +12,7 @@ export const colors = [
 export type Color = 'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'purple';
 
 export interface Game {
-  board: number[];
+  board: { owner: number, tower: boolean }[];
   players: Player[];
   turn: number;
   winner: number;
@@ -40,7 +40,7 @@ export function isValidMove(move: any, game: Game): move is Move {
     return false;
   }
   for (const position of move.positions) {
-    if (game.board[position] !== -1) {
+    if (game.board[position].owner !== -1 || game.board[position].tower) {
       return false;
     }
   }

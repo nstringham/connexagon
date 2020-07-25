@@ -19,7 +19,7 @@ export const makeTurn = functions.firestore.document('games/{gameId}/moves/{user
         const game = doc.data() as Game | undefined;
         if (game && isValidMove(move, game) && context.params.userId === game.uids[game.turn % game.players.length]) {
           move.positions.forEach(position => {
-            game.board[position] = game.turn % game.players.length;
+            game.board[position].owner = game.turn % game.players.length;
           });
           game.winner = findWinner(game.board);
           if (game.winner === -1) {
@@ -126,15 +126,17 @@ export const deleteUserData = functions.auth.user().onDelete((user) => {
 });
 
 
-function findWinner(board: number[]): number {
-  return board.includes(-1) ? -1 : -2;
+function findWinner(board: { owner: number, tower: boolean }[]): number {
+  return board.find(cell => cell.owner === -1 && !cell.tower) ? -1 : -2;
 }
 
 async function makeGame(size: number, uids: string[]) {
   const shuffledColors = shuffle(colors);
   const shuffledUIDs = shuffle(uids);
-  const board = new Array(3 * (size - 1) * size + 1).fill(-1);
-  board[(board.length - 1) / 2] = -2;
+  const board = new Array(3 * (size - 1) * size + 1).fill({ owner: -1, tower: false });
+  board[(board.length - 1) / 2 - (size - 1)] = { owner: -1, tower: true };
+  board[(size - 1)] = { owner: 0, tower: true };
+  board[(board.length - 1)] = { owner: 1, tower: true };
   return firestore.collection('games').add({
     board,
     players: await Promise.all(shuffledUIDs.map(async (uid, i) => ({

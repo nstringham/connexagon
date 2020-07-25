@@ -132,8 +132,6 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
         const position = this.board.getPosition(x * window.devicePixelRatio, y * window.devicePixelRatio);
         this.board.clickHex(position);
       }
-    } else {
-      console.log('not turn');
     }
   }
 
@@ -231,7 +229,7 @@ class Board {
   clickHex(position) {
     if (this.move?.positions.includes(position)) {
       this.move.positions = this.move.positions.filter(pos => pos !== position);
-    } else if (this.game.board[position] === -1) {
+    } else if (this.game.board[position].owner === -1 && !this.game.board[position].tower) {
       if (!this.move) {
         this.move = { positions: [] };
       }
@@ -262,13 +260,20 @@ class Board {
           x: this.center.x + (column * this.spacing * 2),
           y: this.center.y + (row * HEX_RATIO * this.spacing * 2)
         };
-        if (this.game.board[i] === -2) {
+        if (this.game.board[i].tower) {
           this.ctx.fillStyle = this.pallet.main;
+          this.ctx.hex(center.x, center.y, this.spacing, true);
+          this.ctx.fill();
+          if (this.game.board[i].owner !== -1) {
+            this.ctx.fillStyle = this.pallet[this.game.players[this.game.board[i].owner]?.color || 'background'];
+            this.ctx.hex(center.x, center.y, this.spacing * 0.5, true);
+            this.ctx.fill();
+          }
         } else {
-          this.ctx.fillStyle = this.pallet[this.game.players[this.game.board[i]]?.color || 'background'];
+          this.ctx.fillStyle = this.pallet[this.game.players[this.game.board[i].owner]?.color || 'background'];
+          this.ctx.hex(center.x, center.y, this.spacing, true);
+          this.ctx.fill();
         }
-        this.ctx.hex(center.x, center.y, this.spacing, true);
-        this.ctx.fill();
         if (i === this.focus) {
           this.ctx.hex(center.x, center.y, this.spacing * 1.05, true);
           this.ctx.strokeStyle = this.pallet.main;
@@ -318,7 +323,7 @@ class Point {
 }
 
 export interface Game {
-  board: number[];
+  board: { owner: number, tower: boolean }[];
   players: Player[];
   turn: number;
   winner: number;
