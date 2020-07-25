@@ -167,7 +167,7 @@ async function makeGame(size: number, uids: string[]) {
   const shuffledColors = shuffle(colors);
   const shuffledUIDs = shuffle(uids);
   return firestore.collection('games').add({
-    board: new Array(size * size).fill(-1),
+    board: new Array(size * 2 - 1).fill(-1),
     players: await Promise.all(shuffledUIDs.map(async (uid, i) => ({
       color: shuffledColors[i],
       nickname: (await firestore.doc('users/' + uid).get()).data()?.nickname || '[No Name]'
