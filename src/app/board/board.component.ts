@@ -6,10 +6,9 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { User } from 'firebase';
 import { DialogComponent, getWinnerAlert } from '../dialog/dialog.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Pallet, PalletService, Color } from '../pallet.service';
-import { Timestamp } from '@firebase/firestore-types';
+import { Pallet, PalletService } from '../pallet.service';
 import { ModalService } from '../modal.service';
-import { FindValueSubscriber } from 'rxjs/internal/operators/find';
+import { Move, Game } from 'functions/src/types';
 
 @Component({
   selector: 'app-board',
@@ -323,24 +322,6 @@ class Board {
 class Point {
   constructor(public x: number, public y: number) { }
 }
-
-export interface Game {
-  board: { owner: number, tower: boolean }[];
-  players: Player[];
-  turn: number;
-  winner: number;
-  modified: Timestamp;
-  uids: string[];
-}
-
-export type Player = {
-  color: Color;
-  nickname: string;
-};
-
-export type Move = {
-  positions: number[];
-};
 
 export const HEX_RATIO = Math.sqrt(3) / 2;
 

@@ -55,14 +55,3 @@ export type Pallet = {
   background: string,
   main: string
 };
-
-export const colors = [
-  'red',
-  'orange',
-  'yellow',
-  'green',
-  'blue',
-  'purple'
-];
-
-export type Color = 'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'purple';
