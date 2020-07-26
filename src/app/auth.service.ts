@@ -5,8 +5,8 @@ import { auth } from 'firebase/app';
 import { User } from 'firebase';
 import { switchMap, map, filter } from 'rxjs/operators';
 import { AngularFirestore, DocumentSnapshot, Action, DocumentChangeAction } from '@angular/fire/firestore';
-import { Game } from './board/board.component';
 import { ModalService } from './modal.service';
+import { Game } from 'functions/src/types';
 
 @Injectable({
   providedIn: 'root'

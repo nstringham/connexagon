@@ -6,9 +6,9 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { User } from 'firebase';
 import { DialogComponent, getWinnerAlert } from '../dialog/dialog.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Pallet, PalletService, Color } from '../pallet.service';
-import { Timestamp } from '@firebase/firestore-types';
+import { Pallet, PalletService } from '../pallet.service';
 import { ModalService } from '../modal.service';
+import { Move, Game } from 'functions/src/types';
 
 @Component({
   selector: 'app-board',
@@ -83,7 +83,7 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       });
       navigator.serviceWorker.register('firebase-messaging-sw.js').then((registration) => {
-        registration.getNotifications({tag: paramMap.get('id')}).then((notifications) => {
+        registration.getNotifications({ tag: paramMap.get('id') }).then((notifications) => {
           notifications.forEach((notification) => {
             notification.close();
           });
@@ -125,8 +125,8 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
     const y = event.y - this.canvas.nativeElement.getBoundingClientRect().top;
     const position = this.board.getPosition(x * window.devicePixelRatio, y * window.devicePixelRatio);
     if (this.board.game.board[position] === -1) {
-      if (this.isTurn && this.board.game.winner === -1){
-        this.board.move = {position};
+      if (this.isTurn && this.board.game.winner === -1) {
+        this.board.move = { position };
         this.board.drawLetters();
       } else {
         console.log('not turn');
@@ -141,7 +141,7 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  private updateIsTurn(){
+  private updateIsTurn() {
     try {
       this.isTurn = this.board.game.uids[this.board.game.turn % this.board.game.players.length] === this.user.uid;
     } catch (error) {
@@ -192,7 +192,7 @@ class Board {
   }
 
   drawLetters() {
-    if (!this.center){
+    if (!this.center) {
       this.redraw();
       return;
     }
@@ -254,21 +254,3 @@ class Board {
 class Point {
   constructor(public x: number, public y: number) { }
 }
-
-export interface Game {
-  board: number[];
-  players: Player[];
-  turn: number;
-  winner: number;
-  modified: Timestamp;
-  uids: string[];
-}
-
-export type Player = {
-  color: Color;
-  nickname: string;
-};
-
-export type Move = {
-  position: number;
-};

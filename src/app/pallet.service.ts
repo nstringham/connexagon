@@ -18,7 +18,7 @@ export class PalletService {
     );
   }
 
-  getPallet(isDark: boolean): Pallet{
+  getPallet(isDark: boolean): Pallet {
     if (isDark) {
       return {
         red: '#F44336',
@@ -55,14 +55,3 @@ export type Pallet = {
   background: string,
   main: string
 };
-
-export const colors = [
-  'red',
-  'orange',
-  'yellow',
-  'green',
-  'blue',
-  'purple'
-];
-
-export type Color = 'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'purple';

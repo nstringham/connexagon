@@ -3,8 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { AngularFirestore, DocumentChangeAction } from '@angular/fire/firestore';
 import { AuthService } from '../auth.service';
 import { Subscription } from 'rxjs';
-import { Game } from '../board/board.component';
-import { Color, PalletService } from '../pallet.service';
+import { PalletService } from '../pallet.service';
+import { Color, Game } from 'functions/src/types';
 import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
 import { AngularFireFunctions } from '@angular/fire/functions';
 
