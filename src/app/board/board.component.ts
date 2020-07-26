@@ -154,19 +154,21 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
 
 class Board {
   pallet: Pallet;
-  game: Game;
   move: Move;
   gridSize: number;
+  private privateGame: Game;
   private center: Point;
   private length: number;
 
   table: number[][];
   private focus = -1;
-  hexagons: { color: Color | 'background'; highlighted: boolean; }[];
   spacing: number;
 
-  constructor(private ctx: CanvasRenderingContext2D) {
-    this.gridSize = 3; // TODO make dynamic
+  constructor(private ctx: CanvasRenderingContext2D) { }
+
+  set game(game: Game) {
+    this.privateGame = game;
+    this.gridSize = 0.5 + Math.sqrt(12 * game.board.length - 3) / 6;
 
     const rows: number[][] = [];
     for (let row = 0, id = 0; row < this.gridSize * 2 - 1; row++) {
@@ -176,10 +178,10 @@ class Board {
       }
     }
     this.table = rows;
+  }
 
-    this.hexagons = Array(3 * (this.gridSize - 1) * this.gridSize + 1).fill(null)
-      .map(() => ({ color: 'background', highlighted: false }));
-
+  get game() {
+    return this.privateGame;
   }
 
   canvasKeydown(event: KeyboardEvent) {
@@ -314,7 +316,7 @@ class Board {
       row -= sign;
       column += sign * (2 * this.gridSize - 1 - Math.abs(row));
     }
-    return column + Math.floor(this.hexagons.length / 2);
+    return column + Math.floor(this.game.board.length / 2);
   }
 }
 

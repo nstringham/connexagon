@@ -89,11 +89,11 @@ export class GamesComponent implements OnInit, OnDestroy {
     this.spinner.mode = 'indeterminate';
     const data = {};
     data[this.authService.currentUID] = true;
-    this.firestore.doc('queues/2p3x3').update(data).then(() => this.listenToQueue(), () => this.listenToQueue());
+    this.firestore.doc('queues/2p7x7').update(data).then(() => this.listenToQueue(), () => this.listenToQueue());
   }
 
   private listenToQueue() {
-    const subscription = this.firestore.doc<{}>('queues/2p3x3').valueChanges().subscribe(queue => {
+    const subscription = this.firestore.doc<{}>('queues/2p7x7').valueChanges().subscribe(queue => {
       if (this.spinner) {
         const keys = Object.keys(queue);
         if (keys?.includes(this.authService.currentUID)) {
