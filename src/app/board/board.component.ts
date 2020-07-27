@@ -205,7 +205,6 @@ class Board {
     }
     let newFocus = -1;
     while (newFocus === -1 && directions.length > 0) {
-      console.log(directions[0]);
       newFocus = this.gridData.getNeighboringHex(parseInt(document.activeElement.id, 10), directions.shift(), this.gridSize);
     }
     if (newFocus !== -1) {
