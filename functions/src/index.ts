@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import { Game, isValidMove, colors } from './types';
+import { Game, isValidMove, colors, getArrayLength } from './types';
 
 admin.initializeApp();
 
@@ -154,10 +154,14 @@ function findWinner(board: { owner: number, tower: boolean }[]): number {
 async function makeGame(size: number, uids: string[]) {
   const shuffledColors = shuffle(colors);
   const shuffledUIDs = shuffle(uids);
-  const board = new Array(3 * (size - 1) * size + 1).fill({ owner: -1, tower: false });
-  board[(board.length - 1) / 2 - (size - 1)] = { owner: -1, tower: true };
-  board[(size - 1)] = { owner: 0, tower: true };
-  board[(board.length - 1)] = { owner: 1, tower: true };
+  const board = new Array(getArrayLength(size)).fill({ owner: -1, tower: false });
+  for (let i = 0; i < uids.length * 4 + 1;) {
+    const index = Math.floor(Math.random() * board.length);
+    if (!board[index].tower) {
+      board[index] = { owner: -1, tower: true };
+      i++;
+    }
+  }
   return firestore.collection('games').add({
     board,
     players: await Promise.all(shuffledUIDs.map(async (uid, i) => ({
