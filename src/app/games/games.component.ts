@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AngularFirestore, DocumentChangeAction } from '@angular/fire/firestore';
+import { AngularFirestore, DocumentChangeAction, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { AuthService } from '../auth.service';
 import { Subscription } from 'rxjs';
 import { PalletService } from '../pallet.service';
@@ -89,11 +89,13 @@ export class GamesComponent implements OnInit, OnDestroy {
     this.spinner.mode = 'indeterminate';
     const data = {};
     data[this.authService.currentUID] = true;
-    this.firestore.doc('queues/2p7x7').update(data).then(() => this.listenToQueue(), () => this.listenToQueue());
+    const players = 2;
+    const queueDoc = this.firestore.doc<{ [key: string]: boolean }>('queues/' + players + 'p' + (7 + players) + 'x' + (7 + players));
+    queueDoc.update(data).then(() => this.listenToQueue(queueDoc), () => this.listenToQueue(queueDoc));
   }
 
-  private listenToQueue() {
-    const subscription = this.firestore.doc<{}>('queues/2p7x7').valueChanges().subscribe(queue => {
+  private listenToQueue(queueDoc: AngularFirestoreDocument<{ [key: string]: boolean; }>) {
+    const subscription = queueDoc.valueChanges().subscribe(queue => {
       if (this.spinner) {
         const keys = Object.keys(queue);
         if (keys?.includes(this.authService.currentUID)) {
