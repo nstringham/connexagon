@@ -8,7 +8,7 @@ import { DialogComponent, getWinnerAlert } from '../dialog/dialog.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Pallet, PalletService } from '../pallet.service';
 import { ModalService } from '../modal.service';
-import { Move, Game, getSideLength, getNeighboringHex, Direction } from 'functions/src/types';
+import { Move, Game, getSideLength, Direction, isValidMove, GridData } from 'functions/src/types';
 
 @Component({
   selector: 'app-board',
@@ -47,7 +47,7 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
-    this.board = new Board(this.canvas.nativeElement.getContext('2d'));
+    this.board = new Board(this.canvas.nativeElement.getContext('2d'), new GridData());
 
     this.subscriptions.push(this.palletService.pallet$.subscribe(pallet => {
       this.board.pallet = pallet;
@@ -135,11 +135,13 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public submit() {
-    if (this.board.move?.positions?.length === 2 && this.isTurn) {
+    if (this.isValidMove) {
       this.gameDoc.collection('moves').doc(this.user.uid).set(this.board.move);
       delete this.board.move;
     }
   }
+
+  get isValidMove() { return this.board.move && this.board.game && isValidMove(this.board.move, this.board.game); }
 
   private updateIsTurn() {
     try {
@@ -163,7 +165,7 @@ class Board {
   private focus = -1;
   spacing: number;
 
-  constructor(private ctx: CanvasRenderingContext2D) { }
+  constructor(private ctx: CanvasRenderingContext2D, private gridData: GridData) { }
 
   set game(game: Game) {
     this.privateGame = game;
@@ -187,10 +189,10 @@ class Board {
     let directions: Direction[];
     switch (event.key) {
       case 'ArrowLeft':
-        directions = ['L', 'UL', 'DL'];
+        directions = ['NL', 'UL', 'DL'];
         break;
       case 'ArrowRight':
-        directions = ['R', 'DR', 'UR'];
+        directions = ['NR', 'DR', 'UR'];
         break;
       case 'ArrowUp':
         directions = ['UL', 'UR'];
@@ -201,11 +203,12 @@ class Board {
       default:
         return;
     }
-    let newFocus: number;
-    while (!newFocus && directions.length > 0) {
-      newFocus = getNeighboringHex(parseInt(document.activeElement.id, 10), directions.shift(), this.game.board.length);
+    let newFocus = -1;
+    while (newFocus === -1 && directions.length > 0) {
+      console.log(directions[0]);
+      newFocus = this.gridData.getNeighboringHex(parseInt(document.activeElement.id, 10), directions.shift(), this.gridSize);
     }
-    if (newFocus) {
+    if (newFocus !== -1) {
       document.getElementById(newFocus.toString()).focus();
     }
   }

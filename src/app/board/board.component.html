@@ -10,7 +10,6 @@
     </table>
   </canvas>
 </div>
-<button mat-fab color="primary" (click)="submit()" aria-label="submit"
-  [disabled]="!(isTurn && board.move?.positions?.length === 2)">
+<button mat-fab color="primary" (click)="submit()" aria-label="submit" [disabled]="!isValidMove">
   <mat-icon>done</mat-icon>
 </button>

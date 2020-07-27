@@ -36,7 +36,7 @@ export function isValidMove(move: any, game: Game): move is Move {
   if (!Array.isArray(move.positions)) {
     return false;
   }
-  if (move.positions.length !== 2) { // TODO
+  if (move.positions.length > Math.min(4, game.turn + 1)) { // TODO
     return false;
   }
   for (const position of move.positions) {
@@ -55,19 +55,60 @@ export function getArrayLength(sideLength: number) {
   return 3 * (sideLength - 1) * sideLength + 1;
 }
 
-export type Direction = 'UR' | 'UL' | 'R' | 'L' | 'DR' | 'DL';
+export type Direction = 'UR' | 'UL' | 'NR' | 'NL' | 'DR' | 'DL';
 
+export class GridData {
+  rowStartsMap: { [key: number]: number[] } = {};
+  getRowStarts(sideLength: number): number[] {
+    if (this.rowStartsMap[sideLength] === undefined) {
+      let id = 0;
+      this.rowStartsMap[sideLength] = new Array(sideLength * 2 - 1).fill(null).map((_value, row) => {
+        if (row > 0) {
+          id += (sideLength * 2 - 1) - Math.abs((row - 1) - (sideLength - 1));
+        }
+        return id;
+      });
+    }
+    return this.rowStartsMap[sideLength];
+  }
 
-export function getNeighboringHex(current: number, direction: Direction, arrayLength: number) {
-  switch (direction) {
-    case 'R':
-      return current + 1;
-    case 'L':
-      return current - 1;
-    case 'UR':
-    case 'UL':
-    case 'DR':
-    case 'DL':
-      return current;
+  getNeighboringHex(current: number, direction: Direction, sideLength: number) {
+    return this.getNeighboringHexes(current, [direction], sideLength)[0];
+  }
+
+  getNeighboringHexes(current: number, directions: Direction[], sideLength: number) {
+    const RowStarts = this.getRowStarts(sideLength);
+    let currentRow = 0;
+    while (RowStarts[currentRow + 1] <= current) currentRow++;
+    return directions.map(direction => {
+      switch (direction) {
+        case 'NR':
+          return (RowStarts[currentRow + 1] - 1 === current) ? -1 : current + 1;
+        case 'NL':
+          return (RowStarts[currentRow] === current) ? -1 : current - 1;
+        case 'UR':
+        case 'UL':
+        case 'DR':
+        case 'DL':
+          const rowPosition = current - RowStarts[currentRow];
+          const left = direction.charAt(1) === 'L';
+          switch (direction) {
+            case 'UR':
+            case 'UL':
+              const above = (currentRow - (sideLength - 1) <= 0);
+              if (currentRow === 0 || (above && (left ? RowStarts[currentRow] === current : RowStarts[currentRow + 1] - 1 === current))) {
+                return -1;
+              }
+              return RowStarts[currentRow - 1] + (left ? -0.5 : +0.5) + (above ? -0.5 : 0.5) + rowPosition;
+            case 'DR':
+            case 'DL':
+              const below = (currentRow - (sideLength - 1) >= 0);
+              if (currentRow === sideLength * 2 - 2 || (below && (left ? RowStarts[currentRow] === current : RowStarts[currentRow + 1] - 1 === current))) {
+                return -1;
+              }
+              return RowStarts[currentRow + 1] + (left ? -0.5 : +0.5) + (below ? -0.5 : 0.5) + rowPosition;
+          }
+      }
+    });
   }
 }
