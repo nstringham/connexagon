@@ -8,7 +8,7 @@ import { DialogComponent, getWinnerAlert } from '../dialog/dialog.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Pallet, PalletService } from '../pallet.service';
 import { ModalService } from '../modal.service';
-import { Move, Game } from 'functions/src/types';
+import { Move, Game, getSideLength, getNeighboringHex, Direction } from 'functions/src/types';
 
 @Component({
   selector: 'app-board',
@@ -167,7 +167,7 @@ class Board {
 
   set game(game: Game) {
     this.privateGame = game;
-    this.gridSize = 0.5 + Math.sqrt(12 * game.board.length - 3) / 6;
+    this.gridSize = getSideLength(game.board.length);
 
     const rows: number[][] = [];
     for (let row = 0, id = 0; row < this.gridSize * 2 - 1; row++) {
@@ -184,41 +184,29 @@ class Board {
   }
 
   canvasKeydown(event: KeyboardEvent) {
+    let directions: Direction[];
     switch (event.key) {
       case 'ArrowLeft':
-        (document.activeElement.parentElement.previousElementSibling?.firstElementChild as HTMLElement)?.focus();
+        directions = ['L', 'UL', 'DL'];
         break;
       case 'ArrowRight':
-        (document.activeElement.parentElement.nextElementSibling?.firstElementChild as HTMLElement)?.focus();
+        directions = ['R', 'DR', 'UR'];
         break;
       case 'ArrowUp':
-        {
-          const row = document.activeElement.parentElement.parentElement;
-          if (row.previousElementSibling) {
-            let index = Array.from(row.children)
-              .indexOf(document.activeElement.parentElement);
-            if (row.previousElementSibling.children.length < row.children.length) {
-              index--;
-            }
-            index = Math.max(0, Math.min(index, row.previousElementSibling.children.length));
-            (row.previousElementSibling.children.item(index).firstElementChild as HTMLElement).focus();
-          }
-        }
+        directions = ['UL', 'UR'];
         break;
       case 'ArrowDown':
-        {
-          const row = document.activeElement.parentElement.parentElement;
-          if (row.nextElementSibling) {
-            let index = Array.from(row.children)
-              .indexOf(document.activeElement.parentElement);
-            if (row.nextElementSibling.children.length > row.children.length) {
-              index++;
-            }
-            index = Math.max(0, Math.min(index, row.nextElementSibling.children.length - 1));
-            (row.nextElementSibling.children.item(index).firstElementChild as HTMLElement).focus();
-          }
-        }
+        directions = ['DR', 'DL'];
         break;
+      default:
+        return;
+    }
+    let newFocus: number;
+    while (!newFocus && directions.length > 0) {
+      newFocus = getNeighboringHex(parseInt(document.activeElement.id, 10), directions.shift(), this.game.board.length);
+    }
+    if (newFocus) {
+      document.getElementById(newFocus.toString()).focus();
     }
   }
 

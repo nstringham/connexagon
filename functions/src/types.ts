@@ -46,3 +46,28 @@ export function isValidMove(move: any, game: Game): move is Move {
   }
   return true;
 }
+
+export function getSideLength(arrayLength: number) {
+  return 0.5 + Math.sqrt(12 * arrayLength - 3) / 6;
+}
+
+export function getArrayLength(sideLength: number) {
+  return 3 * (sideLength - 1) * sideLength + 1;
+}
+
+export type Direction = 'UR' | 'UL' | 'R' | 'L' | 'DR' | 'DL';
+
+
+export function getNeighboringHex(current: number, direction: Direction, arrayLength: number) {
+  switch (direction) {
+    case 'R':
+      return current + 1;
+    case 'L':
+      return current - 1;
+    case 'UR':
+    case 'UL':
+    case 'DR':
+    case 'DL':
+      return current;
+  }
+}
