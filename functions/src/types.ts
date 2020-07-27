@@ -62,7 +62,7 @@ export class GridData {
   getRowStarts(sideLength: number): number[] {
     if (this.rowStartsMap[sideLength] === undefined) {
       let id = 0;
-      this.rowStartsMap[sideLength] = new Array(sideLength * 2 - 1).fill(null).map((_value, row) => {
+      this.rowStartsMap[sideLength] = new Array(sideLength * 2).fill(null).map((_value, row) => {
         if (row > 0) {
           id += (sideLength * 2 - 1) - Math.abs((row - 1) - (sideLength - 1));
         }
