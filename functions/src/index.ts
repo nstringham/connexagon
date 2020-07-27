@@ -1,11 +1,13 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import { Game, isValidMove, colors, getArrayLength } from './types';
+import { Game, isValidMove, colors, getArrayLength, GridData } from './types';
 
 admin.initializeApp();
 
 const firestore = admin.firestore();
 const messaging = admin.messaging();
+
+const gridData = new GridData();
 
 export const makeTurn = functions.firestore.document('games/{gameId}/moves/{userId}').onCreate((moveSnapshot, context) => {
   const move = moveSnapshot.data();
@@ -154,14 +156,33 @@ function findWinner(board: { owner: number, tower: boolean }[]): number {
 async function makeGame(size: number, uids: string[]) {
   const shuffledColors = shuffle(colors);
   const shuffledUIDs = shuffle(uids);
-  const board = new Array(getArrayLength(size)).fill({ owner: -1, tower: false });
-  for (let i = 0; i < uids.length * 4 + 1;) {
-    const index = Math.floor(Math.random() * board.length);
-    if (!board[index].tower) {
-      board[index] = { owner: -1, tower: true };
-      i++;
+  const board = new Array(getArrayLength(size)).fill(null).map(() => ({ owner: -1, tower: false, distance: size }));
+  const checkHex = (id: number) => {
+    const neighbors = gridData.getNeighboringHexes(id, ['UR', 'UL', 'NR', 'NL', 'DR', 'DL'], size).filter(neighbor => neighbor !== -1);
+    const newDistance = board[id].tower ? 0 : Math.min(...(neighbors.map(neighbor => board[neighbor].distance))) + 1;
+    if (board[id].distance !== newDistance) {
+      board[id].distance = newDistance;
+      neighbors.forEach(neighbor => {
+        if (board[neighbor].distance > board[id].distance + 1) {
+          checkHex(neighbor);
+        }
+      });
     }
   }
+  for (let i = 0, threshold = size / 2; i < uids.length * 4 + 1;) {
+    const index = Math.floor(Math.random() * board.length);
+    if (board[index].distance > threshold) {
+      board[index].tower = true;
+      checkHex(index);
+      console.log(board.map(cell => cell.distance).join());
+      i++;
+    } else {
+      threshold -= 0.05;
+    }
+  }
+  board.forEach(cell => {
+    delete cell.distance;
+  });
   return firestore.collection('games').add({
     board,
     players: await Promise.all(shuffledUIDs.map(async (uid, i) => ({
