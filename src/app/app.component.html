@@ -12,8 +12,8 @@
       <mat-icon>share</mat-icon>
     </button>
     <div *ngIf="deferredInstallPrompt" class="icon-button-warper">
-      <button mat-icon-button (click)="install()" aria-label="Download App">
-        <mat-icon>add_circle_outline</mat-icon>
+      <button mat-icon-button (click)="install()" aria-label="Add to Home Screen">
+        <mat-icon>{{platform.ANDROID ? 'add_to_home_screen' : 'get_app'}}</mat-icon>
       </button>
     </div>
     <div class="icon-button-warper">
