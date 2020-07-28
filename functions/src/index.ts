@@ -208,7 +208,7 @@ async function makeGame(size: number, uids: string[]) {
   }
   for (let i = 0, threshold = size; i < uids.length * 4 + 1;) {
     const index = Math.floor(Math.random() * board.length);
-    if (board[index].distance > threshold) {
+    if (board[index].distance >= threshold) {
       board[index].tower = true;
       checkHex(index);
       console.log(board.map(cell => cell.distance).join());
