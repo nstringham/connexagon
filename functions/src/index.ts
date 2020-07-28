@@ -165,7 +165,6 @@ function checkConnections(board: Cell[], cellId: number) {
     if (id === -1 || checked[id]) {
       return;
     }
-    console.info('checking ' + id);
     checked[id] = true;
     if (board[id].tower && (board[id].owner === -1 || board[id].owner === player)) {
       towers.push(id);
