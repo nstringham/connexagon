@@ -8,7 +8,7 @@ import { DialogComponent, getWinnerAlert } from '../dialog/dialog.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Pallet, PalletService } from '../pallet.service';
 import { ModalService } from '../modal.service';
-import { Move, Game, getSideLength, Direction, isValidMove, GridData } from 'functions/src/types';
+import { Move, Game, getSideLength, Direction, isValidMove, GridData, getMaxMove } from 'functions/src/types';
 
 @Component({
   selector: 'app-board',
@@ -224,7 +224,9 @@ class Board {
       if (!this.move) {
         this.move = { positions: [] };
       }
-      this.move.positions.push(position);
+      if (this.move.positions.length < getMaxMove(this.game)) {
+        this.move.positions.push(position);
+      }
     }
     window.requestAnimationFrame(() => this.redraw());
   }

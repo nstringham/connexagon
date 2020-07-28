@@ -42,7 +42,7 @@ export function isValidMove(move: any, game: Game): move is Move {
   if (!Array.isArray(move.positions)) {
     return false;
   }
-  if (move.positions.length > Math.min(5 - Math.max(1, game.players[game.turn % game.players.length].points), game.turn + 1)) {
+  if (move.positions.length > getMaxMove(game)) {
     return false;
   }
   for (const position of move.positions) {
@@ -51,6 +51,10 @@ export function isValidMove(move: any, game: Game): move is Move {
     }
   }
   return true;
+}
+
+export function getMaxMove(game: Game) {
+  return Math.min(5 - Math.max(1, game.players[game.turn % game.players.length].points), game.turn + 1);
 }
 
 export function getSideLength(arrayLength: number) {
