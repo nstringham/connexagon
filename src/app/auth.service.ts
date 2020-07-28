@@ -29,7 +29,10 @@ export class AuthService {
         return action.payload;
       }));
     }));
-    this.games$ = this.fireAuth.authState.pipe(filter(user => user != null), switchMap((user: User) => {
+    this.games$ = this.fireAuth.authState.pipe(switchMap((user: User) => {
+      if (user == null) {
+        return [];
+      }
       return this.firestore.collection<Game>('games', ref => ref.where('uids', 'array-contains', user.uid)
         .orderBy('modified', 'desc').limit(25)).snapshotChanges();
     }));
