@@ -28,12 +28,12 @@
   </mat-toolbar>
 
   <mat-menu #menu="matMenu">
-    <button mat-menu-item *ngIf="!providers?.includes('google.com')"
+    <button mat-menu-item *ngIf="!(providers$|async)?.includes('google.com')"
       (click)="authService.logIn(authService.getAuthProviderByID('google.com'))">
       <img class="mat-icon" aria-hidden="true" src="assets/img/google.svg">
       <span>Sign in with Google</span>
     </button>
-    <button mat-menu-item *ngIf="!providers?.includes('twitter.com')"
+    <button mat-menu-item *ngIf="!(providers$|async)?.includes('twitter.com')"
       (click)="authService.logIn(authService.getAuthProviderByID('twitter.com'))">
       <img class="mat-icon" aria-hidden="true" [src]="twitterIcon$ | async">
       <span>Sign in with Twitter</span>

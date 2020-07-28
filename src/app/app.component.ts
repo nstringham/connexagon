@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
   dialog: MatDialogRef<LoginComponent>;
 
   twitterIcon$: Observable<string>;
-  providers: string[];
+  providers$: Observable<string[]>;
 
   public deferredInstallPrompt: any;
   @HostListener('window:beforeinstallprompt', ['$event'])
@@ -42,6 +42,15 @@ export class AppComponent implements OnInit {
     this.twitterIcon$ = merge(of(window.matchMedia('(prefers-color-scheme: dark)')), fromEvent(window.matchMedia('(prefers-color-scheme: dark)'), 'change')).pipe(map(event => {
       return (event as MediaQueryListEvent | MediaQueryList).matches ? 'assets/img/twitter-white.svg' : 'assets/img/twitter-blue.svg';
     }));
+
+    this.providers$ = this.fireAuth.authState.pipe(map(user => {
+      if (user != null) {
+        console.log(user.providerData.map(data => data.providerId))
+        return user.providerData.map(data => data.providerId);
+      } else {
+        return [];
+      }
+    }));
   }
 
   ngOnInit(): void {
@@ -49,10 +58,8 @@ export class AppComponent implements OnInit {
       console.log('logged in as: ', user);
       if (user == null) {
         this.dialog = this.matDialog.open(LoginComponent, { disableClose: true });
-        this.providers = [];
       } else if (this.dialog) {
         this.dialog.close();
-        this.providers = user?.providerData.map(data => data.providerId);
       }
     });
   }
