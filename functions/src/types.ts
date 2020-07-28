@@ -12,7 +12,7 @@ export const colors = [
 export type Color = 'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'purple';
 
 export interface Game {
-  board: { owner: number, tower: boolean }[];
+  board: Cell[];
   players: Player[];
   turn: number;
   winner: number;
@@ -23,6 +23,12 @@ export interface Game {
 export type Player = {
   color: Color;
   nickname: string;
+  points: number;
+}
+
+export type Cell = {
+  owner: number;
+  tower: boolean;
 }
 
 export type Move = {
@@ -36,7 +42,7 @@ export function isValidMove(move: any, game: Game): move is Move {
   if (!Array.isArray(move.positions)) {
     return false;
   }
-  if (move.positions.length > Math.min(4, game.turn + 1)) { // TODO
+  if (move.positions.length > Math.min(5 - Math.max(1, game.players[game.turn % game.players.length].points), game.turn + 1)) {
     return false;
   }
   for (const position of move.positions) {
@@ -72,15 +78,15 @@ export class GridData {
     return this.rowStartsMap[sideLength];
   }
 
-  getNeighboringHex(current: number, direction: Direction, sideLength: number) {
-    return this.getNeighboringHexes(current, [direction], sideLength)[0];
+  getNeighboringHex(current: number, sideLength: number, direction: Direction) {
+    return this.getNeighboringHexes(current, sideLength, [direction])[0];
   }
 
-  getNeighboringHexes(current: number, directions: Direction[], sideLength: number) {
+  getNeighboringHexes(current: number, sideLength: number, directions?: Direction[]) {
     const RowStarts = this.getRowStarts(sideLength);
     let currentRow = 0;
     while (RowStarts[currentRow + 1] <= current) currentRow++;
-    return directions.map(direction => {
+    return (directions || ['UR', 'UL', 'NR', 'NL', 'DR', 'DL']).map(direction => {
       switch (direction) {
         case 'NR':
           return (RowStarts[currentRow + 1] - 1 === current) ? -1 : current + 1;

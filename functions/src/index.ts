@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import { Game, isValidMove, colors, getArrayLength, GridData } from './types';
+import { Game, isValidMove, colors, getArrayLength, GridData, Cell, getSideLength } from './types';
 
 admin.initializeApp();
 
@@ -20,10 +20,18 @@ export const makeTurn = functions.firestore.document('games/{gameId}/moves/{user
       transaction.get(gameRef).then(doc => {
         const game = doc.data() as Game | undefined;
         if (game && isValidMove(move, game) && context.params.userId === game.uids[game.turn % game.players.length]) {
+          const playerID = game.turn % game.players.length;
           move.positions.forEach(position => {
-            game.board[position].owner = game.turn % game.players.length;
+            game.board[position].owner = playerID;
+            checkConnections(game.board, position);
           });
-          game.winner = findWinner(game.board);
+          game.players[playerID].points = 0;
+          game.board.forEach(cell => {
+            if (cell.tower && cell.owner === playerID) {
+              game.players[playerID].points++;
+            }
+          });
+          game.winner = findWinner(game);
           if (game.winner === -1) {
             game.turn++;
           }
@@ -148,9 +156,36 @@ export const deleteUserData = functions.auth.user().onDelete((user) => {
   ]);
 });
 
+function checkConnections(board: Cell[], cellId: number) {
+  const checked: { [key: number]: true } = {};
+  const towers: number[] = [];
+  const sideLength = getSideLength(board.length);
+  const player = board[cellId].owner;
+  const check = (id: number) => {
+    if (id === -1 || checked[id]) {
+      return;
+    }
+    console.info('checking ' + id);
+    checked[id] = true;
+    if (board[id].tower && (board[id].owner === -1 || board[id].owner === player)) {
+      towers.push(id);
+    }
+    if (board[id].owner === player) {
+      gridData.getNeighboringHexes(id, sideLength).forEach(neighborID => check(neighborID));
+    }
+  }
+  check(cellId);
+  if (towers.length >= 2) {
+    towers.forEach(towerID => board[towerID].owner = player);
+  }
+}
 
-function findWinner(board: { owner: number, tower: boolean }[]): number {
-  return board.find(cell => cell.owner === -1 && !cell.tower) ? -1 : -2;
+
+function findWinner(game: Game): number {
+  if (!game.board.find(cell => cell.owner === -1 && !cell.tower)) {
+    return -2;
+  }
+  return game.players.findIndex(player => player.points >= 5);
 }
 
 async function makeGame(size: number, uids: string[]) {
@@ -158,7 +193,7 @@ async function makeGame(size: number, uids: string[]) {
   const shuffledUIDs = shuffle(uids);
   const board = new Array(getArrayLength(size)).fill(null).map(() => ({ owner: -1, tower: false, distance: size }));
   const checkHex = (id: number) => {
-    const neighbors = gridData.getNeighboringHexes(id, ['UR', 'UL', 'NR', 'NL', 'DR', 'DL'], size).filter(neighbor => neighbor !== -1);
+    const neighbors = gridData.getNeighboringHexes(id, size).filter(neighbor => neighbor !== -1);
     const newDistance = board[id].tower ? 0 : Math.min(...(neighbors.map(neighbor => board[neighbor].distance))) + 1;
     if (board[id].distance !== newDistance) {
       board[id].distance = newDistance;
@@ -187,7 +222,8 @@ async function makeGame(size: number, uids: string[]) {
     board,
     players: await Promise.all(shuffledUIDs.map(async (uid, i) => ({
       color: shuffledColors[i],
-      nickname: (await firestore.doc('users/' + uid).get()).data()?.nickname || '[No Name]'
+      nickname: (await firestore.doc('users/' + uid).get()).data()?.nickname || '[No Name]',
+      points: 0
     }))),
     uids: shuffledUIDs,
     turn: 0,
