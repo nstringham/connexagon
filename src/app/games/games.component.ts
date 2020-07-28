@@ -42,7 +42,7 @@ export class GamesComponent implements OnInit, OnDestroy {
   ) {
     this.gamesSubscription = authService.games$.subscribe((actions: DocumentChangeAction<Game>[]) => {
       const newGameList = this.gameLists.map((element => ({ games: [], display: element.display })));
-      const skipTurn = functions.httpsCallable('skipTurn');
+      const skipTurn = this.functions.httpsCallable('skipTurn');
       actions.forEach(action => {
         const game = action.payload.doc.data();
         let gameArr: GameListElement[];
