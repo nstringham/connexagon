@@ -7,6 +7,8 @@ import { Platform } from '@angular/cdk/platform';
 import { Location } from '@angular/common';
 import { NotificationsService } from './notifications.service';
 import { ShareService } from './share.service';
+import { Observable, fromEvent, merge, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +20,7 @@ export class AppComponent implements OnInit {
 
   dialog: MatDialogRef<LoginComponent>;
 
-  twitterIcon: string = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'assets/img/twitter-white.svg' : 'assets/img/twitter-blue.svg';
+  twitterIcon$: Observable<string>;
   providers: string[];
 
   public deferredInstallPrompt: any;
@@ -37,9 +39,9 @@ export class AppComponent implements OnInit {
     private matDialog: MatDialog,
     private notifications: NotificationsService,
   ) {
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-      this.twitterIcon = event.matches ? 'assets/img/twitter-white.svg' : 'assets/img/twitter-blue.svg';
-    });
+    this.twitterIcon$ = merge(of(window.matchMedia('(prefers-color-scheme: dark)')), fromEvent(window.matchMedia('(prefers-color-scheme: dark)'), 'change')).pipe(map(event => {
+      return (event as MediaQueryListEvent | MediaQueryList).matches ? 'assets/img/twitter-white.svg' : 'assets/img/twitter-blue.svg';
+    }));
   }
 
   ngOnInit(): void {
@@ -47,10 +49,11 @@ export class AppComponent implements OnInit {
       console.log('logged in as: ', user);
       if (user == null) {
         this.dialog = this.matDialog.open(LoginComponent, { disableClose: true });
+        this.providers = [];
       } else if (this.dialog) {
         this.dialog.close();
+        this.providers = user?.providerData.map(data => data.providerId);
       }
-      this.providers = user?.providerData.map(data => data.providerId);
     });
   }
 

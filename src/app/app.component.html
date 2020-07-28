@@ -35,7 +35,7 @@
     </button>
     <button mat-menu-item *ngIf="!providers?.includes('twitter.com')"
       (click)="authService.logIn(authService.getAuthProviderByID('twitter.com'))">
-      <img class="mat-icon" aria-hidden="true" [src]="twitterIcon">
+      <img class="mat-icon" aria-hidden="true" [src]="twitterIcon$ | async">
       <span>Sign in with Twitter</span>
     </button>
     <button mat-menu-item *ngIf="(fireAuth.authState | async) != null" (click)="authService.promptNickname()">
