@@ -3,7 +3,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 import { auth } from 'firebase/app';
 import { User } from 'firebase';
-import { switchMap, map, filter } from 'rxjs/operators';
+import { switchMap, map, filter, first } from 'rxjs/operators';
 import { AngularFirestore, DocumentSnapshot, Action, DocumentChangeAction } from '@angular/fire/firestore';
 import { ModalService } from './modal.service';
 import { Game } from 'functions/src/types';
@@ -25,18 +25,21 @@ export class AuthService {
     private modal: ModalService
   ) {
     this.userDoc$ = this.fireAuth.authState.pipe(filter(user => user != null), switchMap((user: User) => {
-      return firestore.doc<UserData>('users/' + user.uid).snapshotChanges().pipe(map((action: Action<DocumentSnapshot<UserData>>) => {
+      return this.firestore.doc<UserData>('users/' + user.uid).snapshotChanges().pipe(map((action: Action<DocumentSnapshot<UserData>>) => {
         return action.payload;
       }));
     }));
-    this.games$ = this.fireAuth.authState.pipe(filter(user => user != null), switchMap((user: User) => {
-      return firestore.collection<Game>('games', ref => ref.where('uids', 'array-contains', user.uid)
+    this.games$ = this.fireAuth.authState.pipe(switchMap((user: User) => {
+      if (user == null) {
+        return [];
+      }
+      return this.firestore.collection<Game>('games', ref => ref.where('uids', 'array-contains', user.uid)
         .orderBy('modified', 'desc').limit(25)).snapshotChanges();
     }));
 
     this.userDoc$.subscribe(async (snapshot: DocumentSnapshot<UserData>) => {
-      if (!snapshot?.data()?.nickname) {
-        snapshot.ref.set({ nickname: await this.promptNickname((await fireAuth.currentUser).displayName) });
+      if (!snapshot.exists || !snapshot?.data()?.nickname) {
+        this.promptNickname();
       }
     });
 
@@ -125,8 +128,12 @@ export class AuthService {
     this.beforeLogout.push(callback);
   }
 
-  private async promptNickname(nickname: string) {
-    return await this.modal.prompt('', nickname, 'Nickname', 'Choose a nickname');
+  promptNickname() {
+    this.userDoc$.pipe(first()).subscribe(async (snapshot: DocumentSnapshot<UserData>) => {
+      snapshot.ref.set(
+        { nickname: await this.modal.prompt('', snapshot.data()?.nickname || (await this.fireAuth.currentUser).displayName, 'Nickname', 'Choose a nickname') }
+      );
+    });
   }
 }
 
