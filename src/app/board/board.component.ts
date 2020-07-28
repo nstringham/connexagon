@@ -134,8 +134,14 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  public submit() {
+  public async submit() {
     if (this.isValidMove) {
+      if (
+        getMaxMove(this.board.game) !== this.board.move.positions.length
+        && !await this.modal.confirm(`Are you sure you want to continue?\nYou placed ${this.board.move.positions.length} hexagons but you can place ${getMaxMove(this.board.game)} if you want.`, 'Take partial turn?')
+      ) {
+        return;
+      }
       this.gameDoc.collection('moves').doc(this.user.uid).set(this.board.move);
       delete this.board.move;
     }
