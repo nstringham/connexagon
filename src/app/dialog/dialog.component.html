@@ -1,7 +1,7 @@
-<h1 mat-dialog-title><span *ngIf="data.preTitle" [style.color]="data.preTitle.color"
-    [style.font-weight]="data.preTitle.bold ? 'bold' : 'normal'">{{data.preTitle.text}}</span>{{data.title}}</h1>
 <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
-  <div mat-dialog-content>
+  <h1 mat-dialog-title><span *ngIf="data.preTitle" [style.color]="data.preTitle.color"
+      [style.font-weight]="data.preTitle.bold ? 'bold' : 'normal'">{{data.preTitle.text}}</span>{{data.title}}</h1>
+  <mat-dialog-content>
     <p *ngIf="data.body.length > 0">
       <span *ngFor="let line of data.body.split('\n')">{{line}}<br></span>
     </p>
@@ -12,13 +12,13 @@
       <mat-error *ngIf="field.errors?.maxlength">too long</mat-error>
       <mat-error *ngIf="field.errors?.required">{{data.field.label}} is required</mat-error>
     </mat-form-field>
-  </div>
-  <div mat-dialog-actions [ngSwitch]="data.type" align="end">
+  </mat-dialog-content>
+  <mat-dialog-actions [ngSwitch]="data.type" align="end">
     <button mat-button *ngIf="data.type !== 'confirm'; else yesNo" type="submit"
       [disabled]="!formGroup.valid">Ok</button>
     <ng-template #yesNo>
       <button mat-button [mat-dialog-close]="true">Yes</button>
       <button mat-button [mat-dialog-close]="false">No</button>
     </ng-template>
-  </div>
+  </mat-dialog-actions>
 </form>

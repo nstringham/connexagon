@@ -9,6 +9,8 @@ import { NotificationsService } from './notifications.service';
 import { ShareService } from './share.service';
 import { Observable, fromEvent, merge, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { ModalService } from './modal.service';
+import { AccountComponent } from './account/account.component';
 
 @Component({
   selector: 'app-root',
@@ -32,6 +34,7 @@ export class AppComponent implements OnInit {
 
   constructor(
     public authService: AuthService,
+    public modalService: ModalService,
     public fireAuth: AngularFireAuth,
     public platform: Platform,
     public location: Location,
@@ -71,5 +74,9 @@ export class AppComponent implements OnInit {
         this.deferredInstallPrompt = null;
       });
     }
+  }
+
+  showAccountSettings() {
+    return this.matDialog.open(AccountComponent).afterClosed().toPromise();
   }
 }

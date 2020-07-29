@@ -37,3 +37,6 @@ export type UserData = {
   color?: Color;
   nickname: string;
 }
+
+export const nicknameMaxLength = 10;
+export const nicknameMinLength = 2;

@@ -6,7 +6,7 @@ import { User } from 'firebase';
 import { switchMap, map, filter, first } from 'rxjs/operators';
 import { AngularFirestore, DocumentSnapshot, Action, DocumentChangeAction } from '@angular/fire/firestore';
 import { ModalService } from './modal.service';
-import { Game } from 'functions/src/types';
+import { Game, nicknameMinLength, nicknameMaxLength } from 'functions/src/types';
 
 @Injectable({
   providedIn: 'root'
@@ -131,7 +131,7 @@ export class AuthService {
   promptNickname() {
     this.userDoc$.pipe(first()).subscribe(async (snapshot: DocumentSnapshot<UserData>) => {
       snapshot.ref.set(
-        { nickname: await this.modal.prompt('', snapshot.data()?.nickname || (await this.fireAuth.currentUser).displayName, 'Nickname', 'Choose a nickname', 2, 10) }
+        { nickname: await this.modal.prompt('', snapshot.data()?.nickname || (await this.fireAuth.currentUser).displayName, 'Nickname', 'Choose a nickname', nicknameMinLength, nicknameMaxLength) }
       );
     });
   }

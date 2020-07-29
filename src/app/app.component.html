@@ -38,9 +38,9 @@
       <img class="mat-icon" aria-hidden="true" [src]="twitterIcon$ | async">
       <span>Sign in with Twitter</span>
     </button>
-    <button mat-menu-item *ngIf="(fireAuth.authState | async) != null" (click)="authService.promptNickname()">
-      <mat-icon>edit</mat-icon>
-      <span>Change Nickname</span>
+    <button mat-menu-item *ngIf="(fireAuth.authState | async) != null" (click)="showAccountSettings()">
+      <mat-icon>settings</mat-icon>
+      <span>Account Settings</span>
     </button>
     <button mat-menu-item *ngIf="(fireAuth.authState | async)?.isAnonymous === false" (click)="authService.logOut()">
       <mat-icon>exit_to_app</mat-icon>
