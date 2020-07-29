@@ -6,7 +6,7 @@ import { User } from 'firebase';
 import { switchMap, map, filter, first } from 'rxjs/operators';
 import { AngularFirestore, DocumentSnapshot, Action, DocumentChangeAction } from '@angular/fire/firestore';
 import { ModalService } from './modal.service';
-import { Game, nicknameMinLength, nicknameMaxLength } from 'functions/src/types';
+import { Game, nicknameMinLength, nicknameMaxLength, UserData } from 'functions/src/types';
 
 @Injectable({
   providedIn: 'root'
@@ -136,7 +136,3 @@ export class AuthService {
     });
   }
 }
-
-export type UserData = {
-  nickname: string
-};
