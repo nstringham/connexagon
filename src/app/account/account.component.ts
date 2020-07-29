@@ -31,13 +31,20 @@ export class AccountComponent {
       Validators.maxLength(nicknameMaxLength),
       Validators.minLength(nicknameMinLength)
     ]);
-    this.color = new FormControl(undefined);
+    this.color = new FormControl(null);
     this.formGroup = new FormGroup({
       nickname: this.nickname,
       color: this.color
     });
     authService.userDoc$.subscribe(userDoc => {
-      this.formGroup.setValue(userDoc.data());
+      const data = userDoc.data();
+      if (!data.nickname) {
+        data.nickname = '';
+      }
+      if (!data.color) {
+        data.color = null;
+      }
+      this.formGroup.setValue(data);
       this.docRef = userDoc.ref;
     });
   }
