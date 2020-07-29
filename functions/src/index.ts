@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import { Game, isValidMove, colors } from './types';
+import { Game, isValidMove, colors, UserData } from './types';
 
 admin.initializeApp();
 
@@ -185,14 +185,24 @@ function findWinner(board: number[]): number {
 }
 
 async function makeGame(size: number, uids: string[]) {
-  const shuffledColors = shuffle(colors);
+  let shuffledColors = shuffle(colors);
   const shuffledUIDs = shuffle(uids);
+  const players = await Promise.all(shuffledUIDs.map(async uid => (await firestore.doc('users/' + uid).get()).data() as UserData | undefined || { nickname: '[No Name]' }));
+  players.forEach(player => {
+    if (player.color && shuffledColors.includes(player.color)) {
+      shuffledColors = shuffledColors.filter(color => color !== player.color);
+    } else {
+      delete player.color;
+    }
+  });
+  players.forEach(player => {
+    if (!player.color) {
+      player.color = shuffledColors.pop();
+    }
+  });
   return firestore.collection('games').add({
     board: new Array(size * size).fill(-1),
-    players: await Promise.all(shuffledUIDs.map(async (uid, i) => ({
-      color: shuffledColors[i],
-      nickname: (await firestore.doc('users/' + uid).get()).data()?.nickname || '[No Name]'
-    }))),
+    players,
     uids: shuffledUIDs,
     turn: 0,
     winner: -1,
