@@ -1,0 +1,35 @@
+form {
+  display: flex;
+  flex-direction: column;
+  max-height: 75vh;
+  mat-dialog-content {
+    flex-grow: 1;
+    display: grid;
+    gap: 16px;
+    grid-template-areas:
+      "photo nickname"
+      "color color";
+    & > #photo {
+      grid-area: photo;
+      width: 56px;
+      height: 56px;
+      border-radius: 100%;
+    }
+    & > #nickname {
+      grid-area: nickname;
+    }
+    & > #color {
+      grid-area: color;
+      select {
+        background-color: #0000;
+        border: 1px solid currentColor;
+        padding: 4px;
+        color: inherit;
+        option {
+          text-transform: capitalize;
+          color: initial;
+        }
+      }
+    }
+  }
+}
