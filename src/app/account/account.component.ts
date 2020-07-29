@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { FormGroup, FormControl, Validators, } from '@angular/forms';
+import { FormGroup, FormControl, Validators, Validator, AbstractControl, ValidationErrors, } from '@angular/forms';
 import { AngularFirestore, DocumentReference } from '@angular/fire/firestore';
 import { nicknameMaxLength, nicknameMinLength, colors } from 'functions/src/types';
 import { AuthService } from '../auth.service';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { noEmojiValidator } from '../dialog/dialog.component';
 
 @Component({
   selector: 'app-account',
@@ -28,6 +29,7 @@ export class AccountComponent {
   ) {
     this.nickname = new FormControl('', [
       Validators.required,
+      noEmojiValidator,
       Validators.maxLength(nicknameMaxLength),
       Validators.minLength(nicknameMinLength)
     ]);

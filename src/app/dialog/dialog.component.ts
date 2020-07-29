@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig } from '@angular/material/dialog';
 import { FormGroup, FormControl, AbstractControl, Validators } from '@angular/forms';
+import emojiRegex from 'emoji-regex/text.js';
 
 @Component({
   selector: 'app-dialog',
@@ -18,7 +19,7 @@ export class DialogComponent {
     const groupData: { [key: string]: AbstractControl } = {};
     switch (data.type) {
       case 'prompt':
-        const validators = [Validators.required];
+        const validators = [Validators.required, noEmojiValidator];
         if (this.data.field.length.max) {
           validators.push(Validators.maxLength(this.data.field.length.max));
         }
@@ -101,4 +102,11 @@ export function getWinnerAlert(name: string, color: string): MatDialogConfig {
     },
     minWidth: 300
   };
+}
+
+export function noEmojiValidator(control: AbstractControl) {
+  if (typeof control.value === 'string' && control.value.match(emojiRegex)) {
+    return { hasEmoji: true };
+  }
+  return null;
 }
