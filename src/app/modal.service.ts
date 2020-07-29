@@ -41,9 +41,14 @@ export class ModalService {
     });
   }
 
-  prompt(body: string, placeholder?: string, lable?: string, title?: string) {
+  prompt(body: string, placeholder?: string, label?: string, title?: string, min?: number, max?: number) {
+    const field = {
+      placeholder,
+      label,
+      length: { max, min }
+    };
     return this.zone.run(() => {
-      return this.matDialog.open(DialogComponent, getPrompt(title || '', body, lable, placeholder)).afterClosed().toPromise();
+      return this.matDialog.open(DialogComponent, getPrompt(title || '', body, field)).afterClosed().toPromise();
     });
   }
 }

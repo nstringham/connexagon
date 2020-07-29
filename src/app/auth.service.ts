@@ -131,7 +131,7 @@ export class AuthService {
   promptNickname() {
     this.userDoc$.pipe(first()).subscribe(async (snapshot: DocumentSnapshot<UserData>) => {
       snapshot.ref.set(
-        { nickname: await this.modal.prompt('', snapshot.data()?.nickname || (await this.fireAuth.currentUser).displayName, 'Nickname', 'Choose a nickname') }
+        { nickname: await this.modal.prompt('', snapshot.data()?.nickname || (await this.fireAuth.currentUser).displayName, 'Nickname', 'Choose a nickname', 2, 10) }
       );
     });
   }

@@ -1,6 +1,6 @@
 import * as admin from 'firebase-admin';
 
-export const colors = [
+export const colors: Color[] = [
   'red',
   'blue',
   'green',
@@ -121,4 +121,9 @@ export class GridData {
       }
     });
   }
+}
+
+export type UserData = {
+  color?: Color;
+  nickname: string;
 }

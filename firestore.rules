@@ -1,10 +1,9 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-  	match /games/{gameId} {
-    	allow get;
-      allow list:
-        if request.query.limit <= 25
+    match /games/{gameId} {
+      allow get;
+      allow list:if request.query.limit <= 25
         && request.auth.uid in resource.data.uids;
       match /moves/{userId} {
         allow create: if request.auth.uid == userId;
@@ -12,11 +11,10 @@ service cloud.firestore {
     }
     match /users/{userId} {
       allow get: if request.auth.uid == userId;
-      allow create, update:
-        if request.auth.uid == userId
+      allow create, update: if request.auth.uid == userId
         && request.resource.data.keys() == ["nickname"]
         && request.resource.data.nickname is string
-        && request.resource.data.nickname.size() < 20;
+        && request.resource.data.nickname.size() <= 10;
       match /private/tokens {
         allow get: if request.auth.uid == userId;
         allow create, update: if request.auth.uid == userId  && request.resource.data.values().hasOnly([true]);
@@ -26,9 +24,9 @@ service cloud.firestore {
       allow get;
       allow update:
       if request.resource.data[request.auth.uid] == true
-      && request.resource.data.diff(resource.data).addedKeys() == [request.auth.uid].toSet()
-      && request.resource.data.diff(resource.data).changedKeys() == [].toSet()
-      && request.resource.data.diff(resource.data).removedKeys() == [].toSet()
+        && request.resource.data.diff(resource.data).addedKeys() == [request.auth.uid].toSet()
+        && request.resource.data.diff(resource.data).changedKeys() == [].toSet()
+        && request.resource.data.diff(resource.data).removedKeys() == [].toSet()
     }
   }
 }
