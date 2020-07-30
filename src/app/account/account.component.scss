@@ -6,9 +6,12 @@ form {
     flex-grow: 1;
     display: grid;
     gap: 16px;
+    grid-template-columns: 0fr 1fr;
     grid-template-areas:
       "photo nickname"
-      "color color";
+      "color color"
+      "notifications notifications";
+    padding-bottom: 8px; // stops scroll bar from showing up
     & > #photo {
       grid-area: photo;
       width: 56px;
@@ -23,7 +26,6 @@ form {
       display: grid;
       gap: 8px;
       grid-template-columns: repeat(3, minmax(48px, 96px));
-      padding-bottom: 2px;
       input {
         position: absolute;
         appearance: none;
@@ -60,10 +62,14 @@ form {
         border-radius: 0;
       }
     }
+    & > #notifications {
+      grid-area: notifications;
+    }
     @media only screen and (max-width: 400px) {
       grid-template-areas:
-        "nickname"
-        "color";
+        "nickname nickname"
+        "color color"
+        "notifications notifications";
       & > #photo {
         display: none;
       }

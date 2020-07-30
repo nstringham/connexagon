@@ -22,6 +22,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatRippleModule } from '@angular/material/core';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { BoardComponent } from './board/board.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { GamesComponent } from './games/games.component';
@@ -63,6 +64,7 @@ import { AccountComponent } from './account/account.component';
     MatFormFieldModule,
     MatInputModule,
     MatRippleModule,
+    MatSlideToggleModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production, registrationStrategy: 'registerImmediately' })
   ],
   providers: [],
