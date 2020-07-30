@@ -8,7 +8,7 @@
     <mat-form-field *ngIf="data.type === 'prompt'">
       <mat-label>{{data.field.label}}</mat-label>
       <input matInput formControlName="field">
-      ><mat-error *ngIf="field.errors?.minlength">your nickname is too short</mat-error>
+      <mat-error *ngIf="field.errors?.minlength">your nickname is too short</mat-error>
       <mat-error *ngIf="field.errors?.maxlength">your nickname is too long</mat-error>
       <mat-error *ngIf="field.errors?.hasEmoji">your nickname may on contain emojis</mat-error>
       <mat-error *ngIf="field.errors?.required">nickname is required</mat-error>
