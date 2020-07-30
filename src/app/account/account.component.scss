@@ -24,9 +24,9 @@ form {
         background-color: #0000;
         border: 1px solid currentColor;
         padding: 4px;
+        text-transform: capitalize;
         color: inherit;
         option {
-          text-transform: capitalize;
           color: initial;
         }
       }
