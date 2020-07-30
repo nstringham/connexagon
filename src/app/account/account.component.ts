@@ -1,12 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { FormGroup, FormControl, Validators, Validator, AbstractControl, ValidationErrors, } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AngularFirestore, DocumentReference } from '@angular/fire/firestore';
 import { nicknameMaxLength, nicknameMinLength, colors } from 'functions/src/types';
 import { AuthService } from '../auth.service';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { noEmojiValidator } from '../dialog/dialog.component';
 import { PalletService } from '../pallet.service';
+import { NotificationsService } from '../notifications.service';
+import { Subscription } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-account',
@@ -22,12 +25,16 @@ export class AccountComponent {
 
   colors = colors;
 
+  notificationsEnabled: boolean;
+
   constructor(
     public dialogRef: MatDialogRef<AccountComponent>,
     public fireAuth: AngularFireAuth,
     public pallet: PalletService,
+    public notifications: NotificationsService,
     private firestore: AngularFirestore,
-    private authService: AuthService
+    private authService: AuthService,
+    private zone: NgZone
   ) {
     this.nickname = new FormControl('', [
       Validators.required,
@@ -40,6 +47,7 @@ export class AccountComponent {
       nickname: this.nickname,
       color: this.color
     });
+
     authService.userDoc$.subscribe(userDoc => {
       const data = userDoc.data();
       if (!data.nickname) {
@@ -51,6 +59,10 @@ export class AccountComponent {
       this.formGroup.setValue(data);
       this.docRef = userDoc.ref;
     });
+
+    this.notifications.isEnabled$.subscribe(isEnabled => this.zone.run(() => {
+      this.notificationsEnabled = isEnabled;
+    }));
   }
 
   onSubmit() {
@@ -61,5 +73,17 @@ export class AccountComponent {
 
   handleRippleClick(event) {
     requestAnimationFrame(() => event.target.previousElementSibling.blur());
+  }
+
+  async toggleNotifications(event) {
+    console.log(event)
+    if (event.checked) {
+      await this.notifications.enable();
+    } else {
+      await this.notifications.disable();
+    }
+    this.notifications.isEnabled$.pipe(first()).subscribe(isEnabled => this.zone.run(() => {
+      this.notificationsEnabled = isEnabled;
+    }));
   }
 }

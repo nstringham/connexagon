@@ -20,7 +20,7 @@ export class HomeComponent implements OnInit {
     public notifications: NotificationsService,
     private zone: NgZone
   ) {
-    this.notifications.isEnabled.subscribe(isEnabled => zone.run(() => {
+    this.notifications.isEnabled$.subscribe(isEnabled => zone.run(() => {
       this.notificationsEnabled = isEnabled;
     }));
   }

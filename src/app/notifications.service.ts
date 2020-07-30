@@ -14,7 +14,7 @@ import { ModalService } from './modal.service';
 })
 export class NotificationsService {
 
-  public isEnabled: Observable<boolean>;
+  public isEnabled$: Observable<boolean>;
 
   constructor(
     private Messaging: AngularFireMessaging,
@@ -24,7 +24,7 @@ export class NotificationsService {
     private fireAuth: AngularFireAuth,
     private router: Router
   ) {
-    this.isEnabled = this.fireAuth.authState.pipe(switchMap(user => {
+    this.isEnabled$ = this.fireAuth.authState.pipe(switchMap(user => {
       if (user?.uid) {
         return this.aFirestore.doc<string[]>('users/' + user.uid + '/private/tokens').valueChanges().pipe(switchMap((tokens => {
           if (tokens && 'Notification' in window && Notification.permission === 'granted') {
@@ -56,12 +56,12 @@ export class NotificationsService {
   public async enable() {
     if ('Notification' in window) {
       if (Notification.permission === 'granted'
-      || await this.modal.confirm('Would you like to receive notifications when it\'s your turn?')) {
-        this.Messaging.getToken.subscribe( (token) => {
+        || await this.modal.confirm('Would you like to receive notifications when it\'s your turn?')) {
+        this.Messaging.getToken.subscribe((token) => {
           console.log('Permission granted! Save to the server!', token);
           const data = {};
           data[token] = true;
-          this.aFirestore.doc('users/' + this.authService.currentUID + '/private/tokens').set(data, {merge: true});
+          this.aFirestore.doc('users/' + this.authService.currentUID + '/private/tokens').set(data, { merge: true });
         }, (error) => {
           if (error.code === 'messaging/permission-blocked') {
             this.modal.alert('Your browser is blocking notifications, so you will not be notified when it is your turn.');
@@ -74,7 +74,7 @@ export class NotificationsService {
   }
 
   public async disable() {
-    if ('Notification' in window && Notification.permission === 'granted'){
+    if ('Notification' in window && Notification.permission === 'granted') {
       const token = await this.Messaging.getToken.toPromise();
       const data = {};
       data[token] = firestore.FieldValue.delete();
@@ -82,19 +82,9 @@ export class NotificationsService {
     }
   }
 
-  public toggle() {
-    this.isEnabled.pipe(first()).subscribe(isEnabled => {
-      if (isEnabled) {
-        return this.disable();
-      } else {
-        return this.enable();
-      }
-    });
-  }
-
   public deleteToken() {
     this.Messaging.getToken.pipe(mergeMap(token => this.Messaging.deleteToken(token))).subscribe(
-        (token) => { console.log('Token deleted!'); },
-      );
+      (token) => { console.log('Token deleted!'); },
+    );
   }
 }
