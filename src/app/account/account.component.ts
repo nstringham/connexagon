@@ -59,4 +59,7 @@ export class AccountComponent {
     this.dialogRef.close();
   }
 
+  handleRippleClick(event) {
+    requestAnimationFrame(() => event.target.previousElementSibling.blur());
+  }
 }

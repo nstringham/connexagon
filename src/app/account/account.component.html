@@ -12,8 +12,12 @@
       <mat-error *ngIf="nickname.errors?.required">nickname is required</mat-error>
     </mat-form-field>
     <div id="color">
-      <input type="radio" *ngFor="let color of colors" formControlName="color" [value]="color"
-        [style]="'background-color:'+ (pallet.pallet$|async)[color] +';'">
+      <label *ngFor="let color of colors">
+        <input type="radio" formControlName="color" [value]="color">
+        <div matRipple matRippleColor="#FFF2" [style]="'background-color:'+ (pallet.pallet$|async)[color] +';'"
+          (click)="handleRippleClick($event)">
+        </div>
+      </label>
     </div>
   </mat-dialog-content>
   <mat-dialog-actions align="end">

@@ -23,8 +23,15 @@ form {
       display: grid;
       gap: 8px;
       grid-template-columns: repeat(3, minmax(48px, 96px));
+      padding-bottom: 2px;
       input {
+        position: absolute;
         appearance: none;
+        opacity: 0;
+        height: 0;
+        width: 0;
+      }
+      div {
         position: relative;
         cursor: pointer;
         width: 100%;
@@ -33,23 +40,24 @@ form {
         border-radius: 4px;
         margin: 0;
         color: inherit;
-        &:checked {
-          &::before {
-            content: "check";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: clamp(24px, 10vw, 48px);
-            font-family: "Material Icons";
-            font-weight: 1000;
-          }
+      }
+      input:checked + div {
+        &::before {
+          content: "check";
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          color: white;
+          font-size: clamp(24px, 10vw, 48px);
+          font-family: "Material Icons";
+          font-weight: 1000;
         }
-        &:focus {
-          outline-offset: 0;
-          outline: currentColor solid 2px;
-        }
+      }
+      input:focus + div {
+        outline-offset: 0;
+        outline: currentColor solid 2px;
+        border-radius: 0;
       }
     }
     @media only screen and (max-width: 400px) {
