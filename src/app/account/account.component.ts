@@ -6,6 +6,7 @@ import { nicknameMaxLength, nicknameMinLength, colors } from 'functions/src/type
 import { AuthService } from '../auth.service';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { noEmojiValidator } from '../dialog/dialog.component';
+import { PalletService } from '../pallet.service';
 
 @Component({
   selector: 'app-account',
@@ -24,6 +25,7 @@ export class AccountComponent {
   constructor(
     public dialogRef: MatDialogRef<AccountComponent>,
     public fireAuth: AngularFireAuth,
+    public pallet: PalletService,
     private firestore: AngularFirestore,
     private authService: AuthService
   ) {

@@ -2,21 +2,18 @@
   <h2 mat-dialog-title>Account Settings</h2>
   <mat-dialog-content class="mat-typography">
     <img id="photo" *ngIf="(fireAuth.authState | async)?.photoURL as photoURL" [src]="photoURL">
-    <mat-form-field id="nickname">
+    <mat-form-field id="nickname" appearance="standard">
       <mat-label>Nickname</mat-label>
-      <input matInput type="text" formControlName="nickname">
+      <input matInput type="text" formControlName="nickname"
+        [style]="'color:'+(pallet.pallet$|async)[formGroup.value.color] || 'auto' +';'">
       <mat-error *ngIf="nickname.errors?.minlength">your nickname is too short</mat-error>
       <mat-error *ngIf="nickname.errors?.maxlength">your nickname is too long</mat-error>
       <mat-error *ngIf="nickname.errors?.hasEmoji">your nickname may on contain emojis</mat-error>
       <mat-error *ngIf="nickname.errors?.required">nickname is required</mat-error>
     </mat-form-field>
     <div id="color">
-      <label>
-        Preferred Color:
-        <select formControlName="color">
-          <option *ngFor="let color of colors" [value]="color">{{color}}</option>
-        </select>
-      </label>
+      <input type="radio" *ngFor="let color of colors" formControlName="color" [value]="color"
+        [style]="'background-color:'+ (pallet.pallet$|async)[color] +';'">
     </div>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
