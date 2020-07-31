@@ -20,6 +20,7 @@ import { AccountComponent } from './account/account.component';
 export class AppComponent implements OnInit {
   title = 'Tic-Tac-Toe';
   extendedAppbar = false;
+  root = false;
 
   dialog: MatDialogRef<LoginComponent>;
 
@@ -59,6 +60,7 @@ export class AppComponent implements OnInit {
 
     location.onUrlChange(url => {
       this.extendedAppbar = '/' === url;
+      this.root = '/' === url;
     })
   }
 
