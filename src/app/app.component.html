@@ -1,6 +1,6 @@
 <div class="app-warper">
   <div class="status-bar-fill" *ngIf="platform.IOS"></div>
-  <mat-toolbar id="toolbar" role="heading" color="primary">
+  <mat-toolbar id="toolbar" role="heading" color="primary" [class.extended]="extendedAppbar">
     <div *ngIf="this.location.path()" class="icon-button-warper nav-icon">
       <button mat-icon-button [routerLink]="this.location.path().split('/').slice(0, -1).join('/')" aria-label="back">
         <mat-icon>{{platform.IOS ? 'arrow_back_ios' : 'arrow_back'}}</mat-icon>
@@ -8,9 +8,11 @@
     </div>
     <span class="title">{{title}}</span>
     <span style="flex: 1 1 auto;"></span>
-    <button mat-icon-button *ngIf="shareService.shareable | async" (click)="shareService.share()" aria-label="Share">
-      <mat-icon>share</mat-icon>
-    </button>
+    <div *ngIf="shareService.shareable | async" class="icon-button-warper">
+      <button mat-icon-button (click)="shareService.share()" aria-label="Share">
+        <mat-icon>share</mat-icon>
+      </button>
+    </div>
     <div *ngIf="deferredInstallPrompt" class="icon-button-warper">
       <button mat-icon-button (click)="install()" aria-label="Add to Home Screen">
         <mat-icon>{{platform.ANDROID ? 'add_to_home_screen' : 'get_app'}}</mat-icon>

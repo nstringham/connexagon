@@ -19,6 +19,7 @@ import { AccountComponent } from './account/account.component';
 })
 export class AppComponent implements OnInit {
   title = 'Tic-Tac-Toe';
+  extendedAppbar = false;
 
   dialog: MatDialogRef<LoginComponent>;
 
@@ -31,6 +32,7 @@ export class AppComponent implements OnInit {
     event.preventDefault();
     this.deferredInstallPrompt = event;
   }
+
 
   constructor(
     public authService: AuthService,
@@ -54,6 +56,10 @@ export class AppComponent implements OnInit {
         return [];
       }
     }));
+
+    location.onUrlChange(url => {
+      this.extendedAppbar = '/' === url;
+    })
   }
 
   ngOnInit(): void {

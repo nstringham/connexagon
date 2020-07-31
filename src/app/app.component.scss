@@ -42,3 +42,22 @@
     left: -8px;
   }
 }
+
+@media only screen and (min-height: 400px) {
+  .mat-toolbar-single-row.extended {
+    height: 128px;
+    padding-top: 16px;
+    padding-bottom: 24px;
+    .title {
+      align-self: flex-end;
+      font-size: 96px;
+      line-height: 1em;
+      @media only screen and (max-width: 700px) {
+        font-size: calc(16vw - 20px);
+      }
+    }
+    & > .icon-button-warper {
+      align-self: flex-start;
+    }
+  }
+}
