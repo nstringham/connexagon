@@ -5,7 +5,7 @@
     <mat-form-field id="nickname" appearance="standard">
       <mat-label>Nickname</mat-label>
       <input matInput type="text" formControlName="nickname"
-        [style]="'color:'+(pallet.pallet$|async)[formGroup.value.color] || 'auto' +';'">
+        [style.color]="(pallet.pallet$|async)[formGroup.value.color] || 'auto'">
       <mat-error *ngIf="nickname.errors?.minlength">your nickname is too short</mat-error>
       <mat-error *ngIf="nickname.errors?.maxlength">your nickname is too long</mat-error>
       <mat-error *ngIf="nickname.errors?.hasEmoji">your nickname may on contain emojis</mat-error>
@@ -14,7 +14,7 @@
     <div id="color">
       <label *ngFor="let color of colors">
         <input type="radio" formControlName="color" [value]="color">
-        <div matRipple matRippleColor="#FFF2" [style]="'background-color:'+ (pallet.pallet$|async)[color] +';'"
+        <div matRipple matRippleColor="#FFF2" [style.background-color]="(pallet.pallet$|async)[color]"
           (change)="handleRippleClick($event)">
         </div>
       </label>
