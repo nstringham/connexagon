@@ -66,7 +66,6 @@ export class AccountComponent {
   }
 
   onSubmit() {
-    console.log(this.formGroup.value);
     this.docRef.set(this.formGroup.value);
     this.dialogRef.close();
   }
