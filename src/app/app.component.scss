@@ -51,11 +51,11 @@
 
 @media only screen and (min-height: 500px) {
   .mat-toolbar-single-row.extended {
-    margin-left: 0;
     height: 128px;
     padding-top: 16px;
     padding-bottom: 24px;
     .title {
+      margin-left: 0;
       align-self: flex-end;
       font-size: 76px;
       line-height: 1em;
