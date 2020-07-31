@@ -15,7 +15,7 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['nickname', 'color'])
         && request.resource.data.nickname is string
         && request.resource.data.nickname.size() <= 10
-        && request.resource.data.color in [null, 'red', 'blue', 'green', 'orange', 'purple', 'yellow'];
+        && (!('color' in request.resource) || request.resource.data.color in ['red', 'blue', 'green', 'orange', 'purple', 'yellow']);
       match /private/tokens {
         allow get: if request.auth.uid == userId;
         allow create, update: if request.auth.uid == userId  && request.resource.data.values().hasOnly([true]);

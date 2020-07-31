@@ -23,6 +23,7 @@
     "@angular/platform-browser-dynamic": "^9.1.12",
     "@angular/router": "^9.1.12",
     "@angular/service-worker": "^9.1.12",
+    "emoji-regex": "^9.0.0",
     "firebase": "^7.17.1",
     "rxjs": "~6.5.4",
     "tslib": "^1.13.0",
