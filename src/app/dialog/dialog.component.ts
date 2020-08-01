@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig } from '@angular/material/dialog';
 import { FormGroup, FormControl, AbstractControl, Validators } from '@angular/forms';
-import emojiRegex from 'emoji-regex/text.js';
+import emojiRegex from 'emoji-regex/es2015';
 
 @Component({
   selector: 'app-dialog',
@@ -105,7 +105,7 @@ export function getWinnerAlert(name: string, color: string): MatDialogConfig {
 }
 
 export function noEmojiValidator(control: AbstractControl) {
-  if (typeof control.value === 'string' && control.value.match(emojiRegex)) {
+  if (typeof control.value === 'string' && control.value.match(emojiRegex())) {
     return { hasEmoji: true };
   }
   return null;

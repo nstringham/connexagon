@@ -10,6 +10,14 @@
     </table>
   </canvas>
 </div>
+<ol class="player-list">
+  <li *ngFor="let player of playerList; let i = index">
+    <span [style.color]="(palletService.pallet$ | async)[player.color]"
+      [style.font-weight]="player.winner ? 'bold' : 'normal'">
+      {{player.winner ? '🏆' : ''}}{{player.nickname}}
+    </span>
+  </li>
+</ol>
 <button mat-fab color="primary" (click)="submit()" aria-label="submit" [disabled]="!isValidMove">
   <mat-icon>done</mat-icon>
 </button>

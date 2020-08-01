@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { Game, isValidMove, colors, getArrayLength, GridData, Cell, getSideLength, UserData, Player } from './types';
+const emojiRegex = require('emoji-regex')();
 
 admin.initializeApp();
 
@@ -113,6 +114,10 @@ export const skipTurn = functions.https.onCall((id, context) => {
 
 export const handleUserDataChange = functions.firestore.document('users/{uid}').onUpdate((change, context) => {
   const nickname: string | undefined = change.after.data()?.nickname;
+  if (nickname && emojiRegex.exec(nickname)) {
+    console.error(`"${nickname}" contains emoji so "${change.after.id}" 's nickname has bean reset`);
+    return change.after.ref.set({ nickname: admin.firestore.FieldValue.delete() }, { merge: true });
+  }
   if (nickname && nickname !== change.before.data()?.nickname) {
     return firestore.collection('games').where('uids', 'array-contains', change.after.id)
       .orderBy('modified', 'desc').limit(1000).get().then(snapshot => {

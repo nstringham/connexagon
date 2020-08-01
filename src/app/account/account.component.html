@@ -15,7 +15,7 @@
       <label *ngFor="let color of colors">
         <input type="radio" formControlName="color" [value]="color">
         <div matRipple matRippleColor="#FFF2" [style.background-color]="(pallet.pallet$|async)[color]"
-          (change)="handleRippleClick($event)">
+          (click)="handleRippleClick($event)">
         </div>
       </label>
     </div>

@@ -1,3 +1,5 @@
+@import "~@angular/material/theming";
+
 form {
   display: flex;
   flex-direction: column;
@@ -32,6 +34,7 @@ form {
         opacity: 0;
         height: 0;
         width: 0;
+        margin: 0;
       }
       div {
         position: relative;
@@ -42,24 +45,45 @@ form {
         border-radius: 4px;
         margin: 0;
         color: inherit;
-      }
-      input:checked + div {
+        @include mat-elevation-transition;
+        @media not screen and (prefers-color-scheme: dark) {
+          @include mat-elevation(2);
+        }
         &::before {
           content: "check";
           position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          color: white;
+          top: 0;
+          bottom: 0;
+          right: 0;
+          left: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
           font-size: clamp(24px, 10vw, 48px);
           font-family: "Material Icons";
           font-weight: 1000;
+          border-radius: 4px;
+          color: #0000;
+        }
+      }
+      label:hover > div::before {
+        background-color: rgba(255, 255, 255, 0.08);
+      }
+      input:checked + div {
+        &::before {
+          color: white;
+        }
+        @media not screen and (prefers-color-scheme: dark) {
+          @include mat-elevation(8);
         }
       }
       input:focus + div {
-        outline-offset: 0;
-        outline: currentColor solid 2px;
-        border-radius: 0;
+        &::before {
+          background-color: rgba(255, 255, 255, 0.24);
+        }
+        @media not screen and (prefers-color-scheme: dark) {
+          @include mat-elevation(8);
+        }
       }
     }
     & > #notifications {
