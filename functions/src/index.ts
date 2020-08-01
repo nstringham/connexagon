@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import { Game, isValidMove, colors, getArrayLength, GridData, Cell, getSideLength, UserData } from './types';
+import { Game, isValidMove, colors, getArrayLength, GridData, Cell, getSideLength, UserData, Player } from './types';
 
 admin.initializeApp();
 
@@ -235,6 +235,7 @@ async function makeGame(size: number, uids: string[]) {
     if (!player.color) {
       player.color = shuffledColors.pop();
     }
+    (player as Player).points = 0;
   });
   return firestore.collection('games').add({
     board,
