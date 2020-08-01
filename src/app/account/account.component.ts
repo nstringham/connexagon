@@ -8,7 +8,6 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { noEmojiValidator } from '../dialog/dialog.component';
 import { PalletService } from '../pallet.service';
 import { NotificationsService } from '../notifications.service';
-import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 
 @Component({
