@@ -38,5 +38,5 @@ export type UserData = {
   nickname: string;
 }
 
-export const nicknameMaxLength = 10;
+export const nicknameMaxLength = 15;
 export const nicknameMinLength = 2;
