@@ -105,7 +105,7 @@ export function getWinnerAlert(name: string, color: string): MatDialogConfig {
 }
 
 export function noEmojiValidator(control: AbstractControl) {
-  if (typeof control.value === 'string' && control.value.match(emojiRegex)) {
+  if (typeof control.value === 'string' && control.value.match(emojiRegex())) {
     return { hasEmoji: true };
   }
   return null;
