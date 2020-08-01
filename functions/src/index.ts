@@ -237,7 +237,7 @@ async function makeGame(size: number, uids: string[]) {
     }
   });
   return firestore.collection('games').add({
-    board: new Array(size * size).fill(-1),
+    board,
     players,
     uids: shuffledUIDs,
     turn: 0,
