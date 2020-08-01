@@ -8,7 +8,7 @@ import { DialogComponent, getWinnerAlert } from '../dialog/dialog.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Pallet, PalletService } from '../pallet.service';
 import { ModalService } from '../modal.service';
-import { Move, Game } from 'functions/src/types';
+import { Move, Game, Color, Player } from 'functions/src/types';
 
 @Component({
   selector: 'app-board',
@@ -27,6 +27,8 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
   private user: User;
 
   public isTurn: boolean;
+
+  public playerList: { nickname: string, color: Color, winner: boolean }[];
 
   private gameDoc: AngularFirestoreDocument<Game>;
 
@@ -81,6 +83,12 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
             this.modal.toast('it\'s your turn.');
           }
         }
+        const players = game.players.map((player, i) => ({
+          nickname: player.nickname,
+          color: player.color,
+          winner: game.winner === i
+        }));
+        this.playerList = players.slice(game.turn % players.length).concat(players.slice(0, game.turn % players.length));
       });
       navigator.serviceWorker.register('firebase-messaging-sw.js').then((registration) => {
         registration.getNotifications({ tag: paramMap.get('id') }).then((notifications) => {

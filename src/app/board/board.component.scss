@@ -1,17 +1,42 @@
-div.canvas-wraper {
-    --header-height: 64px;
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    top: var(--header-height);
-    left: 0;
-    display: flex;
-    canvas {
-        --height: calc(100vh - var(--header-height));
-        --width: 100vw;
-        --vmin: min(var(--height), var(--width));
-        height: var(--vmin);
-        width: var(--vmin);
-        margin: auto;
-    }
+@import "~@angular/material/theming";
+
+div.canvas-warper {
+  --header-height: 64px;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  top: var(--header-height);
+  left: 0;
+  display: flex;
+  canvas {
+    --height: calc(100vh - var(--header-height));
+    --width: 100vw;
+    --vmin: min(var(--height), var(--width));
+    height: var(--vmin);
+    width: var(--vmin);
+    margin: auto;
+  }
+}
+
+.player-list {
+  position: relative;
+  list-style-type: none;
+  left: 16px;
+  top: 16px;
+  @media only screen and (min-width: 720px) {
+    left: 24px;
+    top: 24px;
+  }
+  width: fit-content;
+  margin: 0;
+  padding: 16px;
+  border-radius: 8px;
+
+  @media screen and (prefers-color-scheme: dark) {
+    background-color: #222222;
+  }
+  @media not screen and (prefers-color-scheme: dark) {
+    background-color: white;
+    @include mat-elevation(2);
+  }
 }
