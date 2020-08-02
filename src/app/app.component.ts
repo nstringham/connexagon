@@ -85,6 +85,6 @@ export class AppComponent implements OnInit {
   }
 
   showAccountSettings() {
-    return this.matDialog.open(AccountComponent).afterClosed().toPromise();
+    return this.matDialog.open(AccountComponent, { autoFocus: false }).afterClosed().toPromise();
   }
 }
