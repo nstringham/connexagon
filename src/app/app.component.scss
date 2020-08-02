@@ -18,9 +18,17 @@
   overflow: auto;
   flex: 1;
 }
-mat-toolbar {
+mat-toolbar.mat-toolbar-single-row {
   @media not screen and (prefers-color-scheme: dark) {
     @include mat-elevation(4);
+  }
+  z-index: 4;
+  padding: 16px;
+  height: fit-content;
+  * {
+    transition-property: font-size opacity margin-right width;
+    transition-duration: 0.4s;
+    transition-timing-function: ease-in-out;
   }
 
   .account-photo {
@@ -32,8 +40,9 @@ mat-toolbar {
     user-select: none;
     outline: none;
     padding: 4px 8px;
-    margin: -4px -8px;
+    margin: -2px -8px;
     border-radius: 4px;
+    line-height: 1em;
     &[tabindex="0"]:focus:not(:active) {
       background-color: rgb(255, 255, 255, 0.12);
     }
@@ -42,37 +51,27 @@ mat-toolbar {
     height: 24px;
     width: 24px;
     position: relative;
+    align-self: flex-start;
     margin-left: 24px;
 
     &.nav-icon {
-      margin-right: 32px;
       margin-left: 0px;
+      margin-right: 32px;
+      &.hide {
+        width: 0;
+        margin-right: 0px;
+        opacity: 0;
+      }
     }
 
     button {
-      position: absolute;
-      top: -8px;
-      left: -8px;
+      margin: -8px;
     }
   }
 
   @media only screen and (min-height: 500px) {
-    &.extended {
-      height: 128px;
-      padding-top: 16px;
-      padding-bottom: 24px;
-      .title {
-        margin-left: 0;
-        align-self: flex-end;
-        font-size: 76px;
-        line-height: 1em;
-        @media only screen and (max-width: 600px) {
-          font-size: calc(16vw - 20px);
-        }
-      }
-      & > .icon-button-warper {
-        align-self: flex-start;
-      }
+    &.extended .title {
+      font-size: clamp(20px, calc(18vw - 22px), 76px);
     }
   }
 }
