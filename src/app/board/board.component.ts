@@ -113,9 +113,14 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private resizeCanvas() {
-    this.canvas.nativeElement.parentElement.style.setProperty(
-      '--header-height', document.getElementById('toolbar').getBoundingClientRect().bottom + 'px'
-    );
+    let headerHeight = parseFloat(this.canvas.nativeElement.parentElement.style.getPropertyValue('--header-height').replace('px', ''));
+    if (headerHeight === document.getElementById('toolbar').getBoundingClientRect().bottom) {
+      headerHeight = document.getElementById('toolbar').getBoundingClientRect().bottom;
+      this.canvas.nativeElement.parentElement.style.setProperty(
+        '--header-height', headerHeight + 'px'
+      );
+      requestAnimationFrame(() => this.resizeCanvas());
+    }
     this.canvas.nativeElement.width = this.canvas.nativeElement.clientWidth * window.devicePixelRatio;
     this.canvas.nativeElement.height = this.canvas.nativeElement.clientHeight * window.devicePixelRatio;
     this.board.redraw();
@@ -127,6 +132,7 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
       Math.abs(this.canvas.nativeElement.width - this.canvas.nativeElement.clientWidth * window.devicePixelRatio) > 1
     ) {
       // this deals with a problem caused by samsung internet not using css min()
+      console.log('resize');
       this.resizeCanvas();
     }
     const x = event.x - this.canvas.nativeElement.getBoundingClientRect().left;

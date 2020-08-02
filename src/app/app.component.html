@@ -1,8 +1,9 @@
 <div class="app-warper">
   <div class="status-bar-fill" *ngIf="platform.IOS"></div>
   <mat-toolbar id="toolbar" role="heading" color="primary" [class.extended]="extendedAppbar">
-    <div *ngIf="!root" class="icon-button-warper nav-icon">
-      <button mat-icon-button [routerLink]="this.location.path().split('/').slice(0, -1).join('/')" aria-label="back">
+    <div class="icon-button-warper nav-icon" [class.hide]="root">
+      <button mat-icon-button [routerLink]="this.location.path().split('/').slice(0, -1).join('/')" aria-label="back"
+        [disabled]="root">
         <mat-icon>{{platform.IOS ? 'arrow_back_ios' : 'arrow_back'}}</mat-icon>
       </button>
     </div>
