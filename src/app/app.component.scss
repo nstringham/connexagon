@@ -69,9 +69,7 @@ mat-toolbar.mat-toolbar-single-row {
     }
   }
 
-  @media only screen and (min-height: 500px) {
-    &.extended .title {
-      font-size: clamp(20px, calc(18vw - 22px), 76px);
-    }
+  &.extended .title {
+    font-size: clamp(20px, min(calc(18vw - 22px), 15vh), 96px);
   }
 }
