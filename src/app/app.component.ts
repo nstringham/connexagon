@@ -20,6 +20,7 @@ import { AccountComponent } from './account/account.component';
 export class AppComponent implements OnInit {
   title = 'Tic-Tac-Toe';
   extendedAppbar = false;
+  previousScrollPosition = 0;
   root = false;
 
   dialog: MatDialogRef<LoginComponent>;
@@ -86,5 +87,9 @@ export class AppComponent implements OnInit {
 
   showAccountSettings() {
     return this.matDialog.open(AccountComponent, { autoFocus: false }).afterClosed().toPromise();
+  }
+
+  onScroll(event: Event) {
+    this.extendedAppbar = (event.target as HTMLElement).scrollTop === 0;
   }
 }
