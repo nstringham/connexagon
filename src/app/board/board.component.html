@@ -1,7 +1,7 @@
 <div class="canvas-warper">
   <canvas (click)="canvasClickHandler($event)" #canvas></canvas>
 </div>
-<ol class="player-list">
+<ol *ngIf="playerList" class="player-list">
   <li *ngFor="let player of playerList; let i = index">
     <span [style.color]="(palletService.pallet$ | async)[player.color]"
       [style.font-weight]="player.winner ? 'bold' : 'normal'">
