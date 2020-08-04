@@ -35,10 +35,20 @@ div.canvas-warper {
   border-radius: 8px;
 
   @media screen and (prefers-color-scheme: dark) {
-    background-color: #222222;
+    background-color: #232323;
   }
   @media not screen and (prefers-color-scheme: dark) {
     background-color: white;
     @include mat-elevation(2);
+  }
+
+  display: table;
+  li {
+    display: table-row;
+    span.points {
+      display: table-cell;
+      text-align: center;
+      padding-right: 0.5em;
+    }
   }
 }
