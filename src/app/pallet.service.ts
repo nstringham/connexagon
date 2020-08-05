@@ -13,7 +13,6 @@ export class PalletService {
     this.pallet$ = concat(
       of(this.getPallet()),
       fromEvent(matchMedia('(prefers-color-scheme: dark)'), 'change').pipe(map((event: MediaQueryListEvent) => {
-        console.log(event.matches ? 'dark' : 'light');
         return this.getPallet(event.matches);
       }))
     );
