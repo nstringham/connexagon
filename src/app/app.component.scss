@@ -39,8 +39,8 @@ mat-toolbar.mat-toolbar-single-row {
   .title {
     user-select: none;
     outline: none;
-    padding: 4px 8px;
-    margin: -2px -8px;
+    padding: 0.2em 0.4em;
+    margin: -0.1em -0.4em;
     border-radius: 4px;
     line-height: 1em;
     &[tabindex="0"]:focus:not(:active) {
