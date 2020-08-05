@@ -19,9 +19,9 @@ import { AccountComponent } from './account/account.component';
 })
 export class AppComponent implements OnInit {
   title = 'Connexagon';
-  extendedAppbar = false;
+  scrolledTop = true;
   previousScrollPosition = 0;
-  root = false;
+  isRoot = false;
 
   dialog: MatDialogRef<LoginComponent>;
 
@@ -60,9 +60,8 @@ export class AppComponent implements OnInit {
     }));
 
     location.onUrlChange(url => {
-      this.extendedAppbar = '/' === url;
-      this.root = '/' === url;
-    })
+      this.isRoot = '/' === url;
+    });
   }
 
   ngOnInit(): void {
@@ -90,6 +89,6 @@ export class AppComponent implements OnInit {
   }
 
   onScroll(event: Event) {
-    this.extendedAppbar = (event.target as HTMLElement).scrollTop === 0;
+    this.scrolledTop = (event.target as HTMLElement).scrollTop === 0;
   }
 }
