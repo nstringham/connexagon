@@ -62,6 +62,10 @@ mat-toolbar.mat-toolbar-single-row {
         margin-right: 0px;
         filter: opacity(0%);
       }
+
+      mat-icon {
+        color: white;
+      }
     }
 
     button {
