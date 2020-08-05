@@ -1,21 +1,20 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AngularFirestore, DocumentChangeAction } from '@angular/fire/firestore';
 import { AuthService } from '../auth.service';
-import { Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { PalletService } from '../pallet.service';
 import { Color, Game } from 'functions/src/types';
 import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
 import { AngularFireFunctions } from '@angular/fire/functions';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-games',
   templateUrl: './games.component.html',
   styleUrls: ['./games.component.scss']
 })
-export class GamesComponent implements OnInit, OnDestroy {
-
-  private gamesSubscription: Subscription;
+export class GamesComponent {
 
   public spinner: {
     visible: boolean,
@@ -27,11 +26,7 @@ export class GamesComponent implements OnInit, OnDestroy {
       value: 0
     };
 
-  public gameLists: { games: GameListElement[], display: string }[] = [
-    { games: [], display: 'Your Turn' },
-    { games: [], display: 'Current Games' },
-    { games: [], display: 'Finished Games' }
-  ];
+  public gameLists$: Observable<{ games: GameListElement[], display: string }[]>;
 
   constructor(
     private route: ActivatedRoute,
@@ -40,8 +35,13 @@ export class GamesComponent implements OnInit, OnDestroy {
     private functions: AngularFireFunctions,
     public palletService: PalletService
   ) {
-    this.gamesSubscription = authService.games$.subscribe((actions: DocumentChangeAction<Game>[]) => {
-      const newGameList = this.gameLists.map((element => ({ games: [], display: element.display })));
+    this.gameLists$ = authService.games$.pipe(map((actions: DocumentChangeAction<Game>[]) => {
+      const gameLists: { games: GameListElement[], display: string }[] = [
+        { games: [], display: 'Your Turn' },
+        { games: [], display: 'Current Games' },
+        { games: [], display: 'Finished Games' }
+      ];
+      const newGameList = gameLists.map((element => ({ games: [], display: element.display })));
       const skipTurn = this.functions.httpsCallable('skipTurn');
       actions.forEach(action => {
         const game = action.payload.doc.data();
@@ -70,18 +70,12 @@ export class GamesComponent implements OnInit, OnDestroy {
         });
       });
       for (let i = 0; i < newGameList.length; i++) {
-        if (JSON.stringify(this.gameLists[i].games.map(game => game.id)) !== JSON.stringify(newGameList[i].games.map(game => game.id))) {
-          this.gameLists[i] = newGameList[i];
+        if (JSON.stringify(gameLists[i].games.map(game => game.id)) !== JSON.stringify(newGameList[i].games.map(game => game.id))) {
+          gameLists[i] = newGameList[i];
         }
       }
-    });
-  }
-
-  ngOnInit(): void {
-  }
-
-  ngOnDestroy(): void {
-    this.gamesSubscription.unsubscribe();
+      return gameLists;
+    }));
   }
 
   public joinQueue() {
