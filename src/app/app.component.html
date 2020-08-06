@@ -1,33 +1,35 @@
 <div class="app-warper">
-  <div class="status-bar-fill" *ngIf="platform.IOS"></div>
-  <mat-toolbar id="toolbar" role="heading" color="primary" [class.extended]="scrolledTop && isRoot">
-    <div class="icon-button-warper nav-icon" [class.hide]="isRoot">
-      <button mat-icon-button [routerLink]="this.location.path().split('/').slice(0, -1).join('/')" aria-label="back"
-        [disabled]="isRoot">
-        <mat-icon>{{platform.IOS ? 'arrow_back_ios' : 'arrow_back'}}</mat-icon>
-      </button>
-    </div>
-    <h1 class="title" matRipple [matRippleDisabled]="isRoot" matRippleColor="rgba(255, 255, 255, 0.12)" routerLink="/"
-      [tabindex]="isRoot ? -1 : 0" (keyup.enter)="$event.target.click()">{{title}}</h1>
-    <span style="flex: 1 1 auto;"></span>
-    <div *ngIf="shareService.shareable | async" class="icon-button-warper">
-      <button mat-icon-button (click)="shareService.share()" aria-label="Share">
-        <mat-icon>share</mat-icon>
-      </button>
-    </div>
-    <div *ngIf="deferredInstallPrompt" class="icon-button-warper">
-      <button mat-icon-button (click)="install()" aria-label="Add to Home Screen">
-        <mat-icon>{{platform.ANDROID ? 'add_to_home_screen' : 'get_app'}}</mat-icon>
-      </button>
-    </div>
-    <div class="icon-button-warper">
-      <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Account">
-        <img class="account-photo" *ngIf="(fireAuth.authState | async)?.photoURL as photoURL else account_circle"
-          src="{{photoURL}}">
-        <ng-template #account_circle>
-          <mat-icon>account_circle</mat-icon>
-        </ng-template>
-      </button>
+  <mat-toolbar id="toolbar" role="heading" color="primary" [class.extended]="scrolledTop && isRoot"
+    [style.justify-content]="(platform.IOS || platform.SAFARI) ? 'center' : 'left'">
+    <h1 matRipple [matRippleDisabled]="isRoot" matRippleColor="rgba(255, 255, 255, 0.12)" routerLink="/"
+      [tabindex]="isRoot ? -1 : 0" [class.not-root]="!isRoot" (keyup.enter)="$event.target.click()">{{title}}</h1>
+    <div class="buttons">
+      <div *ngIf="!isRoot" class="icon-button-warper nav-icon">
+        <button mat-icon-button [routerLink]="this.location.path().split('/').slice(0, -1).join('/')" aria-label="back"
+          tabindex="1">
+          <mat-icon>{{platform.IOS ? 'arrow_back_ios' : 'arrow_back'}}</mat-icon>
+        </button>
+      </div>
+      <span></span>
+      <div *ngIf="shareService.shareable | async" class="icon-button-warper">
+        <button mat-icon-button (click)="shareService.share()" aria-label="Share">
+          <mat-icon>share</mat-icon>
+        </button>
+      </div>
+      <div *ngIf="deferredInstallPrompt" class="icon-button-warper">
+        <button mat-icon-button (click)="install()" aria-label="Add to Home Screen">
+          <mat-icon>{{platform.ANDROID ? 'add_to_home_screen' : 'get_app'}}</mat-icon>
+        </button>
+      </div>
+      <div class="icon-button-warper">
+        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Account">
+          <img class="account-photo" *ngIf="(fireAuth.authState | async)?.photoURL as photoURL else account_circle"
+            src="{{photoURL}}">
+          <ng-template #account_circle>
+            <mat-icon>account_circle</mat-icon>
+          </ng-template>
+        </button>
+      </div>
     </div>
   </mat-toolbar>
 
