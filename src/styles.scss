@@ -62,12 +62,18 @@ body {
 
 button.mat-fab {
   position: fixed;
+  width: unset;
+  padding: 0 16px;
+  border-radius: 28px;
   bottom: 16px;
   right: 16px;
   bottom: calc(16px + env(safe-area-inset-bottom, 0px));
   right: calc(16px + env(safe-area-inset-right, 0px));
-  .mat-spinner circle {
-    stroke: #fff;
+  .mat-spinner {
+    display: inline-block;
+    circle {
+      stroke: #fff;
+    }
   }
 }
 
