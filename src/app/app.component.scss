@@ -10,6 +10,7 @@
   margin-left: env(safe-area-inset-left, 0px);
   margin-right: env(safe-area-inset-right, 0px);
   overflow: auto;
+  overscroll-behavior: contain;
   flex: 1;
 }
 mat-toolbar.mat-toolbar-single-row {
