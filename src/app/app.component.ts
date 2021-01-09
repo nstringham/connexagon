@@ -52,7 +52,6 @@ export class AppComponent implements OnInit {
 
     this.providers$ = this.fireAuth.authState.pipe(map(user => {
       if (user != null) {
-        console.log(user.providerData.map(data => data.providerId))
         return user.providerData.map(data => data.providerId);
       } else {
         return [];
