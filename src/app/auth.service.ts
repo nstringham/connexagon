@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
-import { auth } from 'firebase/app';
-import { User } from 'firebase';
+import firebase from 'firebase/app';
 import { switchMap, map, filter, first } from 'rxjs/operators';
 import { AngularFirestore, DocumentSnapshot, Action, DocumentChangeAction } from '@angular/fire/firestore';
 import { ModalService } from './modal.service';
@@ -24,12 +23,12 @@ export class AuthService {
     private firestore: AngularFirestore,
     private modal: ModalService
   ) {
-    this.userDoc$ = this.fireAuth.authState.pipe(filter(user => user != null), switchMap((user: User) => {
+    this.userDoc$ = this.fireAuth.authState.pipe(filter(user => user != null), switchMap((user: firebase.User) => {
       return this.firestore.doc<UserData>('users/' + user.uid).snapshotChanges().pipe(map((action: Action<DocumentSnapshot<UserData>>) => {
         return action.payload;
       }));
     }));
-    this.games$ = this.fireAuth.authState.pipe(switchMap((user: User) => {
+    this.games$ = this.fireAuth.authState.pipe(switchMap((user: firebase.User) => {
       if (user == null) {
         return [];
       }
@@ -50,18 +49,18 @@ export class AuthService {
     });
   }
 
-  public getAuthProviderByID(id: string): auth.AuthProvider {
+  public getAuthProviderByID(id: string): firebase.auth.AuthProvider {
     switch (id) {
       case 'google.com':
-        return new auth.GoogleAuthProvider();
+        return new firebase.auth.GoogleAuthProvider();
       case 'twitter.com':
-        return new auth.TwitterAuthProvider();
+        return new firebase.auth.TwitterAuthProvider();
       default:
         console.error('unknown provider:', id);
     }
   }
 
-  async logIn(provider?: auth.AuthProvider) {
+  async logIn(provider?: firebase.auth.AuthProvider) {
     if (provider) {
       return this.fireAuth.currentUser.then(async currentUser => {
         if (currentUser != null) {

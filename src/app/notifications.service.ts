@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
-import { firestore } from 'firebase/app';
+import firebase from 'firebase/app';
 import { AngularFireMessaging } from '@angular/fire/messaging';
 import { Observable, of } from 'rxjs';
 import { switchMap, map, first, mergeMap } from 'rxjs/operators';
@@ -77,7 +77,7 @@ export class NotificationsService {
     if ('Notification' in window && Notification.permission === 'granted') {
       const token = await this.Messaging.getToken.toPromise();
       const data = {};
-      data[token] = firestore.FieldValue.delete();
+      data[token] = firebase.firestore.FieldValue.delete();
       return this.aFirestore.doc('users/' + this.authService.currentUID + '/private/tokens').set(data, { merge: true });
     }
   }

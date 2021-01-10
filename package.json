@@ -24,7 +24,7 @@
     "@angular/router": "^11.0.7",
     "@angular/service-worker": "^11.0.7",
     "emoji-regex": "^9.2.0",
-    "firebase": "^7.24.0",
+    "firebase": "^8.2.2",
     "rxjs": "~6.5.4",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"
