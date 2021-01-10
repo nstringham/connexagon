@@ -46,6 +46,9 @@ $Tic-Tac-Toe-theme-dark: mat-dark-theme($Tic-Tac-Toe-primary-dark, $Tic-Tac-Toe-
     color: white;
     background-color: #121212;
   }
+  * {
+    scrollbar-color: #373737 #1e1e1e;
+  }
 }
 
 /* You can add global styles to this file, and also import other style files */
