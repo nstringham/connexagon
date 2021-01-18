@@ -3,7 +3,7 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Subscription, fromEvent } from 'rxjs';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { User } from 'firebase';
+import firebase from 'firebase/app';
 import { DialogComponent, getWinnerAlert } from '../dialog/dialog.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Pallet, PalletService } from '../pallet.service';
@@ -24,7 +24,7 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private subscriptions: Subscription[] = [];
 
-  private user: User;
+  private user: firebase.User;
 
   public isTurn: boolean;
 
@@ -42,7 +42,7 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
     public matDialog: MatDialog,
     public palletService: PalletService
   ) {
-    this.subscriptions.push(this.fireAuth.authState.subscribe((user: User) => {
+    this.subscriptions.push(this.fireAuth.authState.subscribe((user: firebase.User) => {
       this.user = user;
       this.updateIsTurn();
     }));

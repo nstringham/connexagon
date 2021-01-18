@@ -74,7 +74,7 @@ export class AccountComponent {
   }
 
   async toggleNotifications(event) {
-    console.log(event)
+    console.log(event);
     if (event.checked) {
       await this.notifications.enable();
     } else {

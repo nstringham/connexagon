@@ -80,7 +80,7 @@ export const handleGameQueues = functions.firestore.document('queues/{queueName}
             const players = keys.slice(0, playerCount);
             return makeGame(size, players).then(() => {
               players.forEach(player => delete data[player]);
-              transaction.set(doc.ref, data)
+              transaction.set(doc.ref, data);
             });
           }
         }
