@@ -61,6 +61,12 @@ export class AppComponent implements OnInit {
     location.onUrlChange(url => {
       this.isRoot = '/' === url;
     });
+
+    const scrollTester = window.document.createElement("div");
+    scrollTester.style.cssText = "position:fixed;overflow:scroll";
+    document.body.appendChild(scrollTester);
+    window.document.querySelector('html').classList.toggle('style-scrollbar', scrollTester.offsetWidth > 0);
+    scrollTester.remove();
   }
 
   ngOnInit(): void {
