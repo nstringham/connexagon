@@ -7,7 +7,6 @@
       <div *ngIf="!isRoot" class="icon-button-warper nav-icon">
         <button mat-icon-button [routerLink]="this.location.path().split('/').slice(0, -1).join('/')" aria-label="back"
           tabindex="1">
-          <div class="buttons"></div>
           <mat-icon>{{platform.IOS ? 'arrow_back_ios' : 'arrow_back'}}</mat-icon>
         </button>
       </div>
