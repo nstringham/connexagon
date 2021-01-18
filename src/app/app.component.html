@@ -1,6 +1,6 @@
 <div class="app-warper">
   <mat-toolbar id="toolbar" role="heading" color="primary" [class.extended]="scrolledTop && isRoot"
-    [style.justify-content]="(platform.IOS || platform.SAFARI) ? 'center' : 'left'">
+    [class.safari]="platform.SAFARI">
     <h1 matRipple [matRippleDisabled]="isRoot" matRippleColor="rgba(255, 255, 255, 0.12)" routerLink="/"
       [tabindex]="isRoot ? -1 : 0" [class.not-root]="!isRoot" (keyup.enter)="$event.target.click()">{{title}}</h1>
     <div class="buttons">

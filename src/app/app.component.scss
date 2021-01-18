@@ -22,6 +22,14 @@ mat-toolbar.mat-toolbar-single-row {
   padding-top: calc(env(safe-area-inset-top, 0) + 16px);
   height: fit-content;
   display: flex;
+  justify-content: left;
+
+  &.safari {
+    justify-content: center;
+    h1 {
+      transition: none;
+    }
+  }
 
   h1 {
     align-self: center;
