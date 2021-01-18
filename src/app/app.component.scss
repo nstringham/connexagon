@@ -26,6 +26,9 @@ mat-toolbar.mat-toolbar-single-row {
 
   &.safari {
     justify-content: center;
+    h1 {
+      transition: none;
+    }
   }
 
   h1 {
