@@ -15,7 +15,7 @@ import { AccountComponent } from './account/account.component';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
   title = 'Connexagon';
@@ -35,7 +35,6 @@ export class AppComponent implements OnInit {
     this.deferredInstallPrompt = event;
   }
 
-
   constructor(
     public authService: AuthService,
     public modalService: ModalService,
@@ -44,31 +43,42 @@ export class AppComponent implements OnInit {
     public location: Location,
     public shareService: ShareService,
     private matDialog: MatDialog,
-    private notifications: NotificationsService,
+    private notifications: NotificationsService
   ) {
-    this.twitterIcon$ = merge(of(window.matchMedia('(prefers-color-scheme: dark)')), fromEvent(window.matchMedia('(prefers-color-scheme: dark)'), 'change')).pipe(map(event => {
-      return (event as MediaQueryListEvent | MediaQueryList).matches ? 'assets/img/twitter-white.svg' : 'assets/img/twitter-blue.svg';
-    }));
+    this.twitterIcon$ = merge(
+      of(window.matchMedia('(prefers-color-scheme: dark)')),
+      fromEvent(window.matchMedia('(prefers-color-scheme: dark)'), 'change')
+    ).pipe(
+      map((event) => {
+        return (event as MediaQueryListEvent | MediaQueryList).matches
+          ? 'assets/img/twitter-white.svg'
+          : 'assets/img/twitter-blue.svg';
+      })
+    );
 
-    this.providers$ = this.fireAuth.authState.pipe(map(user => {
-      if (user != null) {
-        console.log(user.providerData.map(data => data.providerId))
-        return user.providerData.map(data => data.providerId);
-      } else {
-        return [];
-      }
-    }));
+    this.providers$ = this.fireAuth.authState.pipe(
+      map((user) => {
+        if (user != null) {
+          console.log(user.providerData.map((data) => data.providerId));
+          return user.providerData.map((data) => data.providerId);
+        } else {
+          return [];
+        }
+      })
+    );
 
-    location.onUrlChange(url => {
+    location.onUrlChange((url) => {
       this.isRoot = '/' === url;
     });
   }
 
   ngOnInit(): void {
-    this.fireAuth.authState.subscribe(user => {
+    this.fireAuth.authState.subscribe((user) => {
       console.log('logged in as: ', user);
       if (user == null) {
-        this.dialog = this.matDialog.open(LoginComponent, { disableClose: true });
+        this.dialog = this.matDialog.open(LoginComponent, {
+          disableClose: true,
+        });
       } else if (this.dialog) {
         this.dialog.close();
       }
@@ -77,7 +87,7 @@ export class AppComponent implements OnInit {
 
   install() {
     if (this.deferredInstallPrompt) {
-      this.deferredInstallPrompt.prompt().then(choiceResult => {
+      this.deferredInstallPrompt.prompt().then((choiceResult) => {
         console.log(choiceResult);
         this.deferredInstallPrompt = null;
       });
@@ -85,7 +95,10 @@ export class AppComponent implements OnInit {
   }
 
   showAccountSettings() {
-    return this.matDialog.open(AccountComponent, { autoFocus: false }).afterClosed().toPromise();
+    return this.matDialog
+      .open(AccountComponent, { autoFocus: false })
+      .afterClosed()
+      .toPromise();
   }
 
   onScroll(event: Event) {

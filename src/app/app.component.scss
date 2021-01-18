@@ -5,17 +5,12 @@
   flex-flow: column;
   height: 100vh;
 }
-.status-bar-fill {
-  background-color: #1976d2;
-  width: 100vw;
-  height: env(safe-area-inset-top, 0px);
-  z-index: 1000;
-}
 .container {
   margin-bottom: env(safe-area-inset-bottom, 0px);
   margin-left: env(safe-area-inset-left, 0px);
   margin-right: env(safe-area-inset-right, 0px);
   overflow: auto;
+  overscroll-behavior: contain;
   flex: 1;
 }
 mat-toolbar.mat-toolbar-single-row {
@@ -24,52 +19,67 @@ mat-toolbar.mat-toolbar-single-row {
   }
   z-index: 4;
   padding: 16px;
+  padding-top: calc(env(safe-area-inset-top, 0) + 16px);
   height: fit-content;
-  * {
-    transition-property: font-size, margin-right, width, filter;
-    transition-duration: 0.4s;
-    transition-timing-function: ease-in-out;
-  }
+  display: flex;
 
-  .account-photo {
-    width: 32px;
-    height: 32px;
-    border-radius: 100%;
-  }
-  .title {
+  h1 {
+    align-self: center;
     user-select: none;
     outline: none;
     padding: 0.2em 0.4em;
     margin: -0.1em -0.4em;
     border-radius: 4px;
     line-height: 1em;
+
+    transition-property: font-size, margin;
+    transition-duration: 0.4s;
+    transition-timing-function: ease-in-out;
+
+    &.not-root {
+      margin: -2px 48px;
+    }
     &[tabindex="0"]:focus:not(:active) {
       background-color: rgb(255, 255, 255, 0.12);
     }
   }
-  .icon-button-warper {
-    height: 24px;
-    width: 24px;
-    position: relative;
-    align-self: flex-start;
-    margin-left: 24px;
 
-    &.nav-icon {
-      margin-left: 0px;
-      margin-right: 32px;
-      &.hide {
-        width: 0;
-        margin-right: 0px;
-        filter: opacity(0%);
-      }
-    }
-
-    button {
-      margin: -8px;
-    }
+  &.extended h1 {
+    font-size: clamp(20px, min(calc(18vw - 22px), 15vh), 96px);
   }
 
-  &.extended .title {
-    font-size: clamp(20px, min(calc(18vw - 22px), 15vh), 96px);
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    right: 0;
+    left: 0;
+    top: 0;
+    padding: inherit;
+    z-index: -1;
+
+    span {
+      flex: 1 1 auto;
+    }
+    .account-photo {
+      width: 32px;
+      height: 32px;
+      border-radius: 100%;
+    }
+    .icon-button-warper {
+      height: 24px;
+      width: 24px;
+      position: relative;
+      align-self: flex-start;
+      margin-left: 24px;
+
+      &.nav-icon {
+        margin-left: 0px;
+      }
+
+      button {
+        margin: -8px;
+      }
+    }
   }
 }

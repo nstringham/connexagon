@@ -11,14 +11,17 @@ export class PalletService {
 
   constructor() {
     this.pallet$ = concat(
-      of(this.getPallet(matchMedia('(prefers-color-scheme: dark)').matches)),
+      of(this.getPallet()),
       fromEvent(matchMedia('(prefers-color-scheme: dark)'), 'change').pipe(map((event: MediaQueryListEvent) => {
         return this.getPallet(event.matches);
       }))
     );
   }
 
-  getPallet(isDark: boolean): Pallet {
+  getPallet(isDark?: boolean): Pallet {
+    if (isDark === undefined) {
+      isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+    }
     if (isDark) {
       return {
         red: '#F44336',
