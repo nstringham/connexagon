@@ -12,8 +12,9 @@
 </div>
 <ol *ngIf="playerList" class="player-list">
   <li *ngFor="let player of playerList; let i = index">
+    <span class="points">{{player.winner ? '🏆' : player.points}}</span>
     <span [style.color]="board.pallet[player.color]" [style.font-weight]="player.winner ? 'bold' : 'normal'">
-      {{player.winner ? '🏆' : ''}}{{player.nickname}}
+      {{player.nickname}}
     </span>
   </li>
 </ol>
