@@ -2,7 +2,7 @@
   <ng-container *ngFor="let gameList of gameLists$|async; let i = index">
     <mat-divider *ngIf="i > 0"></mat-divider>
     <div mat-subheader>{{gameList.display}}</div>
-    <mat-list-item matRipple *ngFor="let game of gameList.games" [routerLink]="'/game/'+game.id" role="listitem"
+    <a mat-list-item matRipple *ngFor="let game of gameList.games" [routerLink]="'/game/'+game.id" role="listitem"
       (keydown.enter)="$event.target.click()">
       <div mat-line>
         <span *ngFor="let player of game.players; let i = index">
@@ -13,7 +13,7 @@
         </span>
       </div>
       <div mat-line class="date"> {{game.modified | date:'medium'}} </div>
-    </mat-list-item>
+    </a>
   </ng-container>
 </mat-list>
 <button mat-fab color="primary" (click)="joinQueue()">

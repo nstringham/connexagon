@@ -24,8 +24,8 @@ mat-list {
   }
 }
 
-mat-list-item {
-  cursor: pointer;
+.mat-list-item {
+  text-decoration: none;
   &:hover {
     background-color: rgba(128, 128, 128, 0.08);
   }
