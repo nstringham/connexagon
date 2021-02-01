@@ -18,8 +18,10 @@ mat-toolbar.mat-toolbar-single-row {
     @include mat-elevation(4);
   }
   z-index: 4;
-  padding: 16px;
   padding-top: calc(env(safe-area-inset-top, 0) + 16px);
+  padding-bottom: 16px;
+  padding-left: calc(env(safe-area-inset-left, 0) + 16px);
+  padding-right: calc(env(safe-area-inset-right, 0) + 16px);
   height: fit-content;
   display: flex;
   justify-content: left;
