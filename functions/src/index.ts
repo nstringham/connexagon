@@ -173,7 +173,7 @@ function checkConnections(board: Cell[], cellId: number) {
     checked[id] = true;
     if (board[id].tower && (board[id].owner === -1 || board[id].owner === player)) {
       towers.push(id);
-      if (board[id].owner === -1 && !gridData.getNeighboringHexes(id, sideLength).find(neighborID => neighborID !== -1 && board[neighborID].owner !== player)) {
+      if (board[id].owner === -1 && undefined === gridData.getNeighboringHexes(id, sideLength).find(neighborID => neighborID !== -1 && board[neighborID].owner !== player)) {
         board[id].owner = player;
       }
     } else if (board[id].owner === player) {
