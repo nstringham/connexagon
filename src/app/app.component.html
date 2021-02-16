@@ -24,7 +24,7 @@
       <div class="icon-button-warper">
         <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Account">
           <img class="account-photo" *ngIf="(fireAuth.authState | async)?.photoURL as photoURL else account_circle"
-            src="{{photoURL}}">
+            [src]="photoURL">
           <ng-template #account_circle>
             <mat-icon>account_circle</mat-icon>
           </ng-template>
