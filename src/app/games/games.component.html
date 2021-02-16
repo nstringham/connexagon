@@ -5,12 +5,12 @@
     <a mat-list-item matRipple *ngFor="let game of gameList.games" [routerLink]="'/game/'+game.id" role="listitem"
       (keydown.enter)="$event.target.click()">
       <div mat-line>
-        <span *ngFor="let player of game.players; let i = index">
-          <span style="white-space: pre;" *ngIf="i > 0">{{i > 0 ? ', ' : ''}}</span>
+        <ng-template ngFor let-player [ngForOf]="game.players" let-i="index">
+          <span style="white-space: pre;" *ngIf="i !== 0">, </span>
           <span [style.color]="pallet[player.color]" [style.font-weight]="player.winner ? 'bold' : 'normal'">
             {{player.winner ? '🏆' : ''}}{{player.nick}}
           </span>
-        </span>
+        </ng-template>
       </div>
       <div mat-line class="date"> {{game.modified | date:'medium'}} </div>
     </a>
