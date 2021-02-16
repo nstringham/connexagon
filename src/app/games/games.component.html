@@ -10,7 +10,9 @@
           <span [style.color]="pallet[player.color]" [class.winner]="player.winner">{{player.nick}}</span>
         </ng-template>
       </div>
-      <div mat-line class="date"> {{game.modified | date:'medium'}} </div>
+      <div mat-line class="date">
+        {{game.modified.toLocaleString(undefined, {month: "short", day: "numeric", hour: 'numeric', minute:"numeric"})}}
+      </div>
     </a>
   </ng-container>
 </mat-list>
