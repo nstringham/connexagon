@@ -45,10 +45,15 @@ div.canvas-warper {
   display: table;
   li {
     display: table-row;
-    span.points {
+    span {
       display: table-cell;
-      text-align: center;
-      padding-right: 0.5em;
+      &.points {
+        text-align: center;
+        padding-right: 0.5em;
+      }
+      &.winner {
+        font-weight: bold;
+      }
     }
   }
 }

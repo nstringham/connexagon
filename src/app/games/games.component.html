@@ -7,9 +7,7 @@
       <div mat-line>
         <ng-template ngFor let-player [ngForOf]="game.players" let-i="index">
           <span style="white-space: pre;" *ngIf="i !== 0">, </span>
-          <span [style.color]="pallet[player.color]" [style.font-weight]="player.winner ? 'bold' : 'normal'">
-            {{player.winner ? '🏆' : ''}}{{player.nick}}
-          </span>
+          <span [style.color]="pallet[player.color]" [class.winner]="player.winner">{{player.nick}}</span>
         </ng-template>
       </div>
       <div mat-line class="date"> {{game.modified | date:'medium'}} </div>
