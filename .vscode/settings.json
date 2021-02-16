@@ -3,5 +3,9 @@
     "connexagon",
     "Millis",
     "uids"
+  ],
+  "conventionalCommits.scopes": [
+    "Angular",
+    "functions"
   ]
 }
