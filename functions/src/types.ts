@@ -69,6 +69,7 @@ export type Direction = 'UR' | 'UL' | 'NR' | 'NL' | 'DR' | 'DL';
 
 export class GridData {
   rowStartsMap: { [key: number]: number[] } = {};
+  // TODO comment this
   getRowStarts(sideLength: number): number[] {
     if (this.rowStartsMap[sideLength] === undefined) {
       let id = 0;
