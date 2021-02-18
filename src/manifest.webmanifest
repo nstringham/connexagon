@@ -3,6 +3,9 @@
   "short_name": "Connexagon",
   "theme_color": "#1976d2",
   "background_color": "#1976d2",
+  "categories": [
+    "games"
+  ],
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
