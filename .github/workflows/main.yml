@@ -104,7 +104,7 @@ jobs:
         working-directory: ./functions
 
       - name: test
-        run: npm run test
+        run: npm run test:ci
 
   deploy:
     runs-on: ubuntu-latest
