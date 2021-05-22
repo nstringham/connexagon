@@ -43,7 +43,7 @@
       <img class="mat-icon" aria-hidden="true" [src]="twitterIcon$ | async">
       <span>Sign in with Twitter</span>
     </button>
-    <button mat-menu-item *ngIf="(fireAuth.authState | async) != null" (click)="showAccountSettings()">
+    <button mat-menu-item *ngIf="(fireAuth.authState | async)" (click)="showAccountSettings()">
       <mat-icon>settings</mat-icon>
       <span>Account Settings</span>
     </button>

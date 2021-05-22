@@ -8,7 +8,7 @@ import firebase from 'firebase/app';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
 
   constructor(
     private dialogRef: MatDialogRef<LoginComponent>,
@@ -19,7 +19,4 @@ export class LoginComponent implements OnInit {
     this.authService.logIn(provider);
     this.dialogRef.close();
   }
-
-  ngOnInit(): void { }
-
 }
