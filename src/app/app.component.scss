@@ -8,7 +8,7 @@ $max-toolbar-height: min(150px, 22vw);
   padding-top: 56px;
   &.is-root {
     --toolbar-height: max(56px, calc(#{$max-toolbar-height} - var(--scroll-top)));
-    padding-top: $max-toolbar-height;
+    padding-top: calc(env(safe-area-inset-top, 0) + #{$max-toolbar-height});
   }
 
   margin-bottom: env(safe-area-inset-bottom, 0px);
@@ -27,11 +27,11 @@ mat-toolbar.mat-toolbar-single-row {
   left: 0;
   right: 0;
   z-index: 4;
+  height: calc(env(safe-area-inset-top, 0) + var(--toolbar-height));
   padding-top: calc(env(safe-area-inset-top, 0) + 16px);
   padding-bottom: 16px;
   padding-left: calc(env(safe-area-inset-left, 0) + 16px);
   padding-right: calc(env(safe-area-inset-right, 0) + 16px);
-  height: var(--toolbar-height);
   display: flex;
   justify-content: left;
 
