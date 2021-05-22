@@ -61,6 +61,9 @@ export class BoardComponent implements OnInit, OnDestroy, AfterViewInit {
       delete this.board.move;
       this.gameSubscription?.unsubscribe();
       this.gameSubscription = this.gameDoc.valueChanges().subscribe(async (game: Game) => {
+        if (JSON.stringify(this.board.game) === JSON.stringify(game)) {
+          return;
+        }
         console.log(game);
         this.board.game = game;
         this.updateIsTurn();
