@@ -41,6 +41,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install dependencies in functions
+        run: npm ci
+        working-directory: ./functions
+
       - name: build
         run: npm run build:prod
 
@@ -79,6 +83,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install dependencies in functions
+        run: npm ci
+        working-directory: ./functions
+
       - name: e2e
         run: npm run e2e
 
@@ -90,6 +98,10 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Install dependencies in functions
+        run: npm ci
+        working-directory: ./functions
 
       - name: test
         run: npm run test
