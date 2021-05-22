@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist\\Connexagon",
+    "public": "dist/Connexagon",
     "ignore": [
       "firebase.json",
       "**/.*",
