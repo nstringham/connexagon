@@ -1,3 +1,4 @@
+@use '~@angular/material' as mat;
 @import "~@angular/material/theming";
 
 $max-toolbar-height: min(150px, 22vw);
@@ -19,7 +20,7 @@ $max-toolbar-height: min(150px, 22vw);
 }
 mat-toolbar.mat-toolbar-single-row {
   @media not screen and (prefers-color-scheme: dark) {
-    @include mat-elevation(4);
+    @include mat.elevation(4);
   }
   position: fixed;
   top: 0;
