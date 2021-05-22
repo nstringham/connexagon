@@ -1,39 +1,45 @@
 @import "~@angular/material/theming";
 
-.app-warper {
-  display: flex;
-  flex-flow: column;
-  height: 100vh;
-}
+$max-toolbar-height: min(150px, 22vw);
+
 .container {
+  --toolbar-height: 56px;
+  padding-top: 56px;
+  &.is-root {
+    --toolbar-height: max(56px, calc(#{$max-toolbar-height} - var(--scroll-top)));
+    padding-top: $max-toolbar-height;
+  }
+
   margin-bottom: env(safe-area-inset-bottom, 0px);
   margin-left: env(safe-area-inset-left, 0px);
   margin-right: env(safe-area-inset-right, 0px);
-  overflow: auto;
-  overscroll-behavior: contain;
-  flex: 1;
+
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 mat-toolbar.mat-toolbar-single-row {
   @media not screen and (prefers-color-scheme: dark) {
     @include mat-elevation(4);
   }
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 4;
   padding-top: calc(env(safe-area-inset-top, 0) + 16px);
   padding-bottom: 16px;
   padding-left: calc(env(safe-area-inset-left, 0) + 16px);
   padding-right: calc(env(safe-area-inset-right, 0) + 16px);
-  height: fit-content;
+  height: var(--toolbar-height);
   display: flex;
   justify-content: left;
 
   &.safari {
     justify-content: center;
-    h1 {
-      transition: none;
-    }
   }
 
   h1 {
+    font-size: calc((var(--toolbar-height) - 32px) * #{20 / (56 - 32)});
     align-self: center;
     user-select: none;
     outline: none;
@@ -42,20 +48,12 @@ mat-toolbar.mat-toolbar-single-row {
     border-radius: 4px;
     line-height: 1em;
 
-    transition-property: font-size, margin;
-    transition-duration: 0.4s;
-    transition-timing-function: ease-in-out;
-
-    &.not-root {
+    *:not(.is-root) > & {
       margin: -2px 48px;
     }
     &[tabindex="0"]:focus:not(:active) {
       background-color: rgb(255, 255, 255, 0.12);
     }
-  }
-
-  &.extended h1 {
-    font-size: clamp(20px, min(calc(18vw - 22px), 15vh), 96px);
   }
 
   .buttons {

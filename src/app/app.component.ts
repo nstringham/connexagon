@@ -19,7 +19,7 @@ import { AccountComponent } from './account/account.component';
 })
 export class AppComponent implements OnInit {
   title = 'Connexagon';
-  scrolledTop = true;
+  scrollTop = 0;
   previousScrollPosition = 0;
   isRoot = false;
 
@@ -108,7 +108,8 @@ export class AppComponent implements OnInit {
       .toPromise();
   }
 
-  onScroll(event: Event) {
-    this.scrolledTop = (event.target as HTMLElement).scrollTop === 0;
+  @HostListener('window:scroll', ['$event'])
+  onScroll() {
+    this.scrollTop = document.documentElement.scrollTop;
   }
 }

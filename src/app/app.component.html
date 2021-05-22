@@ -1,6 +1,5 @@
-<div class="app-warper">
-  <mat-toolbar id="toolbar" role="heading" color="primary" [class.extended]="scrolledTop && isRoot"
-    [class.safari]="platform.SAFARI">
+<div class="container" [style.--scroll-top]="scrollTop+'px'" [class.is-root]="isRoot">
+  <mat-toolbar id="toolbar" role="heading" color="primary" [class.safari]="platform.SAFARI">
     <h1 matRipple [matRippleDisabled]="isRoot" matRippleColor="rgba(255, 255, 255, 0.12)" routerLink="/"
       [tabindex]="isRoot ? -1 : 0" [class.not-root]="!isRoot" (keyup.enter)="$event.target.click()">{{title}}</h1>
     <div class="buttons">
@@ -59,7 +58,6 @@
     </button>
   </mat-menu>
 
-  <div class="container" (scroll)="onScroll($event)">
-    <router-outlet></router-outlet>
-  </div>
+
+  <router-outlet></router-outlet>
 </div>
