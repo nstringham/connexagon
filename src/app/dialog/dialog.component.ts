@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig } from '@angular/material/dialog';
 import { FormGroup, FormControl, AbstractControl, Validators } from '@angular/forms';
-import emojiRegex from 'emoji-regex/es2015';
+import emojiRegex from 'emoji-regex/es2015/RGI_Emoji';
 
 @Component({
   selector: 'app-dialog',
