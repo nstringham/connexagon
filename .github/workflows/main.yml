@@ -133,6 +133,9 @@ jobs:
           name: functions-lib
           path: functions/lib/
 
+      - name: debug
+        run: ls dist
+
       - name: deploy to firebase
         uses: w9jds/firebase-action@master
         with:
