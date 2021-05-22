@@ -79,7 +79,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: lint
+      - name: e2e
         run: npm run e2e
 
   test-ng:
@@ -91,7 +91,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: lint
+      - name: test
         run: npm run test
 
   deploy:
