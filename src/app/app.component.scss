@@ -11,7 +11,7 @@ $max-toolbar-height: min(150px, 22vw);
     padding-top: calc(env(safe-area-inset-top, 0) + #{$max-toolbar-height});
   }
 
-  margin-bottom: env(safe-area-inset-bottom, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   margin-left: env(safe-area-inset-left, 0px);
   margin-right: env(safe-area-inset-right, 0px);
 
