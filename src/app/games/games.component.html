@@ -16,10 +16,13 @@
     </a>
   </ng-container>
 </mat-list>
-<button mat-fab color="primary" (click)="joinQueue()">
+<button mat-fab color="primary" [matMenuTriggerFor]="menu">
   <mat-icon *ngIf="!spinner.visible else spinnerTemplate" aria-hidden="true">add</mat-icon>
   <ng-template #spinnerTemplate>
     <mat-spinner [value]="spinner.value" [mode]="spinner.mode" diameter="24"></mat-spinner>
   </ng-template>
   <label>New Game</label>
 </button>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item *ngFor="let number of [2, 3, 4, 5, 6]" (click)="joinQueue(number)">{{number}} Players</button>
+</mat-menu>

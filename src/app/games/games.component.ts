@@ -78,23 +78,23 @@ export class GamesComponent {
     }));
   }
 
-  public joinQueue() {
+  public joinQueue(players: number) {
     this.spinner.visible = true;
     this.spinner.mode = 'indeterminate';
     const data = {};
     data[this.authService.currentUID] = true;
-    const players = 2;
     const queueDoc = this.firestore.doc<{ [key: string]: boolean }>('queues/' + players + 'p' + (7 + players) + 'x' + (7 + players));
     queueDoc.update(data).then(() => this.listenToQueue(queueDoc), () => this.listenToQueue(queueDoc));
   }
 
   private listenToQueue(queueDoc: AngularFirestoreDocument<{ [key: string]: boolean; }>) {
+    const players = parseInt(queueDoc.ref.id.split('p')[0]);
     const subscription = queueDoc.valueChanges().subscribe(queue => {
       if (this.spinner) {
         const keys = Object.keys(queue);
         if (keys?.includes(this.authService.currentUID)) {
           this.spinner.mode = 'determinate';
-          this.spinner.value = 100 * keys.length / 2;
+          this.spinner.value = (100 * keys.length) / players;
         } else {
           this.spinner.mode = 'indeterminate';
           this.spinner.visible = false;
