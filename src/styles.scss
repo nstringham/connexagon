@@ -103,8 +103,8 @@ button.mat-fab {
   border-radius: 28px;
   bottom: 16px;
   right: 16px;
-  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-  right: calc(16px + env(safe-area-inset-right, 0px));
+  bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  right: max(16px, env(safe-area-inset-right, 0px));
   .mat-spinner {
     display: inline-block;
     circle {
