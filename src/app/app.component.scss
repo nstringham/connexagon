@@ -5,7 +5,7 @@ $max-toolbar-height: min(150px, 22vw);
 
 .container {
   --toolbar-height: 56px;
-  padding-top: 56px;
+  padding-top: calc(env(safe-area-inset-top, 0) + 56px);
   &.is-root {
     --toolbar-height: max(56px, calc(#{$max-toolbar-height} - var(--scroll-top)));
     padding-top: calc(env(safe-area-inset-top, 0) + #{$max-toolbar-height});
