@@ -77,6 +77,8 @@ export class AppComponent implements OnInit {
       .querySelector('html')
       .classList.toggle('style-scrollbar', scrollTester.offsetWidth > 0);
     scrollTester.remove();
+
+    document.addEventListener('scroll', () => this.onScroll(), { passive: true });
   }
 
   ngOnInit(): void {
@@ -108,7 +110,6 @@ export class AppComponent implements OnInit {
       .toPromise();
   }
 
-  @HostListener('window:scroll', ['$event'])
   onScroll() {
     this.scrollTop = document.documentElement.scrollTop;
   }
