@@ -1,3 +1,4 @@
+@use "sass:math";
 @use '~@angular/material' as mat;
 @import "~@angular/material/theming";
 
@@ -40,7 +41,7 @@ mat-toolbar.mat-toolbar-single-row {
   }
 
   h1 {
-    font-size: calc((min(var(--toolbar-height), #{$max-toolbar-height}) - 32px) * #{20 / (56 - 32)});
+    font-size: calc((min(var(--toolbar-height), #{$max-toolbar-height}) - 32px) * #{math.div(20, (56 - 32))});
     align-self: center;
     user-select: none;
     outline: none;
