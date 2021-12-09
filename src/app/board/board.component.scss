@@ -1,6 +1,6 @@
 @use "sass:math";
-@use '~@angular/material' as mat;
-@import "~@angular/material/theming";
+@use "@angular/material" as mat;
+@import "@angular/material/theming";
 $HEX_RATIO: math.div(math.sqrt(3), 2);
 
 div.canvas-warper {

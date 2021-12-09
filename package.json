@@ -21,7 +21,7 @@
     "@angular/core": "^13.0.3",
     "@angular/fire": "^6.1.5",
     "@angular/forms": "^13.0.3",
-    "@angular/material": "^12.2.13",
+    "@angular/material": "^13.1.0",
     "@angular/platform-browser": "^13.0.3",
     "@angular/platform-browser-dynamic": "^13.0.3",
     "@angular/router": "^13.0.3",
