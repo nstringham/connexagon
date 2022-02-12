@@ -12,7 +12,7 @@
       <span></span>
       <div *ngIf="shareService.shareable | async" class="icon-button-warper">
         <button mat-icon-button (click)="shareService.share()" aria-label="Share">
-          <mat-icon>share</mat-icon>
+          <mat-icon>{{platform.IOS ? 'ios_share' : 'share'}}</mat-icon>
         </button>
       </div>
       <div *ngIf="deferredInstallPrompt" class="icon-button-warper">
