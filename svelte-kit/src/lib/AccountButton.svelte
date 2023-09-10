@@ -40,7 +40,7 @@
 		<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
 		<hexagon-filled-button on:click={signInTwitter}>
 			<div slot="icon" class="brand-logo" style="--mask: url({twitterIcon})" />
-			<span>Continue with X</span>
+			<span>Continue with Twitter</span>
 		</hexagon-filled-button>
 		<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
 		<hexagon-filled-button on:click={signInAnonymous}>
