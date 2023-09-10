@@ -12,7 +12,7 @@
 </script>
 
 <header>
-	<a href="/" id="home-link">Connexagon <md-focus-ring for="home-link" aria-hidden="true" /></a>
+	<a href="/" id="home-link">Connexagon<md-focus-ring for="home-link" aria-hidden="true" /></a>
 	<AccountButton />
 </header>
 
