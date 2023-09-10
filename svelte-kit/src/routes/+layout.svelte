@@ -46,7 +46,6 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: 16px;
-		z-index: 12;
 	}
 
 	#home-link {
