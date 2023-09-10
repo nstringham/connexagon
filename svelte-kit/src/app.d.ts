@@ -7,6 +7,10 @@ declare global {
 		// interface PageData {}
 		// interface Platform {}
 	}
+
+	namespace CSS {
+		declare const paintWorklet: { addModule(url: string): void };
+	}
 }
 
 export {};

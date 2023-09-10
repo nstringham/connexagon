@@ -2,6 +2,13 @@
 	import '$lib/variables.css';
 	import '@material/web/focus/md-focus-ring';
 	import AccountButton from '$lib/AccountButton.svelte';
+	import { onMount } from 'svelte';
+
+	import hexagonPaintWorkletUrl from '$lib/hexagon-paint-worklet?url';
+
+	onMount(() => {
+		CSS.paintWorklet.addModule(hexagonPaintWorkletUrl);
+	});
 </script>
 
 <header>

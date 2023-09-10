@@ -1,5 +1,5 @@
 <script lang="ts">
-	import '@material/web/button/filled-button';
+	import '$lib/hexagon-button';
 	import '@material/web/dialog/dialog';
 
 	import googleIcon from './google.svg';
@@ -15,23 +15,23 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
-<md-filled-button on:click={() => (dialogOpen = true)}>Sign in</md-filled-button>
+<hexagon-filled-button on:click={() => (dialogOpen = true)}> Sign in </hexagon-filled-button>
 
 <md-dialog open={dialogOpen} on:close={() => (dialogOpen = false)}>
 	<div slot="headline">Sign in to Connexagon</div>
 	<div slot="content" class="button-stack">
-		<md-filled-button>
+		<hexagon-filled-button>
 			<div slot="icon" class="brand-logo" style="--mask: url({googleIcon})" />
 			<span>Continue with Google</span>
-		</md-filled-button>
-		<md-filled-button
-			><div slot="icon" class="brand-logo" style="--mask: url({twitterIcon})" />
+		</hexagon-filled-button>
+		<hexagon-filled-button>
+			<div slot="icon" class="brand-logo" style="--mask: url({twitterIcon})" />
 			<span>Continue with X</span>
-		</md-filled-button>
-		<md-filled-button>
+		</hexagon-filled-button>
+		<hexagon-filled-button>
 			<div slot="icon" class="brand-logo" style="--mask: url({accountIcon})" />
 			<span>Continue as guest</span>
-		</md-filled-button>
+		</hexagon-filled-button>
 		<div class="legal">
 			By continuing you are agreeing to the<br />
 			<a target="blank" rel="noreferrer" href={tosUrl}>terms of service</a>
@@ -42,13 +42,9 @@
 </md-dialog>
 
 <style>
-	md-filled-button:not(:defined) {
+	hexagon-filled-button:not(:defined) {
+		visibility: hidden;
 		height: 40px;
-		padding-inline: 24px;
-		font-weight: 500;
-		font-size: 0.875rem;
-		background-color: var(--md-sys-color-primary);
-		color: transparent;
 	}
 
 	md-dialog:not(:defined) {
@@ -76,10 +72,6 @@
 
 	.legal {
 		font-size: var(--label-s-font-size);
-	}
-
-	md-filled-button {
-		--md-filled-button-container-shape: 0px;
 	}
 
 	md-dialog {
