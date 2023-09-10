@@ -6,7 +6,14 @@
 	import twitterIcon from './twitter.svg';
 	import accountIcon from './account-box.svg';
 
+	import { signInAnonymous, signInGoogle, signInTwitter, signOut } from './firebase/auth';
+	import { auth$ } from './firebase';
+
 	let dialogOpen = false;
+
+	$: if ($auth$ != null) {
+		dialogOpen = false;
+	}
 
 	const tosUrl =
 		'https://docs.google.com/document/d/e/2PACX-1vTSm5LEWQU3DrYICskZIDJMwlin34xfYl8BGSw5y6FPRlwx7llt2t8yPRsJUQ1RQ9a3C2dTBO9f5Hof/pub';
@@ -14,21 +21,29 @@
 		'https://docs.google.com/document/d/e/2PACX-1vRlv-yOzN6jEaN03HyFDRURWSIb89O3a-OLYxNF9JBSq-rnDhDUxI5B-jTO_K7UagNTuyVf2a8Bi69z/pub';
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
-<hexagon-filled-button on:click={() => (dialogOpen = true)}> Sign in </hexagon-filled-button>
+{#if $auth$ == null}
+	<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
+	<hexagon-filled-button on:click={() => (dialogOpen = true)}>Sign in</hexagon-filled-button>
+{:else}
+	<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
+	<hexagon-filled-button on:click={signOut}>Sign Out</hexagon-filled-button>
+{/if}
 
 <md-dialog open={dialogOpen} on:close={() => (dialogOpen = false)}>
 	<div slot="headline">Sign in to Connexagon</div>
 	<div slot="content" class="button-stack">
-		<hexagon-filled-button>
+		<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
+		<hexagon-filled-button on:click={signInGoogle}>
 			<div slot="icon" class="brand-logo" style="--mask: url({googleIcon})" />
 			<span>Continue with Google</span>
 		</hexagon-filled-button>
-		<hexagon-filled-button>
+		<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
+		<hexagon-filled-button on:click={signInTwitter}>
 			<div slot="icon" class="brand-logo" style="--mask: url({twitterIcon})" />
 			<span>Continue with X</span>
 		</hexagon-filled-button>
-		<hexagon-filled-button>
+		<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
+		<hexagon-filled-button on:click={signInAnonymous}>
 			<div slot="icon" class="brand-logo" style="--mask: url({accountIcon})" />
 			<span>Continue as guest</span>
 		</hexagon-filled-button>
