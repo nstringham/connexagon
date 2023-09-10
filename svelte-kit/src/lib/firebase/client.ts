@@ -1,10 +1,20 @@
 import { browser } from '$app/environment';
+import {
+	PUBLIC_FIREBASE_API_KEY,
+	PUBLIC_FIREBASE_AUTH_DOMAIN,
+	PUBLIC_FIREBASE_DATABASE_URL,
+	PUBLIC_FIREBASE_PROJECT_ID,
+	PUBLIC_FIREBASE_STORAGE_BUCKET,
+	PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+	PUBLIC_FIREBASE_APP_ID
+} from '$env/static/public';
 import { initializeApp } from 'firebase/app';
 import {
 	browserPopupRedirectResolver,
 	browserSessionPersistence,
 	debugErrorMap,
-	initializeAuth
+	initializeAuth,
+	prodErrorMap
 } from 'firebase/auth';
 export {
 	GoogleAuthProvider,
@@ -18,20 +28,18 @@ if (!browser) {
 	throw new Error('client browser only module');
 }
 
-const firebaseConfig = {
-	apiKey: 'AIzaSyBgo8L34F8JgmTIs-9cFvV3UA5PdvY1F9w',
-	authDomain: 'connexagon.firebaseapp.com',
-	databaseURL: 'https://connexagon.firebaseio.com',
-	projectId: 'connexagon',
-	storageBucket: 'connexagon.appspot.com',
-	messagingSenderId: '1096351441958',
-	appId: '1:1096351441958:web:0c08600c5b6b65f15bb2e7'
-};
-
-const app = initializeApp(firebaseConfig);
+const app = initializeApp({
+	apiKey: PUBLIC_FIREBASE_API_KEY,
+	authDomain: PUBLIC_FIREBASE_AUTH_DOMAIN,
+	databaseURL: PUBLIC_FIREBASE_DATABASE_URL,
+	projectId: PUBLIC_FIREBASE_PROJECT_ID,
+	storageBucket: PUBLIC_FIREBASE_STORAGE_BUCKET,
+	messagingSenderId: PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+	appId: PUBLIC_FIREBASE_APP_ID
+});
 
 export const auth = initializeAuth(app, {
-	errorMap: debugErrorMap,
+	errorMap: import.meta.env.DEV ? debugErrorMap : prodErrorMap,
 	persistence: browserSessionPersistence,
 	popupRedirectResolver: browserPopupRedirectResolver
 });
