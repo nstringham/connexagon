@@ -1,14 +1,14 @@
 <script lang="ts">
 	import '$lib/variables.css';
 	import '@material/web/focus/md-focus-ring';
+	import { browser } from '$app/environment';
 	import AccountButton from '$lib/AccountButton.svelte';
-	import { onMount } from 'svelte';
 
 	import hexagonPaintWorkletUrl from '$lib/hexagon-paint-worklet?url';
 
-	onMount(() => {
+	if (browser) {
 		CSS.paintWorklet.addModule(hexagonPaintWorkletUrl);
-	});
+	}
 </script>
 
 <header>
