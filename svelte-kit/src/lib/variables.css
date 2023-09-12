@@ -2,16 +2,18 @@
 	--md-ref-typeface-plain: system-ui, sans-serif;
 	--md-ref-typeface-brand: system-ui, sans-serif;
 
-	--display-l-font-size: 88px;
+	--display-xl-font-size: 88px;
+	--display-l-font-size: 57px;
 	--title-l-font-size: 22px;
 	--body-s-font-size: 12px;
 
 	--spacing-xl: 28px;
 }
 
-@media (width< 600px) {
+@media (width < 600px) {
 	:root {
-		--display-l-font-size: 55px;
+		--display-xl-font-size: 55px;
+		--display-l-font-size: 36px;
 
 		--spacing-xl: 16px;
 	}

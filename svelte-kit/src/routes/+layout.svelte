@@ -2,7 +2,7 @@
 	import '$lib/variables.css';
 	import '@material/web/focus/md-focus-ring';
 	import { browser } from '$app/environment';
-	import AccountButton from '$lib/AccountButton.svelte';
+	import AccountButton from '$lib/sign-in/AccountButton.svelte';
 
 	import hexagonPaintWorkletUrl from '$lib/hexagon-paint-worklet?url';
 
@@ -37,7 +37,7 @@
 		height: 100%;
 		margin: 0;
 		display: grid;
-		grid-template-rows: auto 1fr;
+		grid-template-rows: auto minmax(0, 1fr);
 	}
 
 	header {

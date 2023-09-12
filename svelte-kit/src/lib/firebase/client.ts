@@ -16,6 +16,8 @@ import {
 	initializeAuth,
 	prodErrorMap
 } from 'firebase/auth';
+import { initializeFirestore } from 'firebase/firestore';
+
 export {
 	GoogleAuthProvider,
 	TwitterAuthProvider,
@@ -23,9 +25,10 @@ export {
 	signInAnonymously,
 	signOut
 } from 'firebase/auth';
+export { onSnapshot, doc } from 'firebase/firestore';
 
 if (!browser) {
-	throw new Error('client browser only module');
+	throw new Error('client is a browser only module');
 }
 
 const app = initializeApp({
@@ -43,3 +46,5 @@ export const auth = initializeAuth(app, {
 	persistence: browserSessionPersistence,
 	popupRedirectResolver: browserPopupRedirectResolver
 });
+
+export const db = initializeFirestore(app, {});

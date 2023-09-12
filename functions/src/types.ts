@@ -1,15 +1,15 @@
-import * as admin from 'firebase-admin';
+import type * as admin from 'firebase-admin';
 
-export const colors: Color[] = [
+export const colors = [
   'red',
   'blue',
   'green',
   'orange',
   'purple',
-  'yellow'
-];
+  'yellow',
+] as const;
 
-export type Color = 'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'purple';
+export type Color = (typeof colors)[number];
 
 export interface Game {
   board: Cell[];

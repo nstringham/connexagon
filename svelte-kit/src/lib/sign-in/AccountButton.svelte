@@ -6,8 +6,8 @@
 	import twitterIcon from './twitter.svg';
 	import accountIcon from './account-box.svg';
 
-	import { signInAnonymous, signInGoogle, signInTwitter, signOut } from './firebase/auth';
-	import { auth$ } from './firebase';
+	import { signInAnonymous, signInGoogle, signInTwitter, signOut } from '../firebase/auth';
+	import { auth$ } from '../firebase';
 
 	let dialogOpen = false;
 
