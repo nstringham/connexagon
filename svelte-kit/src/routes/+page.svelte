@@ -1,14 +1,18 @@
 <script lang="ts">
-	import { auth$ } from '$lib/firebase';
+	import { games$ } from '$lib/firebase/firestore';
 	import '$lib/hexagon-button';
 </script>
 
 <div class="container">
 	<h1>Connexagon</h1>
 
-	{#if $auth$ != null}
-		<p>Welcome back {$auth$.displayName}</p>
-	{/if}
+	{#each $games$ as game}
+		<a href="/games/{game.id}">
+			{#each game.data().players as player}
+				<span class="player">{player.nickname}</span>
+			{/each}
+		</a><br />
+	{/each}
 </div>
 
 <style>
@@ -19,5 +23,9 @@
 			text-align: center;
 			font-size: var(--display-l-font-size);
 		}
+	}
+
+	.player:has(+ .player)::after {
+		content: ', ';
 	}
 </style>

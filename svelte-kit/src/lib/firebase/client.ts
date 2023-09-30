@@ -16,7 +16,8 @@ import {
 	initializeAuth,
 	prodErrorMap
 } from 'firebase/auth';
-import { initializeFirestore } from 'firebase/firestore';
+import { CollectionReference, collection, initializeFirestore } from 'firebase/firestore';
+import type { Game } from './firestore';
 
 export {
 	GoogleAuthProvider,
@@ -25,7 +26,7 @@ export {
 	signInAnonymously,
 	signOut
 } from 'firebase/auth';
-export { onSnapshot, doc } from 'firebase/firestore';
+export { doc, query, where, orderBy, limit, onSnapshot } from 'firebase/firestore';
 
 if (!browser) {
 	throw new Error('client is a browser only module');
@@ -47,4 +48,6 @@ export const auth = initializeAuth(app, {
 	popupRedirectResolver: browserPopupRedirectResolver
 });
 
-export const db = initializeFirestore(app, {});
+const db = initializeFirestore(app, {});
+
+export const gamesCollection = collection(db, 'games') as CollectionReference<Game>;
