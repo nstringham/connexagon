@@ -2,11 +2,12 @@ import type * as admin from 'firebase-admin';
 
 export const colors = [
   'red',
-  'blue',
-  'green',
   'orange',
-  'purple',
   'yellow',
+  'green',
+  'blue',
+  'purple',
+  'pink',
 ] as const;
 
 export type Color = (typeof colors)[number];

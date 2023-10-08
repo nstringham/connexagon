@@ -38,3 +38,11 @@ export function points(...points: [number, number][]): Float32Array {
 	}
 	return array;
 }
+
+export function color(hex: string | CSSStyleValue | undefined): Float32Array {
+	const match = /#(\w{2})(\w{2})(\w{2})/.exec(String(hex));
+	if (match == null) {
+		throw new Error(`invalid color ${hex}`);
+	}
+	return new Float32Array(match.slice(1).map((channel) => parseInt(channel, 16) / 256));
+}

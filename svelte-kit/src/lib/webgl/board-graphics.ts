@@ -1,7 +1,7 @@
 import vertexShaderSource from './board.vert';
 import fragmentShaderSource from './board.frag';
-import { createWebGLProgram, points } from './util';
-import type { Color, Game } from '../../../../functions/src/types';
+import { color, createWebGLProgram, points } from './util';
+import type { Game } from '../../../../functions/src/types';
 
 export class BoardGraphics {
 	private readonly gl: WebGL2RenderingContext;
@@ -19,12 +19,18 @@ export class BoardGraphics {
 		});
 	});
 
+	private readonly prefersLightMode = window.matchMedia('(prefers-color-scheme: light)');
+	private readonly onColorChange = () => {
+		this.updateColors();
+		requestAnimationFrame(() => this.render());
+	};
+
 	private readonly vertexBuffer: WebGLBuffer;
 	private hexagons!: number;
 
 	private readonly colorBuffer: WebGLBuffer;
 
-	constructor(private readonly canvas: HTMLCanvasElement, game: Game) {
+	constructor(private readonly canvas: HTMLCanvasElement) {
 		const webGlContext = this.canvas.getContext('webgl2');
 
 		if (webGlContext != null) {
@@ -54,31 +60,43 @@ export class BoardGraphics {
 		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
 
 		this.resizeObserver.observe(this.canvas);
+		this.prefersLightMode.addEventListener('change', this.onColorChange);
 	}
 
 	public destroy() {
 		this.resizeObserver.unobserve(this.canvas);
+		this.prefersLightMode.removeEventListener('change', this.onColorChange);
 	}
 
+	#game!: Game;
 	set game(game: Game) {
-		if (game.board.length != this.hexagons) {
-			this.updateSize(game);
+		this.#game = game;
+
+		if (game.board.length + game.board.filter((cell) => cell.tower).length != this.hexagons) {
+			this.updateSize();
 		}
 
-		const colors = getColors(game);
+		this.updateColors();
 
-		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
-		this.gl.bufferData(this.gl.ARRAY_BUFFER, colors, this.gl.STATIC_DRAW);
-		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
+		requestAnimationFrame(() => this.render());
 	}
 
-	private updateSize(game: Game) {
-		const vertexes = getVertexes(7 + game.players.length);
+	private updateSize() {
+		const towers = this.#game.board.flatMap((cell, i) => (cell.tower ? i : []));
+		const vertexes = getVertexes(7 + this.#game.players.length, towers);
 
 		this.hexagons = vertexes.length;
 
 		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
 		this.gl.bufferData(this.gl.ARRAY_BUFFER, vertexes, this.gl.STATIC_DRAW);
+		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
+	}
+
+	updateColors() {
+		const colors = getColors(this.#game);
+
+		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
+		this.gl.bufferData(this.gl.ARRAY_BUFFER, colors, this.gl.STATIC_DRAW);
 		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
 	}
 
@@ -115,7 +133,7 @@ function getLayout(size: number): Float32Array {
 	const rowOffset = (rows - 1) / 2;
 
 	const horizontalSpacing = (1 / rows) * 2;
-	const verticalSpacing = (0.75 / halfSqrt3 / rows) * 2;
+	const verticalSpacing = (-0.75 / halfSqrt3 / rows) * 2;
 
 	for (let row = 0; row < rows; row++) {
 		const columns = rows - Math.abs(size - (row + 1));
@@ -134,42 +152,53 @@ function getLayout(size: number): Float32Array {
 	return layout;
 }
 
-function getVertexes(size: number): Float32Array {
+function getVertexes(size: number, towers: number[]): Float32Array {
 	const layout = getLayout(size);
 
 	const scale = 1 / (size * 2 - 1);
 
-	const vertexes = new Float32Array(8 * layout.length);
+	const vertexes = new Float32Array(8 * layout.length + 16 * towers.length);
+	let top = 0;
 
-	for (let i = 0; i < vertexes.length; i++) {
-		vertexes[i] = hexagon[i % 16] * scale + layout[(i >> 4) * 2 + (i % 2)];
+	function drawHexagon(location: number, scale: number) {
+		for (let i = 0; i < 16; i++) {
+			vertexes[top++] = hexagon[i] * scale + layout[location * 2 + (i % 2)];
+		}
+	}
+
+	for (let i = 0; i < layout.length / 2; i++) {
+		drawHexagon(i, scale);
+	}
+
+	for (const tower of towers) {
+		drawHexagon(tower, scale * 0.5);
 	}
 
 	return vertexes;
 }
 
-const colorNames: { readonly [color in Color]: Float32Array } = {
-	red: new Float32Array([1, 0, 0]),
-	orange: new Float32Array([1, 0.5, 0]),
-	yellow: new Float32Array([1, 1, 0]),
-	green: new Float32Array([0, 1, 0]),
-	blue: new Float32Array([0, 0, 1]),
-	purple: new Float32Array([0.5, 0, 1])
-};
-
 function getColors({ board, players }: Game): Float32Array {
-	const playerColors = players.map(({ color }) => colorNames[color]);
-	const grey = new Float32Array([0.1, 0.1, 0.1]);
+	const styleMap = document.documentElement.computedStyleMap();
 
-	const colors = new Float32Array(3 * 8 * board.length);
+	const playerColors = players.map((player) => color(styleMap.get(`--${player.color}-container`)));
+	const emptyColor = color(styleMap.get('--md-sys-color-surface-container'));
+	const towerColor = color(styleMap.get('--md-sys-color-on-surface'));
+
+	const towers = board.filter((cell) => cell.tower);
+
+	const colors = new Float32Array(3 * 8 * (board.length + towers.length));
 
 	for (const [i, cell] of board.entries()) {
 		for (let j = 0; j < 8; j++) {
-			colors.set(playerColors[cell.owner] ?? grey, (i * 8 + j) * 3);
+			colors.set(cell.tower ? towerColor : playerColors[cell.owner] ?? emptyColor, (i * 8 + j) * 3);
 		}
 	}
 
-	console.log(colors);
+	for (const [i, cell] of towers.entries()) {
+		for (let j = 0; j < 8; j++) {
+			colors.set(playerColors[cell.owner] ?? towerColor, ((board.length + i) * 8 + j) * 3);
+		}
+	}
 
 	return colors;
 }

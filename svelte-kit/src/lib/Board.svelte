@@ -14,7 +14,7 @@
 	}
 
 	onMount(() => {
-		boardGraphics = new BoardGraphics(canvas, game);
+		boardGraphics = new BoardGraphics(canvas);
 	});
 
 	onDestroy(() => {
