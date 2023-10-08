@@ -8,6 +8,7 @@
 	$: if (typeof $game$ == 'object' && $auth$ != null) {
 		const player = $game$.players[$game$.uids.indexOf($auth$.uid)];
 		document.documentElement.setAttribute('data-color', player.color);
+		sessionStorage.setItem('color', player.color);
 	}
 </script>
 
