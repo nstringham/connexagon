@@ -28,12 +28,18 @@
 
 <style>
 	.wrapper {
+		padding: 4vmin;
 		display: grid;
 		place-content: center;
 		container: game / size;
+		contain: strict;
+
+		@media (width > 1000px) {
+			padding: 6vmin;
+		}
 	}
 	canvas {
-		width: 100cqmin;
-		height: 100cqmin;
+		width: min(100cqw, 115.47cqh);
+		height: min(100cqw, 115.47cqh);
 	}
 </style>
