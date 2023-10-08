@@ -26,7 +26,7 @@ export const games$ = combineLatest([auth$, client$]).pipe(
 	startWith([])
 );
 
-export async function getGameSnapshots(gameId: string): Promise<Observable<Game | undefined>> {
+export async function getGameSnapshots(gameId: string): Promise<Observable<Game | '404'>> {
 	if (browser) {
 		const { gamesCollection, doc, onSnapshot } = await import('./client');
 
@@ -34,7 +34,7 @@ export async function getGameSnapshots(gameId: string): Promise<Observable<Game 
 
 		return new Observable<DocumentSnapshot<Game>>((subscriber) =>
 			onSnapshot(gameRef, subscriber)
-		).pipe(map((snapshot) => snapshot.data()));
+		).pipe(map((snapshot) => snapshot.data() ?? '404'));
 	} else {
 		return NEVER; //TODO
 	}
