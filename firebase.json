@@ -1,17 +1,8 @@
 {
   "hosting": {
-    "public": "dist/Connexagon",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
+    "source": "svelte-kit",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": []
   },
   "firestore": {
     "rules": "firestore.rules",
