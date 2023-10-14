@@ -104,12 +104,14 @@ export class BoardGraphics {
 	}
 
 	private game!: Game;
-	setGame(game: Game) {
+	private user!: number;
+	setGame(game: Game, user: number) {
 		if (this.game?.board.length != game.board.length) {
 			this.pickBufferColorsNeedUpdating = true;
 		}
 
 		this.game = game;
+		this.user = user;
 
 		if (
 			(game.board.length + game.board.filter((cell) => cell.tower).length) * 16 + 4 * 32 !=
@@ -151,7 +153,7 @@ export class BoardGraphics {
 	}
 
 	private updateColors() {
-		const colors = getColors(this.game);
+		const colors = getColors(this.game, this.user);
 
 		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
 		this.gl.bufferData(this.gl.ARRAY_BUFFER, colors, this.gl.DYNAMIC_DRAW);
@@ -339,7 +341,7 @@ function getSelectionVertexes(size: number, selected: number[]) {
 	return vertexes;
 }
 
-function getColors({ board, players }: Game): Float32Array {
+function getColors({ board, players }: Game, user: number): Float32Array {
 	const styleMap = document.documentElement.computedStyleMap();
 
 	const playerColors = players.map((player) => color(styleMap.get(`--${player.color}-container`)));
@@ -363,7 +365,7 @@ function getColors({ board, players }: Game): Float32Array {
 	}
 
 	for (let i = 0; i < 16 * 4; i++) {
-		colors.set(playerColors[0], ((board.length + towers.length) * 8 + i) * 3);
+		colors.set(playerColors[user], ((board.length + towers.length) * 8 + i) * 3);
 	}
 
 	return colors;

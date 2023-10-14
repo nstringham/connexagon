@@ -2,8 +2,11 @@
 	import { BoardGraphics } from './webgl/board-graphics';
 	import type { Game } from './firebase/firestore';
 	import { onDestroy, onMount } from 'svelte';
+	import { auth$ } from './firebase';
 
 	export let game: Game;
+
+	$: user = $auth$ && game.uids.indexOf($auth$.uid);
 
 	let selected: number[] = [];
 
@@ -11,7 +14,7 @@
 
 	let boardGraphics: BoardGraphics;
 
-	$: boardGraphics?.setGame(game);
+	$: boardGraphics?.setGame(game, user ?? 0);
 
 	$: boardGraphics?.setSelected(selected);
 
