@@ -1,4 +1,8 @@
 {
+  "projects": {
+    "production": "connexagon",
+    "staging": "connexagon-staging"
+  },
   "targets": {
     "connexagon": {
       "hosting": {
@@ -8,7 +12,5 @@
       }
     }
   },
-  "projects": {
-    "default": "connexagon"
-  }
+  "etags": {}
 }
