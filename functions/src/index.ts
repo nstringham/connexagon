@@ -230,7 +230,7 @@ async function makeGame(size: number, uids: string[]) {
     }
   }
   board.forEach(cell => {
-    delete cell.distance;
+    delete (cell as Cell & { distance?: number }).distance;
   });
   const players = await Promise.all(shuffledUIDs.map(async uid => (await firestore.doc('users/' + uid).get()).data() as UserData | undefined || { nickname: '[No Name]' }));
   players.forEach(player => {
@@ -288,13 +288,14 @@ async function notify(gameID: string, message: string, uids: string[]) {
 }
 
 // Fisher–Yates Shuffle from https://bost.ocks.org/mike/shuffle/
-function shuffle<T>(array: T[]): T[] {
-  let m = array.length, t, i;
+function shuffle<T>(array: readonly T[]): T[] {
+  const copy = [...array];
+  let m = copy.length, t, i;
   while (m) {
     i = Math.floor(Math.random() * m--);
-    t = array[m];
-    array[m] = array[i];
-    array[i] = t;
+    t = copy[m];
+    copy[m] = copy[i];
+    copy[i] = t;
   }
-  return array;
+  return copy;
 }
