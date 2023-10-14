@@ -16,6 +16,8 @@ export class BoardGraphics {
 			this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
 
 			this.render();
+
+			this.pickBufferResolutionNeedsUpdating = true;
 		});
 	});
 
@@ -28,7 +30,14 @@ export class BoardGraphics {
 	private readonly vertexBuffer: WebGLBuffer;
 	private hexagons!: number;
 
+	private readonly colorAttribute: number;
 	private readonly colorBuffer: WebGLBuffer;
+
+	private pickBufferResolutionNeedsUpdating = true;
+	private pickBufferColorsNeedUpdating = true;
+	private readonly pickColorBuffer: WebGLBuffer;
+	private readonly pickFrameBuffer: WebGLFramebuffer;
+	private readonly pickTexture: WebGLTexture;
 
 	constructor(private readonly canvas: HTMLCanvasElement) {
 		const webGlContext = this.canvas.getContext('webgl2');
@@ -39,25 +48,51 @@ export class BoardGraphics {
 			throw new Error('unable to create WebGL context');
 		}
 
-		this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
 		this.gl.clearColor(0, 0, 0, 0);
 
 		const program = createWebGLProgram(this.gl, vertexShaderSource, fragmentShaderSource);
 		this.gl.useProgram(program);
 
 		this.vertexBuffer = this.gl.createBuffer() as WebGLBuffer;
-		const aPosition = this.gl.getAttribLocation(program, 'aPosition');
+		const positionAttribute = this.gl.getAttribLocation(program, 'aPosition');
 		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
-		this.gl.vertexAttribPointer(aPosition, 2, this.gl.FLOAT, false, 0, 0);
-		this.gl.enableVertexAttribArray(aPosition);
+		this.gl.vertexAttribPointer(positionAttribute, 2, this.gl.FLOAT, false, 0, 0);
+		this.gl.enableVertexAttribArray(positionAttribute);
 
 		this.colorBuffer = this.gl.createBuffer() as WebGLBuffer;
-		const aColor = this.gl.getAttribLocation(program, 'aColor');
+		this.colorAttribute = this.gl.getAttribLocation(program, 'aColor');
 		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
-		this.gl.vertexAttribPointer(aColor, 3, this.gl.FLOAT, false, 0, 0);
-		this.gl.enableVertexAttribArray(aColor);
+		this.gl.vertexAttribPointer(this.colorAttribute, 3, this.gl.FLOAT, false, 0, 0);
+		this.gl.enableVertexAttribArray(this.colorAttribute);
 
 		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
+
+		this.pickColorBuffer = this.gl.createBuffer() as WebGLBuffer;
+
+		this.pickFrameBuffer = this.gl.createFramebuffer() as WebGLFramebuffer;
+		this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.pickFrameBuffer);
+		this.pickTexture = this.gl.createTexture() as WebGLTexture;
+		this.gl.bindTexture(this.gl.TEXTURE_2D, this.pickTexture);
+		this.gl.texImage2D(
+			this.gl.TEXTURE_2D,
+			0,
+			this.gl.RGBA,
+			1,
+			1,
+			0,
+			this.gl.RGBA,
+			this.gl.UNSIGNED_BYTE,
+			null
+		);
+		this.gl.framebufferTexture2D(
+			this.gl.FRAMEBUFFER,
+			this.gl.COLOR_ATTACHMENT0,
+			this.gl.TEXTURE_2D,
+			this.pickTexture,
+			0
+		);
+		this.gl.bindTexture(this.gl.TEXTURE_2D, null);
+		this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
 
 		this.resizeObserver.observe(this.canvas);
 		this.prefersLightMode.addEventListener('change', this.onColorChange);
@@ -70,6 +105,10 @@ export class BoardGraphics {
 
 	#game!: Game;
 	set game(game: Game) {
+		if (this.#game?.board.length != game.board.length) {
+			this.pickBufferColorsNeedUpdating = true;
+		}
+
 		this.#game = game;
 
 		if (game.board.length + game.board.filter((cell) => cell.tower).length != this.hexagons) {
@@ -92,7 +131,7 @@ export class BoardGraphics {
 		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
 	}
 
-	updateColors() {
+	private updateColors() {
 		const colors = getColors(this.#game);
 
 		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
@@ -104,6 +143,80 @@ export class BoardGraphics {
 		this.gl.clear(this.gl.COLOR_BUFFER_BIT);
 		this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 8 * this.hexagons);
 	};
+
+	private resizePickTexture() {
+		this.gl.bindTexture(this.gl.TEXTURE_2D, this.pickTexture);
+		this.gl.texImage2D(
+			this.gl.TEXTURE_2D,
+			0,
+			this.gl.RGBA,
+			this.canvas.width,
+			this.canvas.height,
+			0,
+			this.gl.RGBA,
+			this.gl.UNSIGNED_BYTE,
+			null
+		);
+		this.gl.bindTexture(this.gl.TEXTURE_2D, null);
+	}
+
+	private updatePickColors() {
+		const pickColors = getPickColors(this.#game);
+
+		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.pickColorBuffer);
+		this.gl.bufferData(this.gl.ARRAY_BUFFER, pickColors, this.gl.STATIC_DRAW);
+		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
+	}
+
+	private renderPickBuffer() {
+		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.pickColorBuffer);
+		this.gl.vertexAttribPointer(this.colorAttribute, 3, this.gl.FLOAT, false, 0, 0);
+
+		this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.pickFrameBuffer);
+		this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 8 * this.#game.board.length);
+		this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+
+		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
+		this.gl.vertexAttribPointer(this.colorAttribute, 3, this.gl.FLOAT, false, 0, 0);
+
+		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
+	}
+
+	public getClickedCell({ offsetX, offsetY }: MouseEvent): number | undefined {
+		if (this.pickBufferResolutionNeedsUpdating) {
+			this.resizePickTexture();
+		}
+		if (this.pickBufferColorsNeedUpdating) {
+			this.updatePickColors();
+		}
+		if (this.pickBufferResolutionNeedsUpdating || this.pickBufferColorsNeedUpdating) {
+			this.renderPickBuffer();
+			this.pickBufferResolutionNeedsUpdating = false;
+			this.pickBufferColorsNeedUpdating = false;
+		}
+
+		const pixel = new Uint8Array(4);
+
+		this.gl.bindFramebuffer(this.gl.READ_FRAMEBUFFER, this.pickFrameBuffer);
+
+		this.gl.readPixels(
+			(offsetX / this.canvas.clientWidth) * this.canvas.width,
+			(1 - offsetY / this.canvas.clientHeight) * this.canvas.height,
+			1,
+			1,
+			this.gl.RGBA,
+			this.gl.UNSIGNED_BYTE,
+			pixel
+		);
+
+		this.gl.bindFramebuffer(this.gl.READ_FRAMEBUFFER, null);
+
+		if (pixel[3] == 0) {
+			return undefined;
+		}
+
+		return (pixel[0] << 16) | (pixel[1] << 8) | pixel[2];
+	}
 }
 
 const halfSqrt3 = Math.sqrt(3) / 2;
@@ -197,6 +310,22 @@ function getColors({ board, players }: Game): Float32Array {
 	for (const [i, cell] of towers.entries()) {
 		for (let j = 0; j < 8; j++) {
 			colors.set(playerColors[cell.owner] ?? towerColor, ((board.length + i) * 8 + j) * 3);
+		}
+	}
+
+	return colors;
+}
+
+function getPickColors({ board }: Game) {
+	const colors = new Float32Array(3 * 8 * board.length);
+
+	const currentColor = new Float32Array(3);
+
+	for (let i = 0; i < board.length; i++) {
+		currentColor.set([((i >> 16) & 0xff) / 0xff, ((i >> 8) & 0xff) / 0xff, (i & 0xff) / 0xff]);
+
+		for (let j = 0; j < 8; j++) {
+			colors.set(currentColor, (i * 8 + j) * 3);
 		}
 	}
 

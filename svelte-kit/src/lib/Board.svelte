@@ -23,7 +23,10 @@
 </script>
 
 <div class="wrapper">
-	<canvas bind:this={canvas} />
+	<canvas
+		bind:this={canvas}
+		on:click={(event) => console.log(boardGraphics.getClickedCell(event))}
+	/>
 </div>
 
 <style>
