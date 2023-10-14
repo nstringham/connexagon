@@ -103,15 +103,18 @@ export class BoardGraphics {
 		this.prefersLightMode.removeEventListener('change', this.onColorChange);
 	}
 
-	#game!: Game;
-	set game(game: Game) {
-		if (this.#game?.board.length != game.board.length) {
+	private game!: Game;
+	setGame(game: Game) {
+		if (this.game?.board.length != game.board.length) {
 			this.pickBufferColorsNeedUpdating = true;
 		}
 
-		this.#game = game;
+		this.game = game;
 
-		if (game.board.length + game.board.filter((cell) => cell.tower).length != this.hexagons) {
+		if (
+			(game.board.length + game.board.filter((cell) => cell.tower).length) * 16 + 4 * 32 !=
+			this.hexagons
+		) {
 			this.updateSize();
 		}
 
@@ -120,28 +123,44 @@ export class BoardGraphics {
 		requestAnimationFrame(() => this.render());
 	}
 
+	private selected: number[] = [];
+	setSelected(selected: number[]) {
+		this.selected = selected;
+
+		const selectionVertexes = getSelectionVertexes(7 + this.game.players.length, this.selected);
+
+		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
+		this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 4 * (this.hexagons - 4 * 32), selectionVertexes);
+		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
+
+		requestAnimationFrame(() => this.render());
+	}
+
 	private updateSize() {
-		const towers = this.#game.board.flatMap((cell, i) => (cell.tower ? i : []));
-		const vertexes = getVertexes(7 + this.#game.players.length, towers);
+		const towers = this.game.board.flatMap((cell, i) => (cell.tower ? i : []));
+		const vertexes = getVertexes(7 + this.game.players.length, towers);
+
+		const selectionVertexes = getSelectionVertexes(7 + this.game.players.length, this.selected);
+		vertexes.set(selectionVertexes, vertexes.length - 4 * 32);
 
 		this.hexagons = vertexes.length;
 
 		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
-		this.gl.bufferData(this.gl.ARRAY_BUFFER, vertexes, this.gl.STATIC_DRAW);
+		this.gl.bufferData(this.gl.ARRAY_BUFFER, vertexes, this.gl.DYNAMIC_DRAW);
 		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
 	}
 
 	private updateColors() {
-		const colors = getColors(this.#game);
+		const colors = getColors(this.game);
 
 		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
-		this.gl.bufferData(this.gl.ARRAY_BUFFER, colors, this.gl.STATIC_DRAW);
+		this.gl.bufferData(this.gl.ARRAY_BUFFER, colors, this.gl.DYNAMIC_DRAW);
 		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
 	}
 
 	private render = () => {
 		this.gl.clear(this.gl.COLOR_BUFFER_BIT);
-		this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 8 * this.hexagons);
+		this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, this.hexagons / 2);
 	};
 
 	private resizePickTexture() {
@@ -161,7 +180,7 @@ export class BoardGraphics {
 	}
 
 	private updatePickColors() {
-		const pickColors = getPickColors(this.#game);
+		const pickColors = getPickColors(this.game);
 
 		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.pickColorBuffer);
 		this.gl.bufferData(this.gl.ARRAY_BUFFER, pickColors, this.gl.STATIC_DRAW);
@@ -173,7 +192,7 @@ export class BoardGraphics {
 		this.gl.vertexAttribPointer(this.colorAttribute, 3, this.gl.FLOAT, false, 0, 0);
 
 		this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.pickFrameBuffer);
-		this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 8 * this.#game.board.length);
+		this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 8 * this.game.board.length);
 		this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
 
 		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
@@ -270,7 +289,7 @@ function getVertexes(size: number, towers: number[]): Float32Array {
 
 	const scale = 1 / (size * 2 - 1);
 
-	const vertexes = new Float32Array(8 * layout.length + 16 * towers.length);
+	const vertexes = new Float32Array(8 * layout.length + 16 * towers.length + 32 * 4);
 	let top = 0;
 
 	function drawHexagon(location: number, scale: number) {
@@ -290,6 +309,36 @@ function getVertexes(size: number, towers: number[]): Float32Array {
 	return vertexes;
 }
 
+function getSelectionVertexes(size: number, selected: number[]) {
+	const vertexes = new Float32Array(32 * 4);
+	let top = 0;
+
+	if (selected.length == 0) {
+		return vertexes;
+	}
+
+	const layout = getLayout(size);
+
+	const outerScale = 1 / (size * 2 - 1);
+	const innerScale = outerScale * (1 - 1 / 6);
+
+	function plotPoint(location: number, scale: number, vertex: number) {
+		vertexes[top++] = hexagon[vertex * 2] * scale + layout[location * 2];
+		vertexes[top++] = hexagon[vertex * 2 + 1] * scale + layout[location * 2 + 1];
+	}
+
+	for (const selection of selected) {
+		plotPoint(selection, outerScale, 1);
+		for (const vertex of [1, 3, 5, 6, 4, 2, 1]) {
+			plotPoint(selection, outerScale, vertex);
+			plotPoint(selection, innerScale, vertex);
+		}
+		plotPoint(selection, innerScale, 1);
+	}
+
+	return vertexes;
+}
+
 function getColors({ board, players }: Game): Float32Array {
 	const styleMap = document.documentElement.computedStyleMap();
 
@@ -299,7 +348,7 @@ function getColors({ board, players }: Game): Float32Array {
 
 	const towers = board.filter((cell) => cell.tower);
 
-	const colors = new Float32Array(3 * 8 * (board.length + towers.length));
+	const colors = new Float32Array(3 * 8 * (board.length + towers.length) + 3 * 16 * 4);
 
 	for (const [i, cell] of board.entries()) {
 		for (let j = 0; j < 8; j++) {
@@ -311,6 +360,10 @@ function getColors({ board, players }: Game): Float32Array {
 		for (let j = 0; j < 8; j++) {
 			colors.set(playerColors[cell.owner] ?? towerColor, ((board.length + i) * 8 + j) * 3);
 		}
+	}
+
+	for (let i = 0; i < 16 * 4; i++) {
+		colors.set(playerColors[0], ((board.length + towers.length) * 8 + i) * 3);
 	}
 
 	return colors;

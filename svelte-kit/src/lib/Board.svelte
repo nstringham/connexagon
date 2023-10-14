@@ -5,13 +5,15 @@
 
 	export let game: Game;
 
+	let selected: number[] = [];
+
 	let canvas: HTMLCanvasElement;
 
 	let boardGraphics: BoardGraphics;
 
-	$: if ((game, boardGraphics != undefined)) {
-		boardGraphics.game = game;
-	}
+	$: boardGraphics?.setGame(game);
+
+	$: boardGraphics?.setSelected(selected);
 
 	onMount(() => {
 		boardGraphics = new BoardGraphics(canvas);
@@ -20,13 +22,23 @@
 	onDestroy(() => {
 		boardGraphics.destroy();
 	});
+
+	function onBoardClick(event: MouseEvent) {
+		const index = boardGraphics.getClickedCell(event);
+		if (index == undefined || game.board[index].tower || game.board[index].owner != -1) {
+			return;
+		}
+
+		if (selected.includes(index)) {
+			selected = selected.filter((selection) => selection != index);
+		} else if (selected.length < 4) {
+			selected = [...selected, index];
+		}
+	}
 </script>
 
 <div class="wrapper">
-	<canvas
-		bind:this={canvas}
-		on:click={(event) => console.log(boardGraphics.getClickedCell(event))}
-	/>
+	<canvas bind:this={canvas} on:click={onBoardClick} />
 </div>
 
 <style>
