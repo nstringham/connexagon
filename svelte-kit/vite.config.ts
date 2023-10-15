@@ -3,5 +3,6 @@ import { defineConfig } from 'vite';
 import glsl from 'vite-plugin-glsl';
 
 export default defineConfig({
-	plugins: [sveltekit(), glsl({ compress: true })]
+	plugins: [sveltekit(), glsl({ compress: true })],
+	build: { sourcemap: true }
 });
