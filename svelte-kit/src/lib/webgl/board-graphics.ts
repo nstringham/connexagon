@@ -366,8 +366,9 @@ function getColors({ board, players }: Game, user: number): Float32Array {
 		}
 	}
 
+	const userColor = playerColors[user] ?? color('#888888');
 	for (let i = 0; i < 16 * 4; i++) {
-		colors.set(playerColors[user], ((board.length + towers.length) * 8 + i) * 3);
+		colors.set(userColor, ((board.length + towers.length) * 8 + i) * 3);
 	}
 
 	return colors;

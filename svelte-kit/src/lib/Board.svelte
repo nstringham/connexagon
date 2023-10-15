@@ -14,7 +14,7 @@
 
 	let boardGraphics: BoardGraphics;
 
-	$: boardGraphics?.setGame(game, user ?? 0);
+	$: boardGraphics?.setGame(game, user ?? -1);
 
 	$: boardGraphics?.setSelected(selected);
 
