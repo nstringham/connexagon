@@ -1,7 +1,8 @@
 {
   "projects": {
     "production": "connexagon",
-    "staging": "connexagon-staging"
+    "staging": "connexagon-staging",
+    "default": "connexagon-staging"
   },
   "targets": {
     "connexagon": {
