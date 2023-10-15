@@ -7,7 +7,7 @@
 	import hexagonPaintWorkletUrl from '$lib/hexagon-paint-worklet?url';
 
 	if (browser) {
-		CSS.paintWorklet.addModule(hexagonPaintWorkletUrl);
+		CSS.paintWorklet?.addModule(hexagonPaintWorkletUrl);
 	}
 </script>
 

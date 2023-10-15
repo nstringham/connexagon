@@ -342,11 +342,13 @@ function getSelectionVertexes(size: number, selected: number[]) {
 }
 
 function getColors({ board, players }: Game, user: number): Float32Array {
-	const styleMap = document.documentElement.computedStyleMap();
+	const styles = getComputedStyle(document.documentElement);
 
-	const playerColors = players.map((player) => color(styleMap.get(`--${player.color}-container`)));
-	const emptyColor = color(styleMap.get('--md-sys-color-surface-container'));
-	const towerColor = color(styleMap.get('--md-sys-color-on-surface'));
+	const playerColors = players.map((player) =>
+		color(styles.getPropertyValue(`--${player.color}-container`))
+	);
+	const emptyColor = color(styles.getPropertyValue('--md-sys-color-surface-container'));
+	const towerColor = color(styles.getPropertyValue('--md-sys-color-on-surface'));
 
 	const towers = board.filter((cell) => cell.tower);
 

@@ -9,7 +9,7 @@ declare global {
 	}
 
 	namespace CSS {
-		declare const paintWorklet: { addModule(url: string): void };
+		declare const paintWorklet: undefined | { addModule(url: string): void };
 	}
 }
 
