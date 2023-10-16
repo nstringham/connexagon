@@ -18,6 +18,8 @@
 <style>
 	.container {
 		padding-block: var(--spacing-xl);
+		overflow-y: auto;
+		scrollbar-color: var(--md-sys-color-primary) transparent;
 
 		& h1 {
 			text-align: center;
