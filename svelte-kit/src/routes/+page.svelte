@@ -25,6 +25,10 @@
 			text-align: center;
 			font-size: var(--display-l-font-size);
 		}
+
+		& a {
+			padding: 12px 16px;
+		}
 	}
 
 	.player:has(+ .player)::after {
