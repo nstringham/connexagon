@@ -6,7 +6,7 @@
 <div class="container">
 	<h1>Connexagon</h1>
 
-	{#each $games$ as game}
+	{#each $games$ ?? [] as game}
 		<a href="/games/{game.id}">
 			{#each game.data().players as player}
 				<span class="player">{player.nickname}</span>
