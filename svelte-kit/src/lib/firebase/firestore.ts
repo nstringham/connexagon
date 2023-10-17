@@ -1,10 +1,10 @@
 import { Observable, map, switchMap, NEVER, combineLatest, of, startWith } from 'rxjs';
-import type { Game } from '../../../../functions/src/types';
+import type { Game } from './types';
 import { browser } from '$app/environment';
 import type { DocumentSnapshot, QuerySnapshot } from 'firebase/firestore';
 import { auth$, client$ } from '.';
 
-export * from '../../../../functions/src/types';
+export * from './types';
 
 export const games$ = combineLatest([auth$, client$]).pipe(
 	switchMap(([auth, { gamesCollection, query, where, orderBy, limit, onSnapshot }]) => {

@@ -1,4 +1,5 @@
-import type * as admin from 'firebase-admin';
+import type { Timestamp } from "firebase/firestore";
+
 
 export const colors = [
   'red',
@@ -17,7 +18,7 @@ export interface Game {
   players: Player[];
   turn: number;
   winner: number;
-  modified: admin.firestore.Timestamp;
+  modified: Timestamp;
   uids: string[];
 }
 
@@ -101,25 +102,28 @@ export class GridData {
         case 'UR':
         case 'UL':
         case 'DR':
-        case 'DL':
+        case 'DL': {
           const rowPosition = current - RowStarts[currentRow];
           const left = direction.charAt(1) === 'L';
           switch (direction) {
             case 'UR':
-            case 'UL':
+            case 'UL': {
               const above = (currentRow - (sideLength - 1) <= 0);
               if (currentRow === 0 || (above && (left ? RowStarts[currentRow] === current : RowStarts[currentRow + 1] - 1 === current))) {
                 return -1;
               }
               return RowStarts[currentRow - 1] + (left ? -0.5 : +0.5) + (above ? -0.5 : 0.5) + rowPosition;
+            }
             case 'DR':
-            case 'DL':
+            case 'DL': {
               const below = (currentRow - (sideLength - 1) >= 0);
               if (currentRow === sideLength * 2 - 2 || (below && (left ? RowStarts[currentRow] === current : RowStarts[currentRow + 1] - 1 === current))) {
                 return -1;
               }
               return RowStarts[currentRow + 1] + (left ? -0.5 : +0.5) + (below ? -0.5 : 0.5) + rowPosition;
+            }
           }
+        }
       }
     });
   }

@@ -1,7 +1,7 @@
 import vertexShaderSource from './board.vert';
 import fragmentShaderSource from './board.frag';
 import { color, createWebGLProgram, points } from './util';
-import type { Game } from '../../../../functions/src/types';
+import type { Game } from '../types';
 
 export class BoardGraphics {
 	private readonly gl: WebGL2RenderingContext;
