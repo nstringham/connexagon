@@ -1,6 +1,8 @@
 {
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
-	"cSpell.words": ["connexagon"],
+	"cSpell.words": ["Connexagon", "Supabase"],
 	"eslint.validate": ["javascript", "typescript", "svelte"],
-	"eslint.rules.customizations": [{ "rule": "*", "severity": "downgrade" }]
+	"eslint.rules.customizations": [{ "rule": "*", "severity": "downgrade" }],
+	"deno.enablePaths": ["supabase/functions"],
+	"deno.lint": true
 }
