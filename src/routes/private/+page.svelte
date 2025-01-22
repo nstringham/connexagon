@@ -1,9 +1,43 @@
 <script lang="ts">
-	import { invalidate } from "$app/navigation";
+	import type { RealtimeChannel } from "@supabase/supabase-js";
+	import { onDestroy, onMount } from "svelte";
 	import type { EventHandler } from "svelte/elements";
 
 	let { data } = $props();
-	let { notes, supabase, user } = $derived(data);
+	let { supabase, user } = $derived(data);
+
+	const notes = $state(data.notes);
+
+	let notes_channel: RealtimeChannel | undefined;
+
+	onMount(() => {
+		notes_channel = supabase
+			.channel("schema-db-changes")
+			.on(
+				"postgres_changes",
+				{
+					event: "*",
+					table: "notes",
+					schema: "public",
+				},
+				({ eventType, old: before, new: after }) => {
+					if (eventType == "INSERT") {
+						notes.push(after as any);
+					} else if (eventType == "UPDATE") {
+						const index = notes.findIndex((note) => note.id == before.id);
+						notes.splice(index, 1, after as any);
+					} else if (eventType == "DELETE") {
+						const index = notes.findIndex((note) => note.id == before.id);
+						notes.splice(index, 1);
+					}
+				},
+			)
+			.subscribe();
+	});
+
+	onDestroy(() => {
+		notes_channel?.unsubscribe();
+	});
 
 	const handleSubmit: EventHandler<SubmitEvent, HTMLFormElement> = async (evt) => {
 		evt.preventDefault();
@@ -17,7 +51,6 @@
 		const { error } = await supabase.from("notes").insert({ note });
 		if (error) console.error(error);
 
-		invalidate("supabase:db:notes");
 		form.reset();
 	};
 </script>
