@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Tables } from "$lib/database-types.js";
 	import type { RealtimeChannel } from "@supabase/supabase-js";
 	import { onDestroy, onMount } from "svelte";
 	import type { EventHandler } from "svelte/elements";
@@ -22,10 +23,10 @@
 				},
 				({ eventType, old: before, new: after }) => {
 					if (eventType == "INSERT") {
-						notes.push(after as any);
+						notes.push(after as Tables<"notes">);
 					} else if (eventType == "UPDATE") {
 						const index = notes.findIndex((note) => note.id == before.id);
-						notes.splice(index, 1, after as any);
+						notes.splice(index, 1, after as Tables<"notes">);
 					} else if (eventType == "DELETE") {
 						const index = notes.findIndex((note) => note.id == before.id);
 						notes.splice(index, 1);
