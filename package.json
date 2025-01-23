@@ -12,7 +12,8 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
 		"test:unit": "vitest",
-		"test": "npm run test:unit -- --run"
+		"test": "npm run test:unit -- --run",
+		"generate-types": "supabase gen types typescript --project-id hmwkofjdjrwskoodcaht --schema public > src/lib/database-types.ts && prettier --write src/lib/database-types.ts"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
