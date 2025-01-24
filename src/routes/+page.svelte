@@ -1,11 +1,18 @@
 <script>
 	let { data } = $props();
-	let { countries } = $derived(data);
+	let { games } = $derived(data);
+	$inspect(games);
 </script>
 
 <h1>Welcome to Supabase!</h1>
 <ul>
-	{#each countries as country}
-		<li>{country.name}</li>
+	{#each games as { game }}
+		<li>
+			<a href="/games/{game.id}">
+				{#each game.players as player}
+					<span style:color={player.color}>{player.profile.name}</span>
+				{/each}
+			</a>
+		</li>
 	{/each}
 </ul>
