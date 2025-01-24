@@ -3,21 +3,6 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
 	public: {
 		Tables: {
-			countries: {
-				Row: {
-					id: number;
-					name: string;
-				};
-				Insert: {
-					id?: never;
-					name: string;
-				};
-				Update: {
-					id?: never;
-					name?: string;
-				};
-				Relationships: [];
-			};
 			games: {
 				Row: {
 					board: Database["public"]["CompositeTypes"]["cell"][] | null;
@@ -74,21 +59,21 @@ export type Database = {
 			};
 			players: {
 				Row: {
-					color: number;
+					color: Database["public"]["Enums"]["color"];
 					created_at: string;
 					game_id: string;
 					player_number: number | null;
 					user_id: string;
 				};
 				Insert: {
-					color: number;
+					color: Database["public"]["Enums"]["color"];
 					created_at?: string;
 					game_id: string;
 					player_number?: number | null;
 					user_id: string;
 				};
 				Update: {
-					color?: number;
+					color?: Database["public"]["Enums"]["color"];
 					created_at?: string;
 					game_id?: string;
 					player_number?: number | null;
@@ -102,20 +87,27 @@ export type Database = {
 						referencedRelation: "games";
 						referencedColumns: ["id"];
 					},
+					{
+						foreignKeyName: "players_user_id_fkey1";
+						columns: ["user_id"];
+						isOneToOne: false;
+						referencedRelation: "profiles";
+						referencedColumns: ["user_id"];
+					},
 				];
 			};
 			profiles: {
 				Row: {
-					id: string;
 					name: string | null;
+					user_id: string;
 				};
 				Insert: {
-					id: string;
 					name?: string | null;
+					user_id: string;
 				};
 				Update: {
-					id?: string;
 					name?: string | null;
+					user_id?: string;
 				};
 				Relationships: [];
 			};
@@ -201,7 +193,7 @@ export type Database = {
 			};
 		};
 		Enums: {
-			[_ in never]: never;
+			color: "red" | "green" | "blue";
 		};
 		CompositeTypes: {
 			cell: {
