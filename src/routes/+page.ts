@@ -14,8 +14,8 @@ export const load: PageLoad = async ({ parent }) => {
 				game:games(
 					id,
 					turn,
-					winner_player_number,
-					players(user_id, player_number, color, profile:profiles(name))
+					winner,
+					players(user_id, turn_order, color, profile:profiles(name))
 				)
 			`,
 		)

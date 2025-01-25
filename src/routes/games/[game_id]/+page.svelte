@@ -24,12 +24,12 @@
 					table: "games",
 					filter: `id=eq.${game_id}`,
 				},
-				({ new: { id, board, turn, winner_player_number } }) => {
+				({ new: { id, board, turn, winner } }) => {
 					game = {
 						id,
 						board,
 						turn,
-						winner_player_number,
+						winner,
 						players: game.players,
 					};
 				},
@@ -52,12 +52,12 @@
 					table: "players",
 					filter: `game_id=eq.${game_id}`,
 				},
-				({ new: { user_id, player_number, color } }) => {
+				({ new: { user_id, turn_order, color } }) => {
 					const player = game.players.find((player) => player.user_id === user_id);
 					if (player == undefined) {
 						return invalidate(`supabase:games:${game_id}`);
 					}
-					player.player_number = player_number;
+					player.turn_order = turn_order;
 					player.color = color;
 				},
 			)
