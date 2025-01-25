@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { invalidate } from "$app/navigation";
+	import Board from "$lib/Board.svelte";
 	import type { Tables } from "$lib/database-types.js";
 
 	const { data } = $props();
@@ -66,6 +67,10 @@
 		return () => channel.unsubscribe();
 	});
 </script>
+
+{#if game.board != null}
+	<Board board={game.board} />
+{/if}
 
 <code>
 	<pre>{JSON.stringify(game, null, 2)}</pre>
