@@ -1,6 +1,6 @@
 <script lang="ts">
-	let { data } = $props();
-	let { games } = $derived(data);
+	const { data } = $props();
+	const { games } = $derived(data);
 </script>
 
 <h1>Welcome to Supabase!</h1>
