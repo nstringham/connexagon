@@ -37,12 +37,29 @@
 			.on<Tables<"players">>(
 				"postgres_changes",
 				{
-					event: "*",
+					event: "INSERT",
 					schema: "public",
 					table: "players",
 					filter: `game_id=eq.${game_id}`,
 				},
 				() => invalidate(`supabase:games:${game_id}`),
+			)
+			.on<Tables<"players">>(
+				"postgres_changes",
+				{
+					event: "UPDATE",
+					schema: "public",
+					table: "players",
+					filter: `game_id=eq.${game_id}`,
+				},
+				({ new: { user_id, player_number, color } }) => {
+					const player = game.players.find((player) => player.user_id === user_id);
+					if (player == undefined) {
+						return invalidate(`supabase:games:${game_id}`);
+					}
+					player.player_number = player_number;
+					player.color = color;
+				},
 			)
 			.subscribe();
 

@@ -14,7 +14,7 @@ export const load: PageLoad = async ({ params: { game_id }, parent, depends }) =
 				board,
 				turn,
 				winner_player_number,
-				players(player_number, color, profile:profiles(name))
+				players(user_id, player_number, color, profile:profiles(name))
 			`,
 		)
 		.eq("id", game_id);
