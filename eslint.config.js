@@ -15,6 +15,9 @@ export default ts.config(
 	prettier,
 	...svelte.configs["flat/prettier"],
 	{
+		rules: {
+			"svelte/block-lang": ["error", { script: ["ts"] }],
+		},
 		languageOptions: {
 			globals: {
 				...globals.browser,

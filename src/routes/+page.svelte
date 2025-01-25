@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	let { data } = $props();
 	let { games } = $derived(data);
 </script>
