@@ -8,8 +8,6 @@
 
 	const size = $derived(getSize(board.length));
 
-	$inspect(size);
-
 	const scale = $derived(1 / (size * 2 - 1) / halfSqrt3);
 
 	const layout = $derived(getLayout(size));
