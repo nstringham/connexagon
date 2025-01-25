@@ -1,7 +1,6 @@
 <script>
 	let { data } = $props();
 	let { games } = $derived(data);
-	$inspect(games);
 </script>
 
 <h1>Welcome to Supabase!</h1>
