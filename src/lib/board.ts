@@ -1,4 +1,4 @@
-export const halfSqrt3 = Math.sqrt(3) / 2;
+import { halfSqrt3, round } from "./hexagon";
 
 export type Point = [number, number];
 
@@ -12,8 +12,8 @@ export function getLayout(size: number): Point[] {
 	const rows = size * 2 - 1;
 	const rowOffset = (rows - 1) / 2;
 
-	const horizontalSpacing = 2 / rows;
-	const verticalSpacing = 0.75 * (horizontalSpacing / halfSqrt3);
+	const horizontalSpacing = 2 * halfSqrt3;
+	const verticalSpacing = 1.5;
 
 	for (let row = 0; row < rows; row++) {
 		const columns = rows - Math.abs(row - (size - 1));
@@ -21,7 +21,7 @@ export function getLayout(size: number): Point[] {
 
 		for (let column = 0; column < columns; column++) {
 			layout.push([
-				(column - columnOffset) * horizontalSpacing,
+				round((column - columnOffset) * horizontalSpacing),
 				(row - rowOffset) * verticalSpacing,
 			]);
 		}

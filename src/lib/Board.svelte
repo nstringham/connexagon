@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { SVGAttributes } from "svelte/elements";
-	import { getLayout, getSize, halfSqrt3 } from "./board";
+	import { getLayout, getSize } from "./board";
 	import type { CompositeTypes } from "./database-types";
+	import { getHexagonSvgPath, halfSqrt3 } from "./hexagon";
 
 	type Cell = CompositeTypes<"cell">;
 
@@ -20,26 +21,11 @@
 
 	const layout = $derived(getLayout(size));
 
-	function getHexagonPath(scale: number) {
-		/** small vertical distance (the vertical distance from one of the top side points to the top point) */
-		const sv = (scale / 2).toFixed(5);
+	const viewBoxSize = $derived((size * 2 - 1) * halfSqrt3);
 
-		/** small vertical distance (the distance between 2 side points) */
-		const lv = scale.toFixed(5);
+	const cellPath = getHexagonSvgPath(halfSqrt3);
 
-		/** the horizontal distance between a side point and the center line */
-		const h = (scale * halfSqrt3).toFixed(5);
-
-		return `m0,${lv}l${h},-${sv}v-${lv}l-${h},-${sv}l-${h},${sv}v${lv}z`;
-	}
-
-	const scale = $derived(1 / (size * 2 - 1) / halfSqrt3);
-
-	const cellScale = $derived(scale * (11 / 12));
-
-	const cellPath = $derived(getHexagonPath(cellScale));
-
-	const towerPath = $derived(getHexagonPath(cellScale / 2));
+	const towerPath = getHexagonSvgPath(halfSqrt3 / 2);
 
 	const disabled = $derived(maxAllowedSelection <= 0);
 
@@ -77,7 +63,7 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <svg
 	{...restProps}
-	viewBox="-1 -1 2 2"
+	viewBox="-{viewBoxSize} -{viewBoxSize} {viewBoxSize * 2} {viewBoxSize * 2}"
 	onclick={(event) => {
 		onSelect(event);
 	}}
@@ -116,7 +102,7 @@
 	.cell:focus-visible {
 		outline: none;
 		stroke: pink;
-		stroke-width: 0.1px;
+		stroke-width: 1px;
 	}
 	.cell[aria-selected="true"] {
 		fill: lightblue;
