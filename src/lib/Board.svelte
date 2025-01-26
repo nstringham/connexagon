@@ -41,9 +41,13 @@
 
 	const towerPath = $derived(getHexagonPath(cellScale / 2));
 
-	const allowSelection = $derived(selection.length < maxAllowedSelection);
+	const disabled = $derived(maxAllowedSelection <= 0);
 
 	function onSelect(event: MouseEvent | KeyboardEvent) {
+		if (disabled) {
+			return;
+		}
+
 		if (!(event.target instanceof SVGElement) || event.target.dataset.index == undefined) {
 			return;
 		}
@@ -60,8 +64,11 @@
 
 		if (selectedIndex != -1) {
 			selection.splice(selectedIndex, 1);
-		} else if (allowSelection) {
+		} else {
 			selection.push(index);
+			while (selection.length > maxAllowedSelection) {
+				selection.shift();
+			}
 		}
 	}
 </script>
@@ -92,9 +99,9 @@
 			data-index={i}
 			fill={cell.tower ? "black" : (cell.color ?? "silver")}
 			aria-selected={selectable ? selected : undefined}
-			tabindex={(selectable && allowSelection) || selected ? 0 : undefined}
+			tabindex={(selectable && !disabled) || selected ? 0 : undefined}
 			role={selectable ? "checkbox" : undefined}
-			aria-disabled={selectable ? !allowSelection : undefined}
+			aria-disabled={selectable ? disabled : undefined}
 		/>
 		{#if cell.tower && cell.color != null}
 			<path d="M{x},{y}{towerPath}" fill={cell.color} />
