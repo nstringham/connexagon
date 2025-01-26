@@ -18,9 +18,28 @@
 
 	const size = $derived(getSize(board.length));
 
+	const layout = $derived(getLayout(size));
+
+	function getHexagonPath(scale: number) {
+		/** small vertical distance (the vertical distance from one of the top side points to the top point) */
+		const sv = (scale / 2).toFixed(5);
+
+		/** small vertical distance (the distance between 2 side points) */
+		const lv = scale.toFixed(5);
+
+		/** the horizontal distance between a side point and the center line */
+		const h = (scale * halfSqrt3).toFixed(5);
+
+		return `m0,${lv}l${h},-${sv}v-${lv}l-${h},-${sv}l-${h},${sv}v${lv}z`;
+	}
+
 	const scale = $derived(1 / (size * 2 - 1) / halfSqrt3);
 
-	const layout = $derived(getLayout(size));
+	const cellScale = $derived(scale * (11 / 12));
+
+	const cellPath = $derived(getHexagonPath(cellScale));
+
+	const towerPath = $derived(getHexagonPath(cellScale / 2));
 
 	const allowSelection = $derived(selection.length < maxAllowedSelection);
 
@@ -57,22 +76,15 @@
 		}
 	}}
 >
-	<defs>
-		<path id="hex" d="M0,1L{halfSqrt3},.5V-.5L0,-1L-{halfSqrt3},-.5V.5Z" />
-		<use id="cell" href="#hex" transform="scale({scale * (11 / 12)})" />
-		<use id="tower" href="#cell" transform="scale(.5)" />
-	</defs>
-
 	{#each board as cell, i}
 		{@const [x, y] = layout[i]}
 		{@const selectable = cell.color == null && !cell.tower}
 		{@const selected = selection.includes(i)}
 		<!-- this is ok because we have event listeners on the outer <svg> element -->
 		<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-		<use
-			href="#cell"
-			{x}
-			{y}
+		<path
+			class="cell"
+			d="M{x},{y}{cellPath}"
 			data-index={i}
 			fill={cell.tower ? "black" : (cell.color ?? "silver")}
 			aria-selected={selected}
@@ -81,21 +93,21 @@
 			aria-disabled={!allowSelection}
 		/>
 		{#if cell.tower && cell.color != null}
-			<use href="#tower" {x} {y} fill={cell.color} />
+			<path d="M{x},{y}{towerPath}" fill={cell.color} />
 		{/if}
 	{/each}
 </svg>
 
 <style>
-	use:focus {
+	.cell:focus {
 		outline: none;
 	}
-	use:focus-visible {
+	.cell:focus-visible {
 		outline: none;
 		stroke: pink;
 		stroke-width: 0.1px;
 	}
-	use[aria-selected="true"] {
+	.cell[aria-selected="true"] {
 		fill: lightblue;
 	}
 </style>
