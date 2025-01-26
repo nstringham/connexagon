@@ -50,6 +50,10 @@
 
 		const index = parseInt(event.target.dataset.index);
 
+		if (board[index].tower || board[index].color != null) {
+			return;
+		}
+
 		event.preventDefault();
 
 		const selectedIndex = selection.indexOf(index);
@@ -87,10 +91,10 @@
 			d="M{x},{y}{cellPath}"
 			data-index={i}
 			fill={cell.tower ? "black" : (cell.color ?? "silver")}
-			aria-selected={selected}
+			aria-selected={selectable ? selected : undefined}
 			tabindex={(selectable && allowSelection) || selected ? 0 : undefined}
 			role={selectable ? "checkbox" : undefined}
-			aria-disabled={!allowSelection}
+			aria-disabled={selectable ? !allowSelection : undefined}
 		/>
 		{#if cell.tower && cell.color != null}
 			<path d="M{x},{y}{towerPath}" fill={cell.color} />
