@@ -11,8 +11,6 @@
 	$effect(() => {
 		game = data.game;
 
-		console.log("effect");
-
 		const game_id = data.game.id;
 
 		const channel = supabase
