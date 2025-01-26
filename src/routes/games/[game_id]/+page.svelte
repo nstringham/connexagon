@@ -67,9 +67,17 @@
 </script>
 
 {#if game.board != null}
-	<Board board={game.board} />
+	<div>
+		<Board class="board" board={game.board} maxAllowedSelection={3} />
+	</div>
 {/if}
 
 <code>
 	<pre>{JSON.stringify(game, null, 2)}</pre>
 </code>
+
+<style>
+	* > :global(.board) {
+		width: min(100svh, 100svw);
+	}
+</style>
