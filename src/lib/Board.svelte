@@ -23,7 +23,7 @@
 	{#each board as cell, i}
 		{@const [x, y] = layout[i]}
 		<use href="#cell" {x} {y} fill={cell.tower ? "black" : (cell.color ?? "silver")} />
-		{#if cell.tower}
+		{#if cell.tower && cell.color != null}
 			<use href="#tower" {x} {y} fill={cell.color} />
 		{/if}
 	{/each}
