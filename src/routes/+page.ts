@@ -1,15 +1,10 @@
-import type { SupabaseClient, User } from "@supabase/supabase-js";
 import type { PageLoad } from "./$types";
-import type { Database } from "$lib/database-types";
 
 export const load: PageLoad = async ({ parent }) => {
 	const { supabase, user } = await parent();
-	return { games: await getGamesForUser(supabase, user) };
-};
 
-async function getGamesForUser(supabase: SupabaseClient<Database>, user: User | null) {
 	if (user == null) {
-		return [];
+		return { games: [] };
 	}
 
 	const { data: games, error } = await supabase
@@ -19,8 +14,8 @@ async function getGamesForUser(supabase: SupabaseClient<Database>, user: User | 
 				game:games(
 					id,
 					turn,
-					winner_player_number,
-					players(user_id, player_number, color, profile:profiles(name))
+					winner,
+					players(user_id, turn_order, color, profile:profiles(name))
 				)
 			`,
 		)
@@ -30,5 +25,5 @@ async function getGamesForUser(supabase: SupabaseClient<Database>, user: User | 
 		console.error(error);
 	}
 
-	return games ?? [];
-}
+	return { games: games ?? [] };
+};

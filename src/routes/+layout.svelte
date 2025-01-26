@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { invalidate } from "$app/navigation";
 	import { PUBLIC_SUPABASE_URL } from "$env/static/public";
 	import { onMount } from "svelte";

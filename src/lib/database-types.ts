@@ -12,7 +12,7 @@ export type Database = {
 					id: string;
 					started_at: string | null;
 					turn: number | null;
-					winner_player_number: number | null;
+					winner: Database["public"]["Enums"]["color"] | null;
 				};
 				Insert: {
 					board?: Database["public"]["CompositeTypes"]["cell"][] | null;
@@ -22,7 +22,7 @@ export type Database = {
 					id?: string;
 					started_at?: string | null;
 					turn?: number | null;
-					winner_player_number?: number | null;
+					winner?: Database["public"]["Enums"]["color"] | null;
 				};
 				Update: {
 					board?: Database["public"]["CompositeTypes"]["cell"][] | null;
@@ -32,7 +32,7 @@ export type Database = {
 					id?: string;
 					started_at?: string | null;
 					turn?: number | null;
-					winner_player_number?: number | null;
+					winner?: Database["public"]["Enums"]["color"] | null;
 				};
 				Relationships: [];
 			};
@@ -62,21 +62,21 @@ export type Database = {
 					color: Database["public"]["Enums"]["color"];
 					created_at: string;
 					game_id: string;
-					player_number: number | null;
+					turn_order: number | null;
 					user_id: string;
 				};
 				Insert: {
 					color: Database["public"]["Enums"]["color"];
 					created_at?: string;
 					game_id: string;
-					player_number?: number | null;
+					turn_order?: number | null;
 					user_id: string;
 				};
 				Update: {
 					color?: Database["public"]["Enums"]["color"];
 					created_at?: string;
 					game_id?: string;
-					player_number?: number | null;
+					turn_order?: number | null;
 					user_id?: string;
 				};
 				Relationships: [
@@ -198,7 +198,7 @@ export type Database = {
 		CompositeTypes: {
 			cell: {
 				tower: boolean | null;
-				player_number: number | null;
+				color: Database["public"]["Enums"]["color"] | null;
 			};
 		};
 	};
