@@ -9,8 +9,6 @@ export function getSize(area: number): number {
 export function getLayout(size: number): Point[] {
 	const layout: Point[] = [];
 
-	console.log("here");
-
 	const rows = size * 2 - 1;
 	const rowOffset = (rows - 1) / 2;
 
