@@ -1,4 +1,4 @@
-CREATE TYPE public.color AS ENUM(
+CREATE TYPE public.color AS ENUM (
 	'red',
 	'green',
 	'blue'

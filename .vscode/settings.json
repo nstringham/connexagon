@@ -8,5 +8,6 @@
 	"[sql]": {
 		"editor.defaultFormatter": "bradymholt.pgformatter"
 	},
-	"pgFormatter.tabs": true
+	"pgFormatter.tabs": true,
+	"pgFormatter.noSpaceFunction": false
 }

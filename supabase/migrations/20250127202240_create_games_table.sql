@@ -5,8 +5,8 @@ CREATE TYPE public.cell AS (
 
 ALTER TYPE public.cell OWNER TO postgres;
 
-CREATE TABLE IF NOT EXISTS public.games(
-	id public.xid DEFAULT public.xid() NOT NULL,
+CREATE TABLE IF NOT EXISTS public.games (
+	id public.xid DEFAULT public.xid () NOT NULL,
 	host_user_id uuid NOT NULL,
 	board public.cell[],
 	turn smallint,
@@ -22,7 +22,7 @@ ALTER TABLE ONLY public.games
 	ADD CONSTRAINT games_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY public.games
-	ADD CONSTRAINT games_host_user_id_fkey FOREIGN KEY (host_user_id) REFERENCES auth.users(id);
+	ADD CONSTRAINT games_host_user_id_fkey FOREIGN KEY (host_user_id) REFERENCES auth.users (id);
 
 CREATE POLICY "Enable read access for all users" ON public.games
 	FOR SELECT

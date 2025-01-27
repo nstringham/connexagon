@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS public.profiles(
+CREATE TABLE IF NOT EXISTS public.profiles (
 	user_id uuid NOT NULL,
 	name character varying(12)
 );
@@ -9,7 +9,7 @@ ALTER TABLE ONLY public.profiles
 	ADD CONSTRAINT profiles_pkey PRIMARY KEY (user_id);
 
 ALTER TABLE ONLY public.profiles
-	ADD CONSTRAINT profiles_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
+	ADD CONSTRAINT profiles_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users (id) ON DELETE CASCADE;
 
 CREATE POLICY "Enable read access for all users" ON public.profiles
 	FOR SELECT
