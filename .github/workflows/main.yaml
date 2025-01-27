@@ -71,3 +71,17 @@ jobs:
       - run: tar xzf v${version}.tar.gz
       - run: pgFormatter-${version}/pg_format --inplace --tabs supabase/migrations/*.sql
       - run: git diff --exit-code
+
+  database-types:
+    name: Auto Generated Database Types
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx supabase db start
+      - run: npm run generate-types
+      - run: git diff --exit-code
