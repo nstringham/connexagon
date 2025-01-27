@@ -23,22 +23,28 @@
 
 	const viewBoxSize = $derived((size * 2 - 1) * halfSqrt3);
 
+	const strokeWidth = 1 - halfSqrt3;
+
 	const cellPath = getHexagonSvgPath(halfSqrt3);
 
 	const towerPath = getHexagonSvgPath(halfSqrt3 / 2);
 
+	const haloPath = getHexagonSvgPath(halfSqrt3 - strokeWidth / 2);
+
 	const disabled = $derived(maxAllowedSelection <= 0);
 
 	function onSelect(event: MouseEvent | KeyboardEvent) {
-		if (disabled) {
+		if (disabled || !(event.target instanceof SVGElement)) {
 			return;
 		}
 
-		if (!(event.target instanceof SVGElement) || event.target.dataset.index == undefined) {
+		const target = event.target.closest<SVGGElement>("g[data-index]");
+
+		if (target == null) {
 			return;
 		}
 
-		const index = parseInt(event.target.dataset.index);
+		const index = parseInt(target.dataset.index as string);
 
 		if (board[index].tower || board[index].color != null) {
 			return;
@@ -64,6 +70,7 @@
 <svg
 	{...restProps}
 	viewBox="-{viewBoxSize} -{viewBoxSize} {viewBoxSize * 2} {viewBoxSize * 2}"
+	stroke-width={strokeWidth}
 	onclick={(event) => {
 		onSelect(event);
 	}}
@@ -79,32 +86,35 @@
 		{@const selected = selection.includes(i)}
 		<!-- this is ok because we have event listeners on the outer <svg> element -->
 		<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-		<path
-			class="cell"
-			d="M{x},{y}{cellPath}"
+		<g
 			data-index={i}
-			fill={cell.tower ? "black" : (cell.color ?? "silver")}
 			aria-selected={selectable ? selected : undefined}
 			tabindex={(selectable && !disabled) || selected ? 0 : undefined}
 			role={selectable ? "checkbox" : undefined}
 			aria-disabled={selectable ? disabled : undefined}
-		/>
-		{#if cell.tower && cell.color != null}
-			<path d="M{x},{y}{towerPath}" fill={cell.color} />
-		{/if}
+		>
+			<path
+				class="cell"
+				d="M{x},{y}{cellPath}"
+				fill={cell.tower ? "black" : (cell.color ?? "#ebebeb")}
+				stroke-width={strokeWidth * 2}
+			/>
+			{#if selected}
+				<path d="M{x},{y}{haloPath}" fill="none" stroke="var(--user-color)" />
+			{/if}
+			{#if cell.tower && cell.color != null}
+				<path d="M{x},{y}{towerPath}" fill={cell.color} />
+			{/if}
+		</g>
 	{/each}
 </svg>
 
 <style>
-	.cell:focus {
+	g:focus {
 		outline: none;
 	}
-	.cell:focus-visible {
-		outline: none;
-		stroke: pink;
-		stroke-width: 1px;
-	}
-	.cell[aria-selected="true"] {
-		fill: lightblue;
+	g:focus-visible .cell {
+		paint-order: stroke;
+		stroke: black;
 	}
 </style>
