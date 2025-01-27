@@ -4,5 +4,9 @@
 	"eslint.validate": ["javascript", "typescript", "svelte"],
 	"eslint.rules.customizations": [{ "rule": "*", "severity": "downgrade" }],
 	"deno.enablePaths": ["supabase/functions"],
-	"deno.lint": true
+	"deno.lint": true,
+	"[sql]": {
+		"editor.defaultFormatter": "bradymholt.pgformatter"
+	},
+	"pgFormatter.tabs": true
 }
