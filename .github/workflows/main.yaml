@@ -61,7 +61,7 @@ jobs:
       - run: npm run test
 
   pg-formatter:
-    name: SQL Formatter
+    name: SQL Migration Formatter
     runs-on: ubuntu-latest
     env:
       version: 5.5
