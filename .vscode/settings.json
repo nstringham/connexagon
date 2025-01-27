@@ -3,8 +3,6 @@
 	"cSpell.words": ["Connexagon", "Supabase"],
 	"eslint.validate": ["javascript", "typescript", "svelte"],
 	"eslint.rules.customizations": [{ "rule": "*", "severity": "downgrade" }],
-	"deno.enablePaths": ["supabase/functions"],
-	"deno.lint": true,
 	"[sql]": {
 		"editor.defaultFormatter": "bradymholt.pgformatter"
 	},
