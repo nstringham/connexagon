@@ -88,7 +88,7 @@ export type Database = {
 						referencedColumns: ["id"];
 					},
 					{
-						foreignKeyName: "players_user_id_fkey1";
+						foreignKeyName: "players_user_id_profiles_fkey";
 						columns: ["user_id"];
 						isOneToOne: false;
 						referencedRelation: "profiles";
