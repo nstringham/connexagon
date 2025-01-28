@@ -1,4 +1,5 @@
 <script lang="ts">
+	import "modern-normalize";
 	import { invalidate } from "$app/navigation";
 	import { PUBLIC_SUPABASE_URL } from "$env/static/public";
 	import SignInModal, { openSignInModal } from "$lib/SignInModal.svelte";
