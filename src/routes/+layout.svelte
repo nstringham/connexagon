@@ -29,12 +29,25 @@
 	<link rel="preconnect" href={PUBLIC_SUPABASE_URL} />
 </svelte:head>
 
-{#if session != null}
-	<button onclick={signOut}>Sign Out</button>
-{:else}
-	<button onclick={openSignInModal}>Sign In</button>
-{/if}
+<header>
+	<h1><a href="/">Connexagon</a></h1>
+
+	{#if session != null}
+		<button onclick={signOut}>Sign Out</button>
+	{:else}
+		<button onclick={openSignInModal}>Sign In</button>
+	{/if}
+</header>
 
 {@render children()}
 
 <SignInModal {supabase} />
+
+<style>
+	header {
+		display: grid;
+		grid-template-columns: auto auto;
+		align-items: center;
+		justify-content: space-between;
+	}
+</style>

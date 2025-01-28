@@ -3,7 +3,6 @@
 	const { games } = $derived(data);
 </script>
 
-<h1>Welcome to Supabase!</h1>
 <ul>
 	{#each games as { game }}
 		<li>
