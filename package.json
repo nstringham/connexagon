@@ -37,6 +37,7 @@
 	},
 	"dependencies": {
 		"@supabase/ssr": "^0.5.2",
-		"@supabase/supabase-js": "^2.48.0"
+		"@supabase/supabase-js": "^2.48.0",
+		"modern-normalize": "^3.0.1"
 	}
 }
