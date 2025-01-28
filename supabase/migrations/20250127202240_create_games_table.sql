@@ -24,6 +24,9 @@ ALTER TABLE ONLY public.games
 ALTER TABLE ONLY public.games
 	ADD CONSTRAINT games_host_user_id_fkey FOREIGN KEY (host_user_id) REFERENCES auth.users (id);
 
+ALTER TABLE ONLY public.games
+	ADD CONSTRAINT games_host_user_id_profiles_fkey FOREIGN KEY (host_user_id) REFERENCES public.profiles (user_id);
+
 CREATE POLICY "Enable read access for all users" ON public.games
 	FOR SELECT
 		USING (TRUE);
