@@ -39,3 +39,12 @@ $$;
 create trigger games_insert_trigger
 after insert on public.games for each row
 execute function on_games_insert ();
+
+create or replace function public.create_game () returns text language sql as $$
+	insert into
+		public.games (host_user_id)
+	values
+		(auth.uid ())
+	returning
+		id;
+$$;
