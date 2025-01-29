@@ -36,27 +36,6 @@ export type Database = {
 				};
 				Relationships: [];
 			};
-			notes: {
-				Row: {
-					created_at: string;
-					id: number;
-					note: string;
-					user_id: string;
-				};
-				Insert: {
-					created_at?: string;
-					id?: never;
-					note: string;
-					user_id?: string;
-				};
-				Update: {
-					created_at?: string;
-					id?: never;
-					note?: string;
-					user_id?: string;
-				};
-				Relationships: [];
-			};
 			players: {
 				Row: {
 					color: Database["public"]["Enums"]["color"];
