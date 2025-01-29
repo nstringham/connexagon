@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS public.profiles (
 	user_id uuid NOT NULL,
-	name character varying(12)
+	name character varying(15)
 );
 
 ALTER TABLE public.profiles OWNER TO postgres;
