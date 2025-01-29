@@ -89,7 +89,7 @@
 		<g
 			data-index={i}
 			aria-checked={selectable ? selected : undefined}
-			tabindex={(selectable && !disabled) || selected ? 0 : undefined}
+			tabindex={selectable && !disabled ? 0 : undefined}
 			role={selectable ? "checkbox" : undefined}
 			aria-disabled={selectable ? disabled : undefined}
 		>
