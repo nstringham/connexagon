@@ -1,10 +1,10 @@
-create or replace function public.join_game (game_id text, user_ui uuid) returns void language sql as $$
+create or replace function public.join_game (game_id_to_join text, user_id uuid) returns void language sql as $$
 	insert into
 		public.players (game_id, user_id, color)
 	values
 		(
-			game_id,
-			user_ui,
+			game_id_to_join,
+			user_id,
 			(
 				select
 					all_colors.color
@@ -13,8 +13,8 @@ create or replace function public.join_game (game_id text, user_ui uuid) returns
 						select
 							unnest(enum_range(null::public.color)) as color
 					) as all_colors
-					left join public.players on players.color = all_colors.color
-					and players.game_id = game_id
+					left join public.players on players.game_id = game_id_to_join
+					and players.color = all_colors.color
 				where
 					players.game_id is null
 				order by
@@ -25,8 +25,8 @@ create or replace function public.join_game (game_id text, user_ui uuid) returns
 		);
 $$;
 
-create or replace function public.join_game (game_id text) returns void language sql as $$
-	select public.join_game (game_id, auth.uid ());
+create or replace function public.join_game (game_id_to_join text) returns void language sql as $$
+	select public.join_game (game_id_to_join, auth.uid ());
 $$;
 
 create or replace function public.on_games_insert () returns trigger language plpgsql as $$
