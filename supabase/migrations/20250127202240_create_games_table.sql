@@ -1,40 +1,40 @@
-CREATE TYPE public.cell AS (tower boolean, color public.color);
+create type public.cell as (tower boolean, color public.color);
 
-ALTER TYPE public.cell OWNER TO postgres;
+alter type public.cell owner to postgres;
 
-CREATE TABLE IF NOT EXISTS public.games (
-	id public.xid DEFAULT public.xid () NOT NULL,
-	host_user_id uuid NOT NULL,
+create table if not exists public.games (
+	id public.xid default public.xid () not null,
+	host_user_id uuid not null,
 	board public.cell[],
 	turn smallint,
 	winner public.color,
-	created_at timestamp with time zone DEFAULT now() NOT NULL,
+	created_at timestamp with time zone default now() not null,
 	started_at timestamp with time zone,
 	completed_at timestamp with time zone
 );
 
-ALTER TABLE public.games OWNER TO postgres;
+alter table public.games owner to postgres;
 
-ALTER TABLE ONLY public.games
-ADD CONSTRAINT games_pkey PRIMARY KEY (id);
+alter table only public.games
+add constraint games_pkey primary key (id);
 
-ALTER TABLE ONLY public.games
-ADD CONSTRAINT games_host_user_id_fkey FOREIGN KEY (host_user_id) REFERENCES auth.users (id);
+alter table only public.games
+add constraint games_host_user_id_fkey foreign key (host_user_id) references auth.users (id);
 
-ALTER TABLE ONLY public.games
-ADD CONSTRAINT games_host_user_id_profiles_fkey FOREIGN KEY (host_user_id) REFERENCES public.profiles (user_id);
+alter table only public.games
+add constraint games_host_user_id_profiles_fkey foreign key (host_user_id) references public.profiles (user_id);
 
-CREATE POLICY "Enable read access for all users" ON public.games FOR
-SELECT
-	USING (TRUE);
+create policy "Enable read access for all users" on public.games for
+select
+	using (true);
 
-ALTER TABLE public.games ENABLE ROW LEVEL SECURITY;
+alter table public.games enable row level security;
 
-ALTER PUBLICATION supabase_realtime
-ADD TABLE ONLY public.games;
+alter publication supabase_realtime
+add table only public.games;
 
-GRANT ALL ON TABLE public.games TO anon;
+grant all on table public.games to anon;
 
-GRANT ALL ON TABLE public.games TO authenticated;
+grant all on table public.games to authenticated;
 
-GRANT ALL ON TABLE public.games TO service_role;
+grant all on table public.games to service_role;

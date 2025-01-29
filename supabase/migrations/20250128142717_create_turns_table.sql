@@ -1,22 +1,22 @@
-CREATE TABLE IF NOT EXISTS public.turns (
-	game_id public.xid NOT NULL,
-	turn_number smallint NOT NULL,
-	cells smallint[] NOT NULL,
-	created_at timestamp with time zone DEFAULT now() NOT NULL
+create table if not exists public.turns (
+	game_id public.xid not null,
+	turn_number smallint not null,
+	cells smallint[] not null,
+	created_at timestamp with time zone default now() not null
 );
 
-ALTER TABLE public.turns OWNER TO postgres;
+alter table public.turns owner to postgres;
 
-ALTER TABLE ONLY public.turns
-ADD CONSTRAINT turns_pkey PRIMARY KEY (game_id, turn_number);
+alter table only public.turns
+add constraint turns_pkey primary key (game_id, turn_number);
 
-ALTER TABLE ONLY public.turns
-ADD CONSTRAINT turns_game_id_fkey FOREIGN KEY (game_id) REFERENCES public.games (id);
+alter table only public.turns
+add constraint turns_game_id_fkey foreign key (game_id) references public.games (id);
 
-ALTER TABLE public.turns ENABLE ROW LEVEL SECURITY;
+alter table public.turns enable row level security;
 
-GRANT ALL ON TABLE public.turns TO anon;
+grant all on table public.turns to anon;
 
-GRANT ALL ON TABLE public.turns TO authenticated;
+grant all on table public.turns to authenticated;
 
-GRANT ALL ON TABLE public.turns TO service_role;
+grant all on table public.turns to service_role;

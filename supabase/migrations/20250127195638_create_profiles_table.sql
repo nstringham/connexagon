@@ -1,21 +1,21 @@
-CREATE TABLE IF NOT EXISTS public.profiles (user_id uuid NOT NULL, name character varying(12));
+create table if not exists public.profiles (user_id uuid not null, name character varying(12));
 
-ALTER TABLE public.profiles OWNER TO postgres;
+alter table public.profiles owner to postgres;
 
-ALTER TABLE ONLY public.profiles
-ADD CONSTRAINT profiles_pkey PRIMARY KEY (user_id);
+alter table only public.profiles
+add constraint profiles_pkey primary key (user_id);
 
-ALTER TABLE ONLY public.profiles
-ADD CONSTRAINT profiles_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users (id) ON DELETE CASCADE;
+alter table only public.profiles
+add constraint profiles_id_fkey foreign key (user_id) references auth.users (id) on delete cascade;
 
-CREATE POLICY "Enable read access for all users" ON public.profiles FOR
-SELECT
-	USING (TRUE);
+create policy "Enable read access for all users" on public.profiles for
+select
+	using (true);
 
-ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+alter table public.profiles enable row level security;
 
-GRANT ALL ON TABLE public.profiles TO anon;
+grant all on table public.profiles to anon;
 
-GRANT ALL ON TABLE public.profiles TO authenticated;
+grant all on table public.profiles to authenticated;
 
-GRANT ALL ON TABLE public.profiles TO service_role;
+grant all on table public.profiles to service_role;

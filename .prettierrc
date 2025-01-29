@@ -11,7 +11,11 @@
 		{
 			"files": "*.sql",
 			"options": {
-				"language": "postgresql"
+				"language": "postgresql",
+				"keywordCase": "lower",
+				"functionCase": "lower",
+				"identifierCase": "lower",
+				"dataTypeCase": "lower"
 			}
 		}
 	]

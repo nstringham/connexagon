@@ -1,3 +1,3 @@
-CREATE TYPE public.color AS ENUM('red', 'green', 'blue');
+create type public.color as enum('red', 'green', 'blue');
 
-ALTER TYPE public.color OWNER TO postgres;
+alter type public.color owner to postgres;

@@ -6,5 +6,9 @@
 	"[sql]": {
 		"editor.defaultFormatter": "ReneSaarsoo.sql-formatter-vsc"
 	},
-	"SQL-Formatter-VSCode.dialect": "postgresql"
+	"SQL-Formatter-VSCode.dialect": "postgresql",
+	"SQL-Formatter-VSCode.keywordCase": "lower",
+	"SQL-Formatter-VSCode.functionCase": "lower",
+	"SQL-Formatter-VSCode.identifierCase": "lower",
+	"SQL-Formatter-VSCode.dataTypeCase": "lower"
 }
