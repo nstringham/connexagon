@@ -2,3 +2,6 @@
 package-lock.json
 pnpm-lock.yaml
 yarn.lock
+
+# xid library
+supabase/migrations/20250127194909_pg_xid.sql
