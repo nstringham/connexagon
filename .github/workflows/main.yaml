@@ -74,6 +74,19 @@ jobs:
       - run: npm run generate-types
       - run: git diff --exit-code
 
+  db-lint:
+    name: Lint Database
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx supabase db start
+      - run: npx supabase db lint --fail-on warning
+
   migration-dry-run:
     name: Supabase Migrations Dry Run
     runs-on: ubuntu-latest
