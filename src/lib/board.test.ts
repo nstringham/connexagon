@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { getLayout, getSize, type Point } from "./board";
+import { getLayout, getSize } from "./board";
+import { round } from "./hexagon";
 
 describe("getSize", () => {
 	it("returns the correct value", () => {
@@ -13,28 +14,22 @@ describe("getSize", () => {
 });
 
 describe("getLayout", () => {
-	function expectPointsToBeAlmostEqual(actual: Point[], expected: Point[], delta = 0.000001) {
-		expect(actual).to.have.length(expected.length);
-
-		for (let i = 0; i < expected.length; i++) {
-			expect(actual[i][0]).to.be.approximately(expected[i][0], delta);
-			expect(actual[i][1]).to.be.approximately(expected[i][1], delta);
-		}
-	}
-
 	it("puts one hexagon in the center", () => {
-		expectPointsToBeAlmostEqual(getLayout(1), [[0, 0]]);
+		expect(getLayout(1)).to.deep.equal([[0, 0]]);
 	});
 
 	it("lays out 7 hexagons correctly", () => {
-		expectPointsToBeAlmostEqual(getLayout(2), [
-			[-1 / 3, -1 / Math.sqrt(3)],
-			[1 / 3, -1 / Math.sqrt(3)],
-			[-2 / 3, 0],
+		const sqrt3 = round(Math.sqrt(3));
+		const halfSqrt3 = round(Math.sqrt(3) / 2);
+
+		expect(getLayout(2)).to.deep.equal([
+			[-halfSqrt3, -1.5],
+			[halfSqrt3, -1.5],
+			[-sqrt3, 0],
 			[0, 0],
-			[2 / 3, 0],
-			[-1 / 3, 1 / Math.sqrt(3)],
-			[1 / 3, 1 / Math.sqrt(3)],
+			[sqrt3, 0],
+			[-halfSqrt3, 1.5],
+			[halfSqrt3, 1.5],
 		]);
 	});
 });

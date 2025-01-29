@@ -4,9 +4,11 @@
 	import type { Tables } from "$lib/database-types.js";
 
 	const { data } = $props();
-	const { supabase } = $derived(data);
+	const { supabase, user } = $derived(data);
 
 	let game = $state(data.game);
+
+	const userColor = $derived(game.players.find((player) => player.user_id == user?.id)?.color);
 
 	$effect(() => {
 		game = data.game;
@@ -67,9 +69,17 @@
 </script>
 
 {#if game.board != null}
-	<Board board={game.board} />
+	<div style:--user-color={userColor}>
+		<Board class="board" board={game.board} maxAllowedSelection={3} />
+	</div>
 {/if}
 
 <code>
 	<pre>{JSON.stringify(game, null, 2)}</pre>
 </code>
+
+<style>
+	* > :global(.board) {
+		width: min(100svh, 100svw);
+	}
+</style>
