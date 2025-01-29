@@ -34,7 +34,15 @@ export type Database = {
 					turn?: number | null;
 					winner?: Database["public"]["Enums"]["color"] | null;
 				};
-				Relationships: [];
+				Relationships: [
+					{
+						foreignKeyName: "games_host_user_id_profiles_fkey";
+						columns: ["host_user_id"];
+						isOneToOne: false;
+						referencedRelation: "profiles";
+						referencedColumns: ["user_id"];
+					},
+				];
 			};
 			players: {
 				Row: {
@@ -67,7 +75,7 @@ export type Database = {
 						referencedColumns: ["id"];
 					},
 					{
-						foreignKeyName: "players_user_id_fkey1";
+						foreignKeyName: "players_user_id_profiles_fkey";
 						columns: ["user_id"];
 						isOneToOne: false;
 						referencedRelation: "profiles";

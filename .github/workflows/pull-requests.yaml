@@ -1,0 +1,20 @@
+name: Pull Requests
+
+on:
+  pull_request_target:
+    branches:
+      - next
+
+permissions:
+  pull-requests: read
+
+jobs:
+  prevent-file-change:
+    name: Prevent Migration Edits
+    runs-on: ubuntu-latest
+    steps:
+      - uses: xalvarez/prevent-file-change-action@1cbb6c2722f61b87abb3396e918f27f31f0c6198
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          pattern: supabase/migrations/.*
+          allowNewFiles: true

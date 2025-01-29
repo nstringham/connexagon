@@ -4,6 +4,9 @@ on:
   push:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   prettier:
     name: Prettier
@@ -56,3 +59,46 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run test
+
+  pg-formatter:
+    name: SQL Migration Formatter
+    runs-on: ubuntu-latest
+    env:
+      version: 5.5
+    steps:
+      - uses: actions/checkout@v4
+      - run: wget https://github.com/darold/pgFormatter/archive/refs/tags/v${version}.tar.gz
+      - run: tar xzf v${version}.tar.gz
+      - run: pgFormatter-${version}/pg_format --inplace --tabs supabase/migrations/*.sql
+      - run: git diff --exit-code
+
+  database-types:
+    name: Auto Generated Database Types
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx supabase db start
+      - run: npm run generate-types
+      - run: git diff --exit-code
+
+  migration-dry-run:
+    name: Supabase Migrations Dry Run
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx supabase link --project-ref $SUPABASE_PROJECT_ID
+      - run: npx supabase db push --dry-run

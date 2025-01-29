@@ -13,7 +13,7 @@
 		"lint": "prettier --check . && eslint .",
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run",
-		"generate-types": "supabase gen types typescript --project-id hmwkofjdjrwskoodcaht --schema public > src/lib/database-types.ts && prettier --write src/lib/database-types.ts"
+		"generate-types": "supabase gen types typescript --local --schema public > src/lib/database-types.ts && prettier --write src/lib/database-types.ts"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
@@ -27,7 +27,7 @@
 		"globals": "^15.14.0",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.3",
-		"supabase": "^2.6.8",
+		"supabase": "^2.9.6",
 		"svelte": "^5.0.0",
 		"svelte-check": "^4.0.0",
 		"typescript": "^5.0.0",
