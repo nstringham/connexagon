@@ -8,7 +8,6 @@ Play connexagon now at https://connexagon.vercel.app
 
     1. [Node](https://nodejs.org/)
     1. [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-    1. [Perl](https://www.perl.org/) (optional)
     1. [VS Code](https://code.visualstudio.com/) (optional)
 
 1.  Clone this repository

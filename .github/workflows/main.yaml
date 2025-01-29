@@ -60,18 +60,6 @@ jobs:
       - run: npm ci
       - run: npm run test
 
-  pg-formatter:
-    name: SQL Migration Formatter
-    runs-on: ubuntu-latest
-    env:
-      version: 5.5
-    steps:
-      - uses: actions/checkout@v4
-      - run: wget https://github.com/darold/pgFormatter/archive/refs/tags/v${version}.tar.gz
-      - run: tar xzf v${version}.tar.gz
-      - run: pgFormatter-${version}/pg_format --inplace --tabs supabase/migrations/*.sql
-      - run: git diff --exit-code
-
   database-types:
     name: Auto Generated Database Types
     runs-on: ubuntu-latest

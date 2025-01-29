@@ -6,6 +6,6 @@
 		"vitest.explorer",
 		"editorconfig.editorconfig",
 		"streetsidesoftware.code-spell-checker",
-		"bradymholt.pgformatter"
+		"ReneSaarsoo.sql-formatter-vsc"
 	]
 }

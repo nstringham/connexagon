@@ -4,8 +4,7 @@
 	"eslint.validate": ["javascript", "typescript", "svelte"],
 	"eslint.rules.customizations": [{ "rule": "*", "severity": "downgrade" }],
 	"[sql]": {
-		"editor.defaultFormatter": "bradymholt.pgformatter"
+		"editor.defaultFormatter": "ReneSaarsoo.sql-formatter-vsc"
 	},
-	"pgFormatter.tabs": true,
-	"pgFormatter.noSpaceFunction": false
+	"SQL-Formatter-VSCode.dialect": "postgresql"
 }

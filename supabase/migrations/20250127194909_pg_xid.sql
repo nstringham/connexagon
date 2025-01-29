@@ -8,18 +8,12 @@ EXCEPTION
 END
 $$;
 
-CREATE SEQUENCE IF NOT EXISTS public.xid_serial
-MINVALUE 0
-MAXVALUE 16777215 CYCLE;
+CREATE SEQUENCE IF NOT EXISTS public.xid_serial MINVALUE 0 MAXVALUE 16777215 CYCLE;
 
 SELECT
 	setval('xid_serial', (random() * 16777215)::int);
 
-CREATE OR REPLACE FUNCTION public._xid_machine_id ()
-	RETURNS int
-	LANGUAGE plpgsql
-	IMMUTABLE
-	AS $$
+CREATE OR REPLACE FUNCTION public._xid_machine_id () RETURNS int LANGUAGE plpgsql IMMUTABLE AS $$
 DECLARE
 BEGIN
 	RETURN (
@@ -30,10 +24,7 @@ BEGIN
 END
 $$;
 
-CREATE OR REPLACE FUNCTION public.xid_encode (_id int[])
-	RETURNS public.xid
-	LANGUAGE plpgsql
-	AS $$
+CREATE OR REPLACE FUNCTION public.xid_encode (_id int[]) RETURNS public.xid LANGUAGE plpgsql AS $$
 DECLARE
 	_encoding char(1)[] = '{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v}';
 BEGIN
@@ -41,10 +32,7 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION public.xid_decode (_xid public.xid)
-	RETURNS int[]
-	LANGUAGE plpgsql
-	AS $$
+CREATE OR REPLACE FUNCTION public.xid_decode (_xid public.xid) RETURNS int[] LANGUAGE plpgsql AS $$
 DECLARE
 	_dec int[] = '{255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255}';
 	_b bytea;
@@ -54,10 +42,7 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION xid (_at timestamptz DEFAULT CURRENT_TIMESTAMP)
-	RETURNS public.xid
-	LANGUAGE plpgsql
-	AS $$
+CREATE OR REPLACE FUNCTION xid (_at timestamptz DEFAULT CURRENT_TIMESTAMP) RETURNS public.xid LANGUAGE plpgsql AS $$
 DECLARE
 	_t int;
 	_m int;
@@ -72,10 +57,7 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION public.xid_time (_xid public.xid)
-	RETURNS timestamptz
-	LANGUAGE plpgsql
-	AS $$
+CREATE OR REPLACE FUNCTION public.xid_time (_xid public.xid) RETURNS timestamptz LANGUAGE plpgsql AS $$
 DECLARE
 	_id int[];
 BEGIN
@@ -84,10 +66,7 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION public.xid_machine (_xid public.xid)
-	RETURNS int[]
-	LANGUAGE plpgsql
-	AS $$
+CREATE OR REPLACE FUNCTION public.xid_machine (_xid public.xid) RETURNS int[] LANGUAGE plpgsql AS $$
 DECLARE
 	_id int[];
 BEGIN
@@ -96,10 +75,7 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION public.xid_pid (_xid public.xid)
-	RETURNS int
-	LANGUAGE plpgsql
-	AS $$
+CREATE OR REPLACE FUNCTION public.xid_pid (_xid public.xid) RETURNS int LANGUAGE plpgsql AS $$
 DECLARE
 	_id int[];
 BEGIN
@@ -108,10 +84,7 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION public.xid_counter (_xid public.xid)
-	RETURNS int
-	LANGUAGE plpgsql
-	AS $$
+CREATE OR REPLACE FUNCTION public.xid_counter (_xid public.xid) RETURNS int LANGUAGE plpgsql AS $$
 DECLARE
 	_id int[];
 BEGIN
@@ -119,4 +92,3 @@ BEGIN
 	RETURN (_id[10] << 16) + (_id[11] << 8) + (_id[12]);
 END;
 $$;
-
