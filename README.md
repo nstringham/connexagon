@@ -1,38 +1,47 @@
-# sv
+# Connexagon
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Play connexagon now at https://connexagon.vercel.app
 
-## Creating a project
+## Setting up a Local Development Environment
 
-If you're seeing this, you've probably already done this step. Congrats!
+1.  Prerequisites
 
-```bash
-# create a new project in the current directory
-npx sv create
+    1. [Node](https://nodejs.org/)
+    1. [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+    1. [Perl](https://www.perl.org/) (optional)
+    1. [VS Code](https://code.visualstudio.com/) (optional)
 
-# create a new project in my-app
-npx sv create my-app
-```
+1.  Clone this repository
 
-## Developing
+1.  Install npm dependencies
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+    ```bash
+    npm ci
+    ```
 
-```bash
-npm run dev
+1.  Install workspace recommended VS Code extensions (optional)
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+1.  Start Supabase local database
 
-## Building
+    ```bash
+    npx supabase start
+    ```
 
-To create a production version of your app:
+1.  create a `.env.local` file and fill in the information from the previous step
 
-```bash
-npm run build
-```
+    ```
+    PUBLIC_SUPABASE_URL=<your API URL>
+    PUBLIC_SUPABASE_ANON_KEY=<your anon key>
+    ```
 
-You can preview the production build with `npm run preview`.
+1.  Start SvelteKit in development mode
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+    ```bash
+    npm run dev
+    ```
+
+1.  Don't forget to shut down Supabase local development when you are done.
+
+    ```bash
+    npx supabase stop
+    ```
