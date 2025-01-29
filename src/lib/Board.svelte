@@ -44,20 +44,20 @@
 			return;
 		}
 
-		const index = parseInt(target.dataset.index as string);
+		const cellIndex = parseInt(target.dataset.index as string);
 
-		if (board[index].tower || board[index].color != null) {
+		if (board[cellIndex].tower || board[cellIndex].color != null) {
 			return;
 		}
 
 		event.preventDefault();
 
-		const selectedIndex = selection.indexOf(index);
+		const selectionIndex = selection.indexOf(cellIndex);
 
-		if (selectedIndex != -1) {
-			selection.splice(selectedIndex, 1);
+		if (selectionIndex != -1) {
+			selection.splice(selectionIndex, 1);
 		} else {
-			selection.push(index);
+			selection.push(cellIndex);
 			while (selection.length > maxAllowedSelection) {
 				selection.shift();
 			}
