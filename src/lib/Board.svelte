@@ -88,7 +88,7 @@
 		<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 		<g
 			data-index={i}
-			aria-selected={selectable ? selected : undefined}
+			aria-checked={selectable ? selected : undefined}
 			tabindex={(selectable && !disabled) || selected ? 0 : undefined}
 			role={selectable ? "checkbox" : undefined}
 			aria-disabled={selectable ? disabled : undefined}
