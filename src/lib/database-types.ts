@@ -154,6 +154,12 @@ export type Database = {
 						};
 						Returns: undefined;
 				  };
+			set_name: {
+				Args: {
+					name: string;
+				};
+				Returns: undefined;
+			};
 			xid: {
 				Args: {
 					_at?: string;
