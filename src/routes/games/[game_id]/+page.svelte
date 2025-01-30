@@ -27,13 +27,12 @@
 					table: "games",
 					filter: `id=eq.${game_id}`,
 				},
-				({ new: { id, board, turn, winner, started_at } }) => {
+				({ new: { id, board, turn, winner } }) => {
 					game = {
 						id,
 						board,
 						turn,
 						winner,
-						started_at,
 						players: game.players,
 					};
 				},
@@ -107,13 +106,7 @@
 	<div style:--user-color={userColor}>
 		<Board class="board" board={game.board} maxAllowedSelection={3} />
 	</div>
-{/if}
-
-{#if userColor == null && game.started_at == null}
-	<button onclick={joinGame}>Join Game</button>
-{/if}
-
-{#if userColor != null && game.started_at == null}
+{:else if userColor != null}
 	<label
 		>Color:
 		<select
@@ -126,6 +119,8 @@
 			{/each}
 		</select>
 	</label>
+{:else}
+	<button onclick={joinGame}>Join Game</button>
 {/if}
 
 <code>
