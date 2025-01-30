@@ -30,14 +30,20 @@
 	});
 
 	async function signIn() {
-		await supabase.auth.signInWithPassword({ email, password });
+		const { error } = await supabase.auth.signInWithPassword({ email, password });
+		if (error) {
+			throw error;
+		}
 		email = "";
 		password = "";
 		showSignModal = false;
 	}
 
 	async function signUp() {
-		await supabase.auth.signUp({ email, password });
+		const { error } = await supabase.auth.signUp({ email, password });
+		if (error) {
+			throw error;
+		}
 		email = "";
 		password = "";
 		showSignModal = false;
