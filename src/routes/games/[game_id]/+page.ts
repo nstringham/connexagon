@@ -24,7 +24,7 @@ export const load: PageLoad = async ({ params: { game_id }, parent, depends }) =
 	}
 
 	if (data == null || data.length == 0) {
-		kitError(404);
+		kitError(404, "invalid game id");
 	}
 
 	return { game: data[0] };
