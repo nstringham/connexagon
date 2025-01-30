@@ -107,8 +107,8 @@
 		<Board class="board" board={game.board} maxAllowedSelection={3} />
 	</div>
 {:else if userColor != null}
-	<label
-		>Color:
+	<label>
+		Color:
 		<select
 			name="color"
 			value={userColor}
