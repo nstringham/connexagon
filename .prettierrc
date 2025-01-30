@@ -1,23 +1,18 @@
 {
 	"printWidth": 100,
 	"plugins": ["prettier-plugin-svelte", "prettier-plugin-embed", "prettier-plugin-sql"],
-	"embeddedSqlTags": ["sql"],
 	"overrides": [
 		{
 			"files": "*.svelte",
 			"options": {
 				"parser": "svelte"
 			}
-		},
-		{
-			"files": "*.sql",
-			"options": {
-				"language": "postgresql",
-				"keywordCase": "lower",
-				"functionCase": "lower",
-				"identifierCase": "lower",
-				"dataTypeCase": "lower"
-			}
 		}
-	]
+	],
+	"embeddedSqlTags": ["sql"],
+	"language": "postgresql",
+	"keywordCase": "lower",
+	"functionCase": "lower",
+	"identifierCase": "lower",
+	"dataTypeCase": "lower"
 }
