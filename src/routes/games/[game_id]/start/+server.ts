@@ -43,7 +43,7 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
 
 		const board = generateBoard(players);
 
-		await sql`
+		const updateGame = sql`
 			update public.games
 			set
 				board = ${serializeBoard(board)},
@@ -53,7 +53,7 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
 				id = ${game_id}
 		`;
 
-		await sql`
+		const updatePlayers = sql`
 			with
 				ordered_players as (
 					select
@@ -76,6 +76,8 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
 				players.user_id = ordered_players.user_id
 				and game_id = ${game_id}
 		`;
+
+		await Promise.all([updateGame, updatePlayers]);
 	});
 
 	return new Response();
