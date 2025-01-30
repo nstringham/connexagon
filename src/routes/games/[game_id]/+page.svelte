@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { invalidate } from "$app/navigation";
 	import Board from "$lib/Board.svelte";
-	import type { Tables } from "$lib/database-types.js";
+	import type { Tables } from "$lib/database-types";
+	import type { Cell } from "$lib/game";
 
 	const { data } = $props();
 	const { supabase, user } = $derived(data);
@@ -70,7 +71,7 @@
 
 {#if game.board != null}
 	<div style:--user-color={userColor}>
-		<Board class="board" board={game.board} maxAllowedSelection={3} />
+		<Board class="board" board={game.board as Cell[]} maxAllowedSelection={3} />
 	</div>
 {/if}
 
