@@ -31,6 +31,7 @@ Play connexagon now at https://connexagon.vercel.app
     ```
     PUBLIC_SUPABASE_URL=<your API URL>
     PUBLIC_SUPABASE_ANON_KEY=<your anon key>
+    POSTGRES_URL=<your DB URL>
     ```
 
 1.  Start SvelteKit in development mode
