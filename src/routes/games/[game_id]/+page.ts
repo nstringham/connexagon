@@ -14,6 +14,7 @@ export const load: PageLoad = async ({ params: { game_id }, parent, depends }) =
 				board,
 				turn,
 				winner,
+				started_at,
 				players(user_id, turn_order, color, profile:profiles(name))
 			`,
 		)

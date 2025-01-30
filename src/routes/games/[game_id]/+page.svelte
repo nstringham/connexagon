@@ -25,12 +25,13 @@
 					table: "games",
 					filter: `id=eq.${game_id}`,
 				},
-				({ new: { id, board, turn, winner } }) => {
+				({ new: { id, board, turn, winner, started_at } }) => {
 					game = {
 						id,
 						board,
 						turn,
 						winner,
+						started_at,
 						players: game.players,
 					};
 				},
@@ -66,12 +67,23 @@
 
 		return () => channel.unsubscribe();
 	});
+
+	async function joinGame() {
+		const { error } = await supabase.rpc("join_game", { game_id_to_join: game.id });
+		if (error) {
+			throw error;
+		}
+	}
 </script>
 
 {#if game.board != null}
 	<div style:--user-color={userColor}>
 		<Board class="board" board={game.board} maxAllowedSelection={3} />
 	</div>
+{/if}
+
+{#if userColor == null && game.started_at == null}
+	<button onclick={joinGame}>Join Game</button>
 {/if}
 
 <code>
