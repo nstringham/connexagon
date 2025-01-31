@@ -96,7 +96,7 @@
 			<path
 				class="cell"
 				d="M{x},{y}{cellPath}"
-				fill={cell.tower ? "black" : (cell.color ?? "#ebebeb")}
+				fill={cell.tower ? "currentcolor" : (cell.color ?? "light-dark(#ebebeb, #181818)")}
 				stroke-width={strokeWidth * 2}
 			/>
 			{#if selected}
@@ -115,6 +115,6 @@
 	}
 	g:focus-visible .cell {
 		paint-order: stroke;
-		stroke: black;
+		stroke: currentcolor;
 	}
 </style>
