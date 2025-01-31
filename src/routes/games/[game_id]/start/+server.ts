@@ -1,7 +1,7 @@
 import { serializeBoard, sql } from "$lib/db.server";
 import { error } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
-import { generateBoard } from "$lib/game";
+import { generateBoard } from "$lib/board";
 
 export const POST: RequestHandler = async ({ params: { game_id }, locals: { user } }) => {
 	if (user == null) {

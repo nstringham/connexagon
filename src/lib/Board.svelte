@@ -1,8 +1,7 @@
 <script lang="ts">
 	import type { SVGAttributes } from "svelte/elements";
-	import { getLayout, getSize } from "./board";
+	import { getLayout, getSize, type Cell } from "./board";
 	import { getHexagonSvgPath, halfSqrt3 } from "./hexagon";
-	import type { Cell } from "./game";
 
 	const {
 		board,

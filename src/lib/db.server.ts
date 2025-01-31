@@ -1,6 +1,6 @@
 import { POSTGRES_URL } from "$env/static/private";
 import postgres from "postgres";
-import type { Cell } from "./game";
+import type { Cell } from "./board";
 
 export const sql = postgres(POSTGRES_URL);
 

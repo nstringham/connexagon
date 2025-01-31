@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { invalidate } from "$app/navigation";
+	import type { Cell } from "$lib/board";
 	import Board from "$lib/Board.svelte";
 	import type { Tables } from "$lib/database-types";
-	import type { Cell } from "$lib/game";
 
 	const { data } = $props();
 	const { supabase, user } = $derived(data);
