@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { generateBoard, getLayout, getSize } from "./board";
+import { generateBoard, getAdjacentCells, getLayout, getSize } from "./board";
 import { round } from "./hexagon";
 
 describe("getSize", () => {
@@ -31,6 +31,41 @@ describe("getLayout", () => {
 			[-halfSqrt3, 1.5],
 			[halfSqrt3, 1.5],
 		]);
+	});
+});
+
+describe("getAdjacentCells", () => {
+	it("finds the 6 cells around a cell on the top half", () => {
+		expect(getAdjacentCells(217, 48)).toBe([35, 36, 47, 49, 61, 62]);
+		expect(getAdjacentCells(217, 51)).toBe([38, 39, 50, 52, 64, 65]);
+	});
+
+	it("finds the 6 cells around a cell on the bottom half", () => {
+		expect(getAdjacentCells(217, 168)).toBe([154, 155, 167, 169, 180, 181]);
+		expect(getAdjacentCells(217, 120)).toBe([103, 104, 119, 121, 135, 136]);
+	});
+
+	it("finds the 6 cells around the center cell", () => {
+		expect(getAdjacentCells(217, 108)).toBe([91, 92, 107, 109, 124, 125]);
+	});
+
+	it("finds the 6 cells around the center cell on a larger board", () => {
+		expect(getAdjacentCells(271, 135)).toBe([116, 117, 134, 136, 153, 154]);
+	});
+
+	it("finds the 4 cells around a top edge", () => {
+		expect(getAdjacentCells(217, 3)).toBe([2, 4, 12, 13]);
+	});
+
+	it("finds the 4 cells around a side edge", () => {
+		expect(getAdjacentCells(217, 55)).toBe([42, 56, 69, 70]);
+		expect(getAdjacentCells(217, 162)).toBe([148, 149, 163, 175]);
+	});
+
+	it("finds the 3 cells around a corner", () => {
+		expect(getAdjacentCells(217, 0)).toBe([1, 9, 10]);
+		expect(getAdjacentCells(217, 8)).toBe([7, 17, 18]);
+		expect(getAdjacentCells(217, 100)).toBe([84, 101, 117]);
 	});
 });
 

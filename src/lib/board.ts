@@ -33,6 +33,12 @@ export function getLayout(size: number): Point[] {
 	return layout;
 }
 
+export function getAdjacentCells(length: number, index: number): number[] {
+	const size = getSize(length);
+
+	throw new Error("Not implemented yet!");
+}
+
 const emptyCell: Readonly<Cell> = { tower: false, color: null };
 const towerCell: Readonly<Cell> = { tower: true, color: null };
 
