@@ -11,6 +11,7 @@ export const load: PageLoad = async ({ params: { game_id }, parent, depends }) =
 		.select(
 			`
 				id,
+				host_user_id,
 				board,
 				turn,
 				winner,
@@ -27,5 +28,11 @@ export const load: PageLoad = async ({ params: { game_id }, parent, depends }) =
 		kitError(404, "invalid game id");
 	}
 
-	return { game: data[0] };
+	const game = data[0];
+
+	if (game.turn != null) {
+		game.players.sort((a, b) => a.turn_order! - b.turn_order!);
+	}
+
+	return { game };
 };

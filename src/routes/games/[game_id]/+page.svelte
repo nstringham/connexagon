@@ -1,15 +1,13 @@
 <script lang="ts">
 	import { invalidate } from "$app/navigation";
-	import type { Cell } from "$lib/board";
+	import { getMaxTurnSize, getTowers, type Cell } from "$lib/board.js";
 	import Board from "$lib/Board.svelte";
-	import type { Tables } from "$lib/database-types";
+	import type { Tables } from "$lib/database-types.js";
 
 	const { data } = $props();
 	const { supabase, user } = $derived(data);
 
 	let game = $state(data.game);
-
-	const userColor = $derived(game.players.find((player) => player.user_id == user?.id)?.color);
 
 	$effect(() => {
 		game = data.game;
@@ -26,9 +24,10 @@
 					table: "games",
 					filter: `id=eq.${game_id}`,
 				},
-				({ new: { id, board, turn, winner } }) => {
+				({ new: { id, host_user_id, board, turn, winner } }) => {
 					game = {
 						id,
+						host_user_id,
 						board,
 						turn,
 						winner,
@@ -67,12 +66,43 @@
 
 		return () => channel.unsubscribe();
 	});
+
+	const userColor = $derived(game.players.find((player) => player.user_id == user?.id)?.color);
+
+	const isTurn = $derived(
+		game.turn == null ? false : game.players[game.turn % game.players.length].color == userColor,
+	);
+
+	const board = $derived(game.board as Cell[] | null);
+
+	const { towersByColor } = $derived(getTowers(board ?? []));
+
+	const maxAllowedSelection = $derived(
+		!isTurn || userColor == undefined ? 0 : getMaxTurnSize(game.turn!, towersByColor[userColor]),
+	);
+
+	let selection: number[] = $state([]);
+
+	async function startGame() {
+		await fetch(`/games/${game.id}/start`, { method: "POST" });
+	}
+
+	async function makeTurn() {
+		await fetch(`/games/${game.id}/turns`, { method: "POST", body: JSON.stringify(selection) });
+		selection = [];
+	}
 </script>
 
-{#if game.board != null}
+{#if board != null}
 	<div style:--user-color={userColor}>
-		<Board class="board" board={game.board as Cell[]} maxAllowedSelection={3} />
+		<Board class="board" {board} bind:selection {maxAllowedSelection} />
 	</div>
+{:else if user?.id === game.host_user_id}
+	<button onclick={startGame}>Start game</button>
+{/if}
+
+{#if isTurn}
+	<button onclick={makeTurn}>Make turn</button>
 {/if}
 
 <code>
