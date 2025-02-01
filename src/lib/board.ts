@@ -1,4 +1,4 @@
-import type { CompositeTypes } from "./database-types";
+import type { CompositeTypes, Enums } from "./database-types";
 import { halfSqrt3, round } from "./hexagon";
 
 export type Cell = CompositeTypes<"cell"> & { tower: boolean };
@@ -81,4 +81,14 @@ export function getTowers(board: Cell[]): TowerStats {
 	}
 
 	return { towers, towersByColor };
+}
+
+/**
+ * calculates how many cells a player may select on their turn
+ * @param turn the index of the turn the game is currently on
+ * @param towers the number of towers the player has already captured
+ * @returns the maximum number of cells the player may place this turn
+ */
+export function getMaxTurnSize(turn: number, towers: number) {
+	return Math.min(4, turn + 1, 5 - towers);
 }

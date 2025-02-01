@@ -1,5 +1,13 @@
 import { describe, it, expect } from "vitest";
-import { generateBoard, getAdjacentCells, getLayout, getSize, getTowers, type Cell } from "./board";
+import {
+	generateBoard,
+	getAdjacentCells,
+	getLayout,
+	getMaxTurnSize,
+	getSize,
+	getTowers,
+	type Cell,
+} from "./board";
 import { round } from "./hexagon";
 
 /** creates a board from a hardcoded string for use in tests */
@@ -161,5 +169,31 @@ describe("getTowers", () => {
 			towers: [1, 4, 12, 14, 23, 36],
 			towersByColor: { unclaimed: 3, red: 2, green: 1, blue: 0 },
 		});
+	});
+});
+
+describe("getMaxTurnSize", () => {
+	it("limits turns at the beginning of the game", () => {
+		expect(getMaxTurnSize(0, 0)).toBe(1);
+		expect(getMaxTurnSize(1, 0)).toBe(2);
+		expect(getMaxTurnSize(2, 0)).toBe(3);
+		expect(getMaxTurnSize(3, 0)).toBe(4);
+		expect(getMaxTurnSize(4, 0)).toBe(4);
+	});
+
+	it("limits turns based on towers captured", () => {
+		expect(getMaxTurnSize(100, 0)).toBe(4);
+		expect(getMaxTurnSize(100, 1)).toBe(4);
+		expect(getMaxTurnSize(100, 2)).toBe(3);
+		expect(getMaxTurnSize(100, 3)).toBe(2);
+		expect(getMaxTurnSize(100, 4)).toBe(1);
+	});
+
+	it("limits turns based on towers captured and beginning of game", () => {
+		expect(getMaxTurnSize(0, 0)).toBe(1);
+		expect(getMaxTurnSize(2, 2)).toBe(3);
+		expect(getMaxTurnSize(3, 2)).toBe(3);
+		expect(getMaxTurnSize(4, 2)).toBe(3);
+		expect(getMaxTurnSize(3, 4)).toBe(1);
 	});
 });
