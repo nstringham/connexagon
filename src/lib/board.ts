@@ -1,5 +1,6 @@
 import type { CompositeTypes, Enums } from "./database-types";
 import { halfSqrt3, round } from "./hexagon";
+import triangleNumbers from "virtual:triangle-numbers";
 
 export type Cell = CompositeTypes<"cell"> & { tower: boolean };
 
@@ -36,7 +37,16 @@ export function getLayout(size: number): Point[] {
 export function getAdjacentCells(length: number, index: number): number[] {
 	const size = getSize(length);
 
-	throw new Error("Not implemented yet!");
+	const rowWidth = Math.round(Math.sqrt(2 * (index + triangleNumbers[size - 1] + 1)));
+
+	return [
+		index - rowWidth,
+		index - rowWidth + 1,
+		index - 1,
+		index + 1,
+		index + rowWidth,
+		index + rowWidth + 1,
+	];
 }
 
 const emptyCell: Readonly<Cell> = { tower: false, color: null };
