@@ -78,6 +78,10 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
 			error(400, `each cell index must be between 0 and ${rawBoard.length}`);
 		}
 
+		if (color == null) {
+			error(400, "you must have a color to make a turn");
+		}
+
 		const board = rawBoard.map((cell) => ({
 			tower: cell.charAt(1) === "t",
 			color: (cell.substring(3, cell.length - 1) || null) as Enums<"color"> | null,
