@@ -3,6 +3,11 @@ import { error } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import type { Enums } from "$lib/database-types";
 import { getMaxTurnSize, getTowers } from "$lib/board";
+import type { Config } from "@sveltejs/adapter-vercel";
+
+export const config: Config = {
+	runtime: "nodejs22.x",
+};
 
 function isIntegerArray(value: unknown): value is number[] {
 	return Array.isArray(value) && value.every((n) => Number.isInteger(n));
