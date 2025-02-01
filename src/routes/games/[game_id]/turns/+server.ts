@@ -2,6 +2,7 @@ import { serializeBoard, sql } from "$lib/db.server";
 import { error } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import type { Enums } from "$lib/database-types";
+import { getMaxTurnSize, getTowers } from "$lib/board";
 
 function isIntegerArray(value: unknown): value is number[] {
 	return Array.isArray(value) && value.every((n) => Number.isInteger(n));
@@ -82,14 +83,12 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
 			color: (cell.substring(3, cell.length - 1) || null) as Enums<"color"> | null,
 		}));
 
-		const towers = board.keys().filter((i) => board[i].tower);
+		const { towersByColor } = getTowers(board);
 
-		const ownedTowers = [...towers.filter((i) => board[i].color == color)];
+		const maxTurnSize = getMaxTurnSize(turn_number, towersByColor[color]);
 
-		const maxTurnLength = 5 - Math.max(ownedTowers.length, 1);
-
-		if (turn.length > maxTurnLength) {
-			error(400, `you may not claim more than ${maxTurnLength} cells in one turn`);
+		if (turn.length > maxTurnSize) {
+			error(400, `you may not claim more than ${maxTurnSize} cells in one turn`);
 		}
 
 		if (turn.some((i) => board[i].tower)) {
