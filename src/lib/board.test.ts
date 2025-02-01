@@ -1,6 +1,24 @@
 import { describe, it, expect } from "vitest";
-import { generateBoard, getAdjacentCells, getLayout, getSize } from "./board";
+import { generateBoard, getAdjacentCells, getLayout, getSize, getTowers, type Cell } from "./board";
 import { round } from "./hexagon";
+
+/** creates a board from a hardcoded string for use in tests */
+function board([board]: TemplateStringsArray): Cell[] {
+	const lookup: { [key: string]: (() => Cell) | undefined } = {
+		"⚫": () => ({ tower: false, color: null }),
+		"🔴": () => ({ tower: false, color: "red" }),
+		"🟢": () => ({ tower: false, color: "green" }),
+		"🔵": () => ({ tower: false, color: "blue" }),
+		"🔲": () => ({ tower: true, color: null }),
+		"🟥": () => ({ tower: true, color: "red" }),
+		"🟩": () => ({ tower: true, color: "green" }),
+		"🟦": () => ({ tower: true, color: "blue" }),
+	};
+
+	return [...new Intl.Segmenter().segment(board.replaceAll(/\s/g, ""))].map(
+		({ segment }) => lookup[segment]?.() ?? expect.fail(`invalid board character '${segment}'`),
+	);
+}
 
 describe("getSize", () => {
 	it("returns the correct value", () => {
@@ -90,5 +108,58 @@ describe("generateBoard", () => {
 
 	it("does not generate the same board every time", () => {
 		expect(generateBoard(3)).to.not.equal(generateBoard(3));
+	});
+});
+
+describe("getTowers", () => {
+	it("finds nothing for an empty", () => {
+		expect(
+			getTowers(board`
+				   ⚫⚫⚫⚫
+				  ⚫⚫⚫⚫⚫
+				 ⚫⚫⚫⚫⚫⚫
+				⚫⚫⚫⚫⚫⚫⚫
+				 ⚫⚫⚫⚫⚫⚫
+				  ⚫⚫⚫⚫⚫
+				   ⚫⚫⚫⚫
+			`),
+		).to.deep.equal({
+			towers: [],
+			towersByColor: { unclaimed: 0, red: 0, green: 0, blue: 0 },
+		});
+	});
+
+	it("finds nothing for board with no towers", () => {
+		expect(
+			getTowers(board`
+				   ⚫🔴⚫⚫
+				  ⚫⚫🔴🔵⚫
+				 ⚫⚫⚫🔴🔵⚫
+				🟢🟢⚫🔴⚫🔵🔵
+				 ⚫⚫⚫⚫🟢⚫
+				  🔵🔵⚫🟢🟢
+				   ⚫⚫⚫⚫
+			`),
+		).to.deep.equal({
+			towers: [],
+			towersByColor: { unclaimed: 0, red: 0, green: 0, blue: 0 },
+		});
+	});
+
+	it("finds towers on a board with towers", () => {
+		expect(
+			getTowers(board`
+				   ⚫🟥⚫⚫
+				  🔲⚫🔴🔵⚫
+				 ⚫⚫⚫🟥🔵🔲
+				🟢🟢⚫🔴⚫🔵🔵
+				 ⚫🔲⚫⚫⚫⚫
+				  🔵🔵⚫🟢🟢
+				   ⚫⚫🟢🟩
+			`),
+		).to.deep.equal({
+			towers: [1, 4, 12, 14, 23, 36],
+			towersByColor: { unclaimed: 3, red: 2, green: 1, blue: 0 },
+		});
 	});
 });

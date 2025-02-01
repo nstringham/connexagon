@@ -62,3 +62,23 @@ export function generateBoard(players: number): Cell[] {
 
 	return board;
 }
+
+export type TowerStats = {
+	towers: number[];
+	towersByColor: { [key in Enums<"color"> | "unclaimed"]: number };
+};
+
+/** finds all the towers in the board and counts how many towers of each color exist */
+export function getTowers(board: Cell[]): TowerStats {
+	const towers: number[] = [];
+	const towersByColor = { unclaimed: 0, red: 0, green: 0, blue: 0 };
+
+	for (const [i, cell] of board.entries()) {
+		if (cell.tower) {
+			towers.push(i);
+			towersByColor[cell.color ?? "unclaimed"] += 1;
+		}
+	}
+
+	return { towers, towersByColor };
+}
