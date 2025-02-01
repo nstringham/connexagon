@@ -37,16 +37,33 @@ export function getLayout(size: number): Point[] {
 export function getAdjacentCells(length: number, index: number): number[] {
 	const size = getSize(length);
 
-	const rowWidth = Math.round(Math.sqrt(2 * (index + triangleNumbers[size - 1] + 1)));
+	const rowWidth = Math.round(
+		Math.sqrt(2 * (Math.min(index, length - index) + triangleNumbers[size - 1] + 1)),
+	);
 
-	return [
-		index - rowWidth,
-		index - rowWidth + 1,
-		index - 1,
-		index + 1,
-		index + rowWidth,
-		index + rowWidth + 1,
-	];
+	const center = length / 2;
+
+	const cells: number[] = [];
+
+	if (index < size) {
+		// do nothing
+	} else if (index < center + rowWidth / 2) {
+		cells.push(index - rowWidth, index - rowWidth + 1);
+	} else {
+		cells.push(index - rowWidth - 1, index - rowWidth);
+	}
+
+	cells.push(index - 1, index + 1);
+
+	if (index < center - rowWidth / 2) {
+		cells.push(index + rowWidth, index + rowWidth + 1);
+	} else if (index < length - size) {
+		cells.push(index + rowWidth - 1, index + rowWidth);
+	} else {
+		// do nothing
+	}
+
+	return cells;
 }
 
 const emptyCell: Readonly<Cell> = { tower: false, color: null };
