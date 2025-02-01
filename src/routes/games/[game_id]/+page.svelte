@@ -105,9 +105,9 @@
 	<button onclick={makeTurn}>Make turn</button>
 {/if}
 
-<code>
+{#if import.meta.env.DEV}
 	<pre>{JSON.stringify(game, null, 2)}</pre>
-</code>
+{/if}
 
 <style>
 	* > :global(.board) {
