@@ -32,7 +32,6 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
 		type queryResult = {
 			board: string[];
 			turn_number: number;
-			winner: Color;
 			completed: boolean;
 			user_id: string;
 			color: Color | null;
@@ -42,7 +41,6 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
 			select
 				board,
 				turn as turn_number,
-				winner,
 				completed_at is not null as completed,
 				player.user_id,
 				player.color
@@ -67,7 +65,7 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
 			error(404, "invalid game id");
 		}
 
-		const { board: rawBoard, turn_number, winner, completed, user_id, color } = result[0];
+		const { board: rawBoard, turn_number, completed, user_id, color } = result[0];
 
 		if (completed) {
 			error(400, "game has already completed");
