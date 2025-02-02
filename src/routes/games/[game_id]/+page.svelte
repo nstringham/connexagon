@@ -148,7 +148,7 @@
 			</select>
 		</label>
 		{#if user?.id === game.host_user_id}
-			<button onclick={startGame}>Start game</button>
+			<button onclick={startGame} disabled={game.players.length < 2}>Start game</button>
 		{/if}
 	{:else}
 		<button onclick={joinGame}>Join Game</button>
