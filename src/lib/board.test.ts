@@ -91,7 +91,7 @@ describe("getAdjacentCells", () => {
 		expect(getAdjacentCells(217, 55)).to.deep.equal([42, 56, 69, 70]);
 		expect(getAdjacentCells(217, 54)).to.deep.equal([41, 53, 67, 68]);
 		expect(getAdjacentCells(217, 162)).to.deep.equal([148, 149, 163, 175]);
-		expect(getAdjacentCells(217, 162)).to.deep.equal([196, 197, 206, 216]);
+		expect(getAdjacentCells(217, 207)).to.deep.equal([196, 197, 206, 216]);
 	});
 
 	it("finds the 3 cells around a corner", () => {

@@ -35,32 +35,53 @@ export function getLayout(size: number): Point[] {
 }
 
 export function getAdjacentCells(length: number, index: number): number[] {
+	const centerOfBoard = length / 2;
+
+	// mirror if index is in the bottom half of the board
+	if (index > centerOfBoard) {
+		const mirror = (cell: number) => length - 1 - cell;
+		return getAdjacentCells(length, mirror(index)).map(mirror);
+	}
+
 	const size = getSize(length);
 
-	const rowWidth = Math.round(
-		Math.sqrt(2 * (Math.min(index, length - index) + triangleNumbers[size - 1] + 1)),
-	);
+	const rowWidth = Math.round(Math.sqrt(2 * (index + triangleNumbers[size - 1] + 1)));
 
-	const center = length / 2;
+	const beginningOfRow = triangleNumbers[rowWidth - 1] - triangleNumbers[size - 1];
+
+	const endOfRow = beginningOfRow + rowWidth - 1;
 
 	const cells: number[] = [];
 
-	if (index < size) {
-		// do nothing
-	} else if (index < center + rowWidth / 2) {
-		cells.push(index - rowWidth, index - rowWidth + 1);
-	} else {
-		cells.push(index - rowWidth - 1, index - rowWidth);
+	// top neighbors
+	if (index >= size) {
+		// not first row
+		if (index !== beginningOfRow) {
+			cells.push(index - rowWidth);
+		}
+		if (index !== endOfRow) {
+			cells.push(index - rowWidth + 1);
+		}
 	}
 
-	cells.push(index - 1, index + 1);
+	// left and right neighbors
+	if (index !== beginningOfRow) {
+		cells.push(index - 1);
+	}
+	if (index !== endOfRow) {
+		cells.push(index + 1);
+	}
 
-	if (index < center - rowWidth / 2) {
+	// bottom neighbors
+	if (endOfRow < centerOfBoard) {
+		// not middle row
 		cells.push(index + rowWidth, index + rowWidth + 1);
-	} else if (index < length - size) {
-		cells.push(index + rowWidth - 1, index + rowWidth);
 	} else {
-		// do nothing
+		// middle row
+		if (index !== beginningOfRow) {
+			cells.push(index + rowWidth - 1);
+		}
+		cells.push(index + rowWidth);
 	}
 
 	return cells;

@@ -16,8 +16,10 @@ export default defineConfig({
 });
 
 function* getTriangleNumbers() {
+	const maxNumberOfPlayers = 3;
+	const maxTriangleSize = (7 + maxNumberOfPlayers) * 2 - 1;
 	let total = 0;
-	for (let i = 0; i < 7 + 7; i++) {
+	for (let i = 0; i <= maxTriangleSize; i++) {
 		total += i;
 		yield total;
 	}
