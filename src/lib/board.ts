@@ -2,6 +2,10 @@ import type { CompositeTypes, Enums } from "./database-types";
 import { halfSqrt3, round } from "./hexagon";
 import triangleNumbers from "virtual:triangle-numbers";
 
+export type Color = Enums<"color">;
+
+export const colors: readonly Color[] = ["red", "green", "blue"];
+
 export type Cell = CompositeTypes<"cell"> & { tower: boolean };
 
 export type Point = [number, number];
@@ -113,7 +117,7 @@ export function generateBoard(players: number): Cell[] {
 
 export type TowerStats = {
 	towers: number[];
-	towersByColor: { [key in Enums<"color"> | "unclaimed"]: number };
+	towersByColor: { [key in Color | "unclaimed"]: number };
 };
 
 /** finds all the towers in the board and counts how many towers of each color exist */

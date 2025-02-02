@@ -1,10 +1,8 @@
 <script lang="ts">
 	import { invalidate } from "$app/navigation";
-	import { getMaxTurnSize, getTowers, type Cell } from "$lib/board.js";
+	import { colors, getMaxTurnSize, getTowers, type Cell, type Color } from "$lib/board.js";
 	import Board from "$lib/Board.svelte";
-	import type { Enums, Tables } from "$lib/database-types.js";
-
-	type Color = Enums<"color">;
+	import type { Tables } from "$lib/database-types.js";
 
 	const { data } = $props();
 	const { supabase, user } = $derived(data);
@@ -106,8 +104,6 @@
 			throw error;
 		}
 	}
-
-	const colors: readonly Color[] = ["red", "green", "blue"];
 
 	const colorOptions = $derived(
 		colors.map((color) => ({
