@@ -25,13 +25,14 @@
 					table: "games",
 					filter: `id=eq.${game_id}`,
 				},
-				({ new: { id, host_user_id, board, turn, winner } }) => {
+				({ new: { id, host_user_id, board, turn, winner, completed_at } }) => {
 					game = {
 						id,
 						host_user_id,
 						board,
 						turn,
 						winner,
+						completed_at,
 						players: game.players,
 					};
 				},
@@ -75,6 +76,8 @@
 	});
 
 	const userColor = $derived(game.players.find((player) => player.user_id == user?.id)?.color);
+
+	const isGameOver = $derived(game.completed_at != null);
 
 	const isTurn = $derived(
 		game.turn == null ? false : game.players[game.turn % game.players.length].color == userColor,
@@ -154,7 +157,11 @@
 	<div style:--user-color={userColor}>
 		<Board class="board" {board} bind:selection {maxAllowedSelection} />
 	</div>
-	{#if isTurn}
+	{#if isGameOver}
+		<h1 style:color={game.winner}>
+			{game.players.find((player) => player.color === game.winner)?.profile.name ?? "nobody"} won!
+		</h1>
+	{:else if isTurn}
 		<button onclick={makeTurn} disabled={selection.length === 0}>Make turn</button>
 	{/if}
 {/if}

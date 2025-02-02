@@ -218,7 +218,7 @@ describe("doTurn", () => {
 			   ⚫⚫⚫⚫
 		`;
 
-		doTurn(board, [0, 4, 9], "red");
+		expect(doTurn(board, [0, 4, 9], "red")).toBe(0);
 
 		expect(board).to.deep.equal(cells`
 			   🔴⚫⚫⚫
@@ -259,7 +259,7 @@ describe("doTurn", () => {
 		expect(() => doTurn(board, [0], "red")).toThrow(InvalidTurnError);
 	});
 
-	it("should claim any connected towers", () => {
+	it("should claim any connected towers and return the number of towers claimed", () => {
 		const board = cells`
 			   ⚫⚫⚫⚫
 			  ⚫🔲⚫⚫⚫
@@ -270,7 +270,7 @@ describe("doTurn", () => {
 			   ⚫⚫⚫⚫
 		`;
 
-		doTurn(board, [0, 4, 9], "red");
+		expect(doTurn(board, [0, 4, 9], "red")).toBe(2);
 
 		expect(board).to.deep.equal(cells`
 			   🔴⚫⚫⚫
@@ -294,7 +294,7 @@ describe("doTurn", () => {
 			   ⚫⚫⚫⚫
 		`;
 
-		doTurn(board, [0, 4, 9], "red");
+		expect(doTurn(board, [0, 4, 9], "red")).toBe(1);
 
 		expect(board).to.deep.equal(cells`
 			   🔴⚫⚫⚫
@@ -318,7 +318,7 @@ describe("doTurn", () => {
 			   ⚫⚫⚫⚫
 		`;
 
-		doTurn(board, [0, 4, 9], "red");
+		expect(doTurn(board, [0, 4, 9], "red")).toBe(0);
 
 		expect(board).to.deep.equal(cells`
 			   🔴⚫⚫⚫
@@ -342,7 +342,7 @@ describe("doTurn", () => {
 			   ⚫⚫⚫⚫
 		`;
 
-		doTurn(board, [4, 9, 11, 25], "red");
+		expect(doTurn(board, [4, 9, 11, 25], "red")).toBe(2);
 
 		expect(board).to.deep.equal(cells`
 			   ⚫⚫⚫⚫

@@ -2,7 +2,7 @@ import { serializeBoard, sql } from "$lib/db.server";
 import { error } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import type { Enums } from "$lib/database-types";
-import { doTurn, getMaxTurnSize, getTowers, InvalidTurnError } from "$lib/board";
+import { doTurn, getMaxTurnSize, getTowers, InvalidTurnError, type Color } from "$lib/board";
 import type { Config } from "@sveltejs/adapter-vercel";
 
 export const config: Config = {
@@ -32,15 +32,17 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
 		type queryResult = {
 			board: string[];
 			turn_number: number;
+			winner: Color;
 			completed: boolean;
 			user_id: string;
-			color: Enums<"color"> | null;
+			color: Color | null;
 		}[];
 
 		const result = await sql<queryResult>`
 			select
 				board,
 				turn as turn_number,
+				winner,
 				completed_at is not null as completed,
 				player.user_id,
 				player.color
@@ -65,7 +67,7 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
 			error(404, "invalid game id");
 		}
 
-		const { board: rawBoard, turn_number, completed, user_id, color } = result[0];
+		const { board: rawBoard, turn_number, winner, completed, user_id, color } = result[0];
 
 		if (completed) {
 			error(400, "game has already completed");
@@ -100,8 +102,10 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
 			error(400, `you may not claim more than ${maxTurnSize} cells in one turn`);
 		}
 
+		let claimedTowers: number;
+
 		try {
-			doTurn(board, turn, color);
+			claimedTowers = doTurn(board, turn, color);
 		} catch (e) {
 			if (e instanceof InvalidTurnError) {
 				error(400, e.message);
@@ -110,14 +114,28 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
 			}
 		}
 
-		const updateGame = sql`
-			update public.games
-			set
-				board = ${serializeBoard(board)},
-				turn = ${turn_number + 1}
-			where
-				id = ${game_id}
-		`;
+		let updateGame: Promise<unknown>;
+
+		if (towersByColor[color] + claimedTowers >= 5) {
+			updateGame = sql`
+				update public.games
+				set
+					board = ${serializeBoard(board)},
+					winner = ${color},
+					completed_at = now()
+				where
+					id = ${game_id}
+			`;
+		} else {
+			updateGame = sql`
+				update public.games
+				set
+					board = ${serializeBoard(board)},
+					turn = ${turn_number + 1}
+				where
+					id = ${game_id}
+			`;
+		}
 
 		const insertTurn = sql`
 			insert into

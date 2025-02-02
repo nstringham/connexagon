@@ -152,9 +152,10 @@ export class InvalidTurnError extends Error {}
  * @param board the game board
  * @param turn the indexes of the cells claimed by the player in this turn
  * @param color the color of the player
+ * @returns the number of towers claimed by this turn
  * @throws `InvalidTurnError` if the turn is not valid for the board
  */
-export function doTurn(board: Cell[], turn: number[], color: Color) {
+export function doTurn(board: Cell[], turn: number[], color: Color): number {
 	for (const i of turn) {
 		if (board[i].tower) {
 			throw new InvalidTurnError("you can not directly claim a tower");
@@ -166,6 +167,8 @@ export function doTurn(board: Cell[], turn: number[], color: Color) {
 
 		board[i].color = color;
 	}
+
+	let claimedTowers = 0;
 
 	const checkedCells = new Set<number>();
 	for (const turnCell of turn) {
@@ -193,8 +196,13 @@ export function doTurn(board: Cell[], turn: number[], color: Color) {
 
 		if (towers.size > 1) {
 			for (const tower of towers) {
-				board[tower].color = color;
+				if (board[tower].color != color) {
+					board[tower].color = color;
+					claimedTowers += 1;
+				}
 			}
 		}
 	}
+
+	return claimedTowers;
 }
