@@ -10,7 +10,7 @@ export const load: PageLoad = async ({ parent }) => {
 	const { data: profile, error } = await supabase
 		.from("profiles")
 		.select("name")
-		.eq("user_id", user?.id);
+		.eq("user_id", user.id);
 
 	if (error) {
 		console.error(error);
