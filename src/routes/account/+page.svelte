@@ -7,9 +7,7 @@
 	let name = $state("");
 
 	$effect(() => {
-		if (profile?.name) {
-			name = profile.name;
-		}
+		name = profile?.name ?? "";
 	});
 
 	async function save() {

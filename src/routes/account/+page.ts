@@ -4,7 +4,7 @@ export const load: PageLoad = async ({ parent }) => {
 	const { supabase, user } = await parent();
 
 	if (user == null) {
-		return { games: [] };
+		return {};
 	}
 
 	const { data: profile, error } = await supabase
