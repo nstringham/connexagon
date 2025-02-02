@@ -30,9 +30,5 @@ export const load: PageLoad = async ({ params: { game_id }, parent, depends }) =
 
 	const game = data[0];
 
-	if (game.turn != null) {
-		game.players.sort((a, b) => a.turn_order! - b.turn_order!);
-	}
-
 	return { game };
 };

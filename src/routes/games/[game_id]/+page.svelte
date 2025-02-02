@@ -69,6 +69,12 @@
 		return () => channel.unsubscribe();
 	});
 
+	$effect(() => {
+		if (game.turn != null) {
+			game.players.sort((a, b) => a.turn_order! - b.turn_order!);
+		}
+	});
+
 	const userColor = $derived(game.players.find((player) => player.user_id == user?.id)?.color);
 
 	const isTurn = $derived(
