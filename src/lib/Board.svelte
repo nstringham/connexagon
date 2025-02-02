@@ -2,6 +2,7 @@
 	import type { SVGAttributes } from "svelte/elements";
 	import { getLayout, getSize, type Cell } from "./board";
 	import { getHexagonSvgPath, halfSqrt3 } from "./hexagon";
+	import { dev } from "$app/environment";
 
 	const {
 		board,
@@ -102,7 +103,7 @@
 			{#if cell.tower && cell.color != null}
 				<path d="M{x},{y}{towerPath}" fill={cell.color} />
 			{/if}
-			{#if import.meta.env.DEV}
+			{#if dev}
 				<text class="debug-info" {x} {y} font-size={strokeWidth * 3}>{i}</text>
 			{/if}
 		</g>

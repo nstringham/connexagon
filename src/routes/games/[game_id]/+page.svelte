@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { dev } from "$app/environment";
 	import { invalidate } from "$app/navigation";
 	import { colors, getMaxTurnSize, getTowers, type Cell, type Color } from "$lib/board.js";
 	import Board from "$lib/Board.svelte";
@@ -158,7 +159,7 @@
 	{/if}
 {/if}
 
-{#if import.meta.env.DEV}
+{#if dev}
 	<pre>{JSON.stringify(game, null, 2)}</pre>
 {/if}
 
