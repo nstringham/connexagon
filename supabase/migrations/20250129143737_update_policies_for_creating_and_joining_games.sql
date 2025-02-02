@@ -29,7 +29,7 @@ with
 	check (
 		(
 			select
-				auth.uid () as uid
+				auth.uid ()
 		) = host_user_id
 	);
 
@@ -54,7 +54,7 @@ with
 		) = user_id
 		and exists (
 			select
-				games.started_at
+				games.id
 			from
 				games
 			where
@@ -78,7 +78,7 @@ for update
 		) = user_id
 		and exists (
 			select
-				games.started_at
+				games.id
 			from
 				games
 			where
