@@ -67,8 +67,8 @@ describe("getAdjacentCells", () => {
 	});
 
 	it("finds the 6 cells around a cell on the bottom half", () => {
-		expect(getAdjacentCells(217, 168)).to.deep.equal([154, 155, 167, 169, 180, 181]);
-		expect(getAdjacentCells(217, 120)).to.deep.equal([103, 104, 119, 121, 135, 136]);
+		expect(getAdjacentCells(217, 168)).to.deep.equal([181, 180, 169, 167, 155, 154]);
+		expect(getAdjacentCells(217, 120)).to.deep.equal([136, 135, 121, 119, 104, 103]);
 	});
 
 	it("finds the 6 cells around the center cell", () => {
@@ -84,14 +84,14 @@ describe("getAdjacentCells", () => {
 	});
 
 	it("finds the 4 cells around a bottom edge", () => {
-		expect(getAdjacentCells(217, 212)).to.deep.equal([202, 203, 211, 213]);
+		expect(getAdjacentCells(217, 212)).to.deep.equal([213, 211, 203, 202]);
 	});
 
 	it("finds the 4 cells around a side edge", () => {
 		expect(getAdjacentCells(217, 55)).to.deep.equal([42, 56, 69, 70]);
 		expect(getAdjacentCells(217, 54)).to.deep.equal([41, 53, 67, 68]);
-		expect(getAdjacentCells(217, 162)).to.deep.equal([148, 149, 163, 175]);
-		expect(getAdjacentCells(217, 207)).to.deep.equal([196, 197, 206, 216]);
+		expect(getAdjacentCells(217, 162)).to.deep.equal([175, 163, 149, 148]);
+		expect(getAdjacentCells(217, 207)).to.deep.equal([216, 206, 197, 196]);
 	});
 
 	it("finds the 3 cells around a corner", () => {
