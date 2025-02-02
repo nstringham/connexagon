@@ -166,4 +166,35 @@ export function doTurn(board: Cell[], turn: number[], color: Color) {
 
 		board[i].color = color;
 	}
+
+	const checkedCells = new Set<number>();
+	for (const turnCell of turn) {
+		const cellsToCheck = [turnCell];
+
+		const towers = new Set<number>();
+
+		while (cellsToCheck.length > 0) {
+			const cell = cellsToCheck.pop()!;
+
+			if (checkedCells.has(cell)) {
+				continue;
+			}
+			checkedCells.add(cell);
+
+			if (board[cell].tower && (board[cell].color === null || board[cell].color === color)) {
+				towers.add(cell);
+				continue;
+			}
+
+			if (board[cell].color === color) {
+				cellsToCheck.push(...getAdjacentCells(board.length, cell));
+			}
+		}
+
+		if (towers.size > 1) {
+			for (const tower of towers) {
+				board[tower].color = color;
+			}
+		}
+	}
 }
