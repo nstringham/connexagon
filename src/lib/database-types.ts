@@ -85,15 +85,15 @@ export type Database = {
 			};
 			profiles: {
 				Row: {
-					name: string | null;
+					name: string;
 					user_id: string;
 				};
 				Insert: {
-					name?: string | null;
+					name: string;
 					user_id: string;
 				};
 				Update: {
-					name?: string | null;
+					name?: string;
 					user_id?: string;
 				};
 				Relationships: [];
@@ -136,6 +136,24 @@ export type Database = {
 				Args: Record<PropertyKey, never>;
 				Returns: number;
 			};
+			create_game: {
+				Args: Record<PropertyKey, never>;
+				Returns: string;
+			};
+			join_game:
+				| {
+						Args: {
+							game_id_to_join: string;
+						};
+						Returns: undefined;
+				  }
+				| {
+						Args: {
+							game_id_to_join: string;
+							user_id: string;
+						};
+						Returns: undefined;
+				  };
 			xid: {
 				Args: {
 					_at?: string;
