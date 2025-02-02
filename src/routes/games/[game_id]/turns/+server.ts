@@ -2,7 +2,7 @@ import { serializeBoard, sql } from "$lib/db.server";
 import { error } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import type { Enums } from "$lib/database-types";
-import { getMaxTurnSize, getTowers } from "$lib/board";
+import { doTurn, getMaxTurnSize, getTowers, InvalidTurnError } from "$lib/board";
 import type { Config } from "@sveltejs/adapter-vercel";
 
 export const config: Config = {
@@ -100,16 +100,14 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
 			error(400, `you may not claim more than ${maxTurnSize} cells in one turn`);
 		}
 
-		if (turn.some((i) => board[i].tower)) {
-			error(400, "you cannot directly claim a tower");
-		}
-
-		if (turn.some((i) => board[i].color !== null)) {
-			error(400, "you may not claim a cell that is already claimed");
-		}
-
-		for (const i of turn) {
-			board[i].color = color;
+		try {
+			doTurn(board, turn, color);
+		} catch (e) {
+			if (e instanceof InvalidTurnError) {
+				error(400, e.message);
+			} else {
+				throw e;
+			}
 		}
 
 		const updateGame = sql`

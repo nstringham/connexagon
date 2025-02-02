@@ -1,17 +1,19 @@
 import { describe, it, expect } from "vitest";
 import {
+	doTurn,
 	generateBoard,
 	getAdjacentCells,
 	getLayout,
 	getMaxTurnSize,
 	getSize,
 	getTowers,
+	InvalidTurnError,
 	type Cell,
 } from "./board";
 import { round } from "./hexagon";
 
 /** creates a board from a hardcoded string for use in tests */
-function board([board]: TemplateStringsArray): Cell[] {
+function cells([board]: TemplateStringsArray): Cell[] {
 	const lookup: { [key: string]: (() => Cell) | undefined } = {
 		"⚫": () => ({ tower: false, color: null }),
 		"🔴": () => ({ tower: false, color: "red" }),
@@ -128,7 +130,7 @@ describe("generateBoard", () => {
 describe("getTowers", () => {
 	it("finds nothing for an empty", () => {
 		expect(
-			getTowers(board`
+			getTowers(cells`
 				   ⚫⚫⚫⚫
 				  ⚫⚫⚫⚫⚫
 				 ⚫⚫⚫⚫⚫⚫
@@ -145,7 +147,7 @@ describe("getTowers", () => {
 
 	it("finds nothing for board with no towers", () => {
 		expect(
-			getTowers(board`
+			getTowers(cells`
 				   ⚫🔴⚫⚫
 				  ⚫⚫🔴🔵⚫
 				 ⚫⚫⚫🔴🔵⚫
@@ -162,7 +164,7 @@ describe("getTowers", () => {
 
 	it("finds towers on a board with towers", () => {
 		expect(
-			getTowers(board`
+			getTowers(cells`
 				   ⚫🟥⚫⚫
 				  🔲⚫🔴🔵⚫
 				 ⚫⚫⚫🟥🔵🔲
@@ -201,5 +203,59 @@ describe("getMaxTurnSize", () => {
 		expect(getMaxTurnSize(3, 2)).toBe(3);
 		expect(getMaxTurnSize(4, 2)).toBe(3);
 		expect(getMaxTurnSize(3, 4)).toBe(1);
+	});
+});
+
+describe("doTurn", () => {
+	it("should update the board at the designated indexes", () => {
+		const board = cells`
+			   ⚫⚫⚫⚫
+			  ⚫⚫⚫⚫⚫
+			 ⚫⚫⚫⚫⚫⚫
+			⚫⚫⚫⚫⚫⚫⚫
+			 ⚫⚫⚫⚫⚫⚫
+			  ⚫⚫⚫⚫⚫
+			   ⚫⚫⚫⚫
+		`;
+
+		doTurn(board, [0, 4, 9], "red");
+
+		expect(board).to.deep.equal(cells`
+			   🔴⚫⚫⚫
+			  🔴⚫⚫⚫⚫
+			 🔴⚫⚫⚫⚫⚫
+			⚫⚫⚫⚫⚫⚫⚫
+			 ⚫⚫⚫⚫⚫⚫
+			  ⚫⚫⚫⚫⚫
+			   ⚫⚫⚫⚫
+		`);
+	});
+
+	it("should throw error if cell is already claimed", () => {
+		const board = cells`
+			   🔵⚫⚫⚫
+			  ⚫⚫⚫⚫⚫
+			 ⚫⚫⚫⚫⚫⚫
+			⚫⚫⚫⚫⚫⚫⚫
+			 ⚫⚫⚫⚫⚫⚫
+			  ⚫⚫⚫⚫⚫
+			   ⚫⚫⚫⚫
+		`;
+
+		expect(() => doTurn(board, [0], "red")).toThrow(InvalidTurnError);
+	});
+
+	it("should throw error if cell is tower", () => {
+		const board = cells`
+			   🔲⚫⚫⚫
+			  ⚫⚫⚫⚫⚫
+			 ⚫⚫⚫⚫⚫⚫
+			⚫⚫⚫⚫⚫⚫⚫
+			 ⚫⚫⚫⚫⚫⚫
+			  ⚫⚫⚫⚫⚫
+			   ⚫⚫⚫⚫
+		`;
+
+		expect(() => doTurn(board, [0], "red")).toThrow(InvalidTurnError);
 	});
 });

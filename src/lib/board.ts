@@ -144,3 +144,26 @@ export function getTowers(board: Cell[]): TowerStats {
 export function getMaxTurnSize(turn: number, towers: number) {
 	return Math.min(4, turn + 1, 5 - towers);
 }
+
+export class InvalidTurnError extends Error {}
+
+/**
+ * Applies a turn and all it's effects to the game board
+ * @param board the game board
+ * @param turn the indexes of the cells claimed by the player in this turn
+ * @param color the color of the player
+ * @throws `InvalidTurnError` if the turn is not valid for the board
+ */
+export function doTurn(board: Cell[], turn: number[], color: Color) {
+	for (const i of turn) {
+		if (board[i].tower) {
+			throw new InvalidTurnError("you can not directly claim a tower");
+		}
+
+		if (board[i].color !== null) {
+			throw new InvalidTurnError("you may not claim a cell that is already claimed");
+		}
+
+		board[i].color = color;
+	}
+}
