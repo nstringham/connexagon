@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { invalidate } from "$app/navigation";
 	import Board from "$lib/Board.svelte";
-	import type { Tables } from "$lib/database-types.js";
+	import type { Enums, Tables } from "$lib/database-types.js";
+
+	type Color = Enums<"color">;
 
 	const { data } = $props();
 	const { supabase, user } = $derived(data);
@@ -66,12 +68,59 @@
 
 		return () => channel.unsubscribe();
 	});
+
+	async function joinGame() {
+		const { error } = await supabase.rpc("join_game", { game_id_to_join: game.id });
+		if (error) {
+			throw error;
+		}
+	}
+
+	const colors: readonly Color[] = ["red", "green", "blue"];
+
+	const colorOptions = $derived(
+		colors.map((color) => ({
+			color,
+			available: !game.players.some(
+				(player) => player.color == color && player.user_id != user?.id,
+			),
+		})),
+	);
+
+	async function changeColor(color: Color) {
+		if (user == null) {
+			throw new Error("cannot set color because user is not logged in");
+		}
+		const { error } = await supabase
+			.from("players")
+			.update({ color })
+			.eq("game_id", game.id)
+			.eq("user_id", user.id);
+		if (error) {
+			throw error;
+		}
+	}
 </script>
 
 {#if game.board != null}
 	<div style:--user-color={userColor}>
 		<Board class="board" board={game.board} maxAllowedSelection={3} />
 	</div>
+{:else if userColor != null}
+	<label>
+		Color:
+		<select
+			name="color"
+			value={userColor}
+			onchange={({ currentTarget }) => changeColor(currentTarget.value as Color)}
+		>
+			{#each colorOptions as { color, available }}
+				<option value={color} disabled={!available}>{color}</option>
+			{/each}
+		</select>
+	</label>
+{:else}
+	<button onclick={joinGame}>Join Game</button>
 {/if}
 
 <code>
