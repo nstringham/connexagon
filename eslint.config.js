@@ -12,12 +12,15 @@ export default ts.config(
 	includeIgnoreFile(gitignorePath),
 	js.configs.recommended,
 	...ts.configs.recommendedTypeChecked,
+	...ts.configs.stylisticTypeChecked,
 	...svelte.configs["flat/recommended"],
 	prettier,
 	...svelte.configs["flat/prettier"],
 	{
 		rules: {
 			"svelte/block-lang": ["error", { script: ["ts"] }],
+			"@typescript-eslint/consistent-type-definitions": ["off"],
+			"@typescript-eslint/consistent-indexed-object-style": ["error", "index-signature"],
 		},
 
 		languageOptions: {
@@ -52,4 +55,5 @@ export default ts.config(
 			"@typescript-eslint/no-unnecessary-condition": "off",
 		},
 	},
+	{ ignores: ["src/lib/database-types.ts"] },
 );

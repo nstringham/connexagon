@@ -1,6 +1,6 @@
 export const halfSqrt3 = Math.sqrt(3) / 2;
 
-export function round(n: number, fractionDigits: number = 5) {
+export function round(n: number, fractionDigits = 5) {
 	return Number(n.toFixed(fractionDigits));
 }
 
