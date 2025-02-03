@@ -18,6 +18,7 @@ export default ts.config(
 	...svelte.configs["flat/prettier"],
 	{
 		rules: {
+			curly: "error",
 			"@typescript-eslint/no-non-null-assertion": "off",
 			"@typescript-eslint/consistent-type-definitions": ["off"],
 			"@typescript-eslint/consistent-indexed-object-style": ["error", "index-signature"],
