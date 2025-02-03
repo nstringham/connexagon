@@ -9,7 +9,7 @@
 		if (error) {
 			throw error;
 		}
-		goto(`/games/${gameId}`);
+		await goto(`/games/${gameId}`);
 	}
 </script>
 
