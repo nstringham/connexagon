@@ -11,16 +11,17 @@ const gitignorePath = fileURLToPath(new URL("./.gitignore", import.meta.url));
 export default ts.config(
 	includeIgnoreFile(gitignorePath),
 	js.configs.recommended,
-	...ts.configs.recommendedTypeChecked,
+	...ts.configs.strictTypeChecked,
 	...ts.configs.stylisticTypeChecked,
 	...svelte.configs["flat/recommended"],
 	prettier,
 	...svelte.configs["flat/prettier"],
 	{
 		rules: {
-			"svelte/block-lang": ["error", { script: ["ts"] }],
+			"@typescript-eslint/no-non-null-assertion": "off",
 			"@typescript-eslint/consistent-type-definitions": ["off"],
 			"@typescript-eslint/consistent-indexed-object-style": ["error", "index-signature"],
+			"svelte/block-lang": ["error", { script: ["ts"] }],
 		},
 
 		languageOptions: {
@@ -45,14 +46,12 @@ export default ts.config(
 		},
 
 		rules: {
-			// incompatible with svelte's generic props
 			"@typescript-eslint/no-unsafe-assignment": "off",
 			"@typescript-eslint/no-unsafe-member-access": "off",
-
-			// not consistent in svelte files
 			"@typescript-eslint/no-unsafe-argument": "off",
 			"@typescript-eslint/no-unsafe-call": "off",
 			"@typescript-eslint/no-unnecessary-condition": "off",
+			"@typescript-eslint/restrict-template-expressions": ["error", { allowAny: true }],
 		},
 	},
 	{ ignores: ["src/lib/database-types.ts"] },

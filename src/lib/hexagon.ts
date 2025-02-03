@@ -34,5 +34,6 @@ export function getHexagonSvgPath(radius: number) {
 	/** the y component of the sloped line l */
 	const ly = round(radius * halfSqrt3);
 
+	// eslint-disable-next-line @typescript-eslint/restrict-template-expressions -- safe because numbers are rounded
 	return `m0,${v}l${ly},-${lx}v-${v}l-${ly},-${lx}l-${ly},${lx}v${v}z`;
 }
