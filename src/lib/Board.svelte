@@ -114,6 +114,7 @@
 	g:focus {
 		outline: none;
 	}
+
 	g:focus-visible .cell {
 		paint-order: stroke;
 		stroke: currentcolor;
