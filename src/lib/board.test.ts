@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
 	doTurn,
 	generateBoard,
@@ -122,8 +122,38 @@ describe("generateBoard", () => {
 		expect(board.filter((cell) => cell.tower).length).toBe(25);
 	});
 
-	it("does not generate the same board every time", () => {
-		expect(generateBoard(3)).to.not.equal(generateBoard(3));
+	it("should use the Math.random function to determine the locations of the towers", () => {
+		vi.spyOn(Math, "random")
+			.mockReturnValueOnce(0 / 217)
+			.mockReturnValueOnce(212 / 217)
+			.mockReturnValueOnce(189 / 217)
+			.mockReturnValueOnce(201 / 217)
+			.mockReturnValueOnce(74 / 217)
+			.mockReturnValueOnce(24 / 217)
+			.mockReturnValueOnce(105 / 217)
+			.mockReturnValueOnce(189 / 217)
+			.mockReturnValueOnce(78 / 217)
+			.mockReturnValueOnce(216 / 217);
+
+		expect(generateBoard(2)).to.deep.equal(cells`
+			        🔲⚫⚫⚫⚫⚫⚫⚫⚫
+			       ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			      ⚫⚫⚫⚫⚫🔲⚫⚫⚫⚫⚫
+			     ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			    ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			   ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			  ⚫⚫⚫⚫⚫🔲⚫⚫⚫🔲⚫⚫⚫⚫⚫
+			 ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			⚫⚫⚫⚫⚫🔲⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			 ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			  ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			   ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			    ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			     ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			      ⚫⚫🔲⚫⚫⚫⚫⚫⚫⚫⚫
+			       ⚫⚫⚫🔲⚫⚫⚫⚫⚫⚫
+			        ⚫⚫⚫⚫🔲⚫⚫⚫🔲
+		`);
 	});
 });
 
