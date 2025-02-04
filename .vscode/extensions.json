@@ -3,6 +3,7 @@
 		"svelte.svelte-vscode",
 		"dbaeumer.vscode-eslint",
 		"esbenp.prettier-vscode",
+		"stylelint.vscode-stylelint",
 		"vitest.explorer",
 		"editorconfig.editorconfig",
 		"streetsidesoftware.code-spell-checker",
