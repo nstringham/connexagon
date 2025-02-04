@@ -104,6 +104,14 @@ describe("getAdjacentCells", () => {
 });
 
 describe("generateBoard", () => {
+	function mockRandom(indexes: number[], divisor = 217) {
+		const mock = vi.spyOn(Math, "random");
+		for (const index of indexes) {
+			mock.mockReturnValueOnce(index / divisor);
+		}
+		return mock;
+	}
+
 	it("generates a size 9 board with 9 towers for 2 player", () => {
 		const board = generateBoard(2);
 		expect(board.length).toBe(217);
@@ -123,17 +131,7 @@ describe("generateBoard", () => {
 	});
 
 	it("should use the Math.random function to determine the locations of the towers", () => {
-		vi.spyOn(Math, "random")
-			.mockReturnValueOnce(0 / 217)
-			.mockReturnValueOnce(212 / 217)
-			.mockReturnValueOnce(189 / 217)
-			.mockReturnValueOnce(201 / 217)
-			.mockReturnValueOnce(74 / 217)
-			.mockReturnValueOnce(24 / 217)
-			.mockReturnValueOnce(105 / 217)
-			.mockReturnValueOnce(189 / 217)
-			.mockReturnValueOnce(78 / 217)
-			.mockReturnValueOnce(216 / 217);
+		mockRandom([0, 212, 189, 201, 74, 24, 105, 189, 78, 216]);
 
 		expect(generateBoard(2)).to.deep.equal(cells`
 			        🔲⚫⚫⚫⚫⚫⚫⚫⚫
