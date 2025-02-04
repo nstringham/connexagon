@@ -108,6 +108,10 @@ export function generateBoard(players: number): Cell[] {
 			continue;
 		}
 
+		if (getAdjacentCells(board.length, index).length < 6) {
+			continue;
+		}
+
 		board[index] = towerCell;
 		towersRemaining--;
 	}
