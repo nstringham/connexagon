@@ -21,7 +21,7 @@ jobs:
       - run: npx prettier --check .
 
   eslint:
-    name: Lint
+    name: Lint JavaScript
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -31,6 +31,18 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx eslint .
+
+  stylelint:
+    name: Lint CSS
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx stylelint "src/**/*.{css,svelte}"
 
   svelte-check:
     name: Svelte Check
@@ -76,7 +88,7 @@ jobs:
       - run: git diff --exit-code
 
   db-lint:
-    name: Lint Database
+    name: Lint SQL
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
