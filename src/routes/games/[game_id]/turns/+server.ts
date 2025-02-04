@@ -1,7 +1,6 @@
-import { serializeBoard, sql } from "$lib/db.server";
+import { deserializeBoard, serializeBoard, sql } from "$lib/db.server";
 import { error } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
-import type { Enums } from "$lib/database-types";
 import { doTurn, getMaxTurnSize, getTowers, InvalidTurnError, type Color } from "$lib/board";
 import type { Config } from "@sveltejs/adapter-vercel";
 
@@ -87,10 +86,7 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
 			error(400, "you must have a color to make a turn");
 		}
 
-		const board = rawBoard.map((cell) => ({
-			tower: cell.charAt(1) === "t",
-			color: (cell.substring(3, cell.length - 1) || null) as Enums<"color"> | null,
-		}));
+		const board = deserializeBoard(rawBoard);
 
 		const { towersByColor } = getTowers(board);
 
