@@ -108,7 +108,8 @@ export function generateBoard(players: number): Cell[] {
 			continue;
 		}
 
-		if (getAdjacentCells(board.length, index).length < 6) {
+		const neighbors = getAdjacentCells(board.length, index);
+		if (neighbors.length < 6 || neighbors.some((neighbor) => board[neighbor] === towerCell)) {
 			continue;
 		}
 

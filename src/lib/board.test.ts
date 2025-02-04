@@ -131,7 +131,7 @@ describe("generateBoard", () => {
 	});
 
 	it("should use the Math.random function to determine the locations of the towers", () => {
-		mockRandom([0, 212, 189, 201, 74, 24, 105, 189, 78, 216, 192, 184, 65]);
+		mockRandom([0, 212, 189, 201, 74, 24, 105, 189, 78, 202, 93, 216, 192, 184, 65]);
 
 		expect(generateBoard(2)).to.deep.equal(cells`
 			        ⚫⚫⚫⚫⚫⚫⚫⚫⚫
