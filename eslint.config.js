@@ -22,6 +22,10 @@ export default ts.config(
 			"@typescript-eslint/no-non-null-assertion": "off",
 			"@typescript-eslint/consistent-type-definitions": ["off"],
 			"@typescript-eslint/consistent-indexed-object-style": ["error", "index-signature"],
+			"@typescript-eslint/no-unnecessary-condition": [
+				"error",
+				{ allowConstantLoopConditions: true },
+			],
 			"svelte/block-lang": ["error", { script: ["ts"] }],
 		},
 
