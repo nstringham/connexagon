@@ -97,24 +97,56 @@ const towerCell: Readonly<Cell> = { tower: true, color: null };
 export function generateBoard(players: number): Cell[] {
 	const size = players + 7;
 
-	const board = Array<Cell>(3 * size * (size - 1) + 1).fill(emptyCell);
+	const length = 3 * size * (size - 1) + 1;
 
-	let towersRemaining = 4 * players + 1;
+	const board = Array<Cell>(length).fill(emptyCell);
 
-	while (towersRemaining > 0) {
-		const index = Math.floor(Math.random() * board.length);
+	const towerDistances = new Uint8Array(length).fill(size * 2);
 
-		if (board[index].tower) {
-			continue;
-		}
-
-		const neighbors = getAdjacentCells(board.length, index);
-		if (neighbors.length < 6 || neighbors.some((neighbor) => board[neighbor] === towerCell)) {
-			continue;
-		}
-
+	function placeTower(index: number) {
 		board[index] = towerCell;
-		towersRemaining--;
+
+		towerDistances[index] = 0;
+		const distancesToPropagate = [index];
+		while (distancesToPropagate.length > 0) {
+			const index = distancesToPropagate.shift()!;
+			const distance = towerDistances[index];
+			for (const neighbor of getAdjacentCells(length, index)) {
+				if (towerDistances[neighbor] > distance + 1) {
+					towerDistances[neighbor] = distance + 1;
+					distancesToPropagate.push(neighbor);
+				}
+			}
+		}
+	}
+
+	function getRandomTowerPlacement(): number {
+		while (true) {
+			const index = Math.floor(Math.random() * length);
+
+			if (board[index].tower) {
+				continue;
+			}
+
+			const neighbors = getAdjacentCells(length, index);
+			if (neighbors.length < 6 || neighbors.some((neighbor) => board[neighbor] === towerCell)) {
+				continue;
+			}
+
+			return index;
+		}
+	}
+
+	for (let tower = 0; tower < 4 * players + 1; tower++) {
+		let furthest: number = getRandomTowerPlacement();
+		for (let option = 1; option < 12; option++) {
+			const randomIndex = getRandomTowerPlacement();
+			if (towerDistances[randomIndex] > towerDistances[furthest]) {
+				furthest = randomIndex;
+			}
+		}
+
+		placeTower(furthest);
 	}
 
 	return board;

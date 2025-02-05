@@ -12,6 +12,17 @@ import {
 } from "./board";
 import { round } from "./hexagon";
 
+/** https://gist.github.com/avilde/3736a903560b35fd587d213a3f79fad7 */
+export function seededRandom(seed: number): () => number {
+	return () => {
+		seed |= 0;
+		seed = (seed + 0x6d2b79f5) | 0;
+		let imul = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+		imul = (imul + Math.imul(imul ^ (imul >>> 7), 61 | imul)) ^ imul;
+		return ((imul ^ (imul >>> 14)) >>> 0) / 4294967296;
+	};
+}
+
 /** creates a board from a hardcoded string for use in tests */
 function cells([board]: TemplateStringsArray): Cell[] {
 	const lookup: { [key: string]: (() => Cell) | undefined } = {
@@ -104,14 +115,6 @@ describe("getAdjacentCells", () => {
 });
 
 describe("generateBoard", () => {
-	function mockRandom(indexes: number[], divisor = 217) {
-		const mock = vi.spyOn(Math, "random");
-		for (const index of indexes) {
-			mock.mockReturnValueOnce(index / divisor);
-		}
-		return mock;
-	}
-
 	it("generates a size 9 board with 9 towers for 2 player", () => {
 		const board = generateBoard(2);
 		expect(board.length).toBe(217);
@@ -131,27 +134,32 @@ describe("generateBoard", () => {
 	});
 
 	it("should use the Math.random function to determine the locations of the towers", () => {
-		mockRandom([0, 212, 189, 201, 74, 24, 105, 189, 78, 202, 93, 216, 192, 184, 65]);
+		const random = seededRandom(1234);
+		vi.spyOn(Math, "random").mockImplementation(() => random());
 
-		expect(generateBoard(2)).to.deep.equal(cells`
+		const actual = generateBoard(2);
+
+		const expected = cells`
 			        ⚫⚫⚫⚫⚫⚫⚫⚫⚫
-			       ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
-			      ⚫⚫⚫⚫⚫🔲⚫⚫⚫⚫⚫
+			       ⚫⚫⚫⚫⚫⚫🔲⚫⚫⚫
+			      ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
 			     ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
-			    ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
-			   ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫🔲⚫⚫⚫
-			  ⚫⚫⚫⚫⚫🔲⚫⚫⚫🔲⚫⚫⚫⚫⚫
-			 ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
-			⚫⚫⚫⚫⚫🔲⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			    ⚫⚫⚫🔲⚫⚫⚫⚫⚫⚫🔲⚫⚫
+			   ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			  ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			 ⚫⚫⚫⚫⚫⚫⚫⚫⚫🔲⚫⚫⚫⚫⚫⚫
+			⚫🔲⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫🔲⚫
 			 ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
 			  ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
-			   ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			   ⚫⚫⚫🔲⚫⚫⚫⚫⚫⚫⚫🔲⚫⚫
 			    ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
-			     ⚫⚫⚫⚫⚫⚫⚫⚫⚫🔲⚫⚫
-			      ⚫⚫🔲⚫⚫🔲⚫⚫⚫⚫⚫
-			       ⚫⚫⚫🔲⚫⚫⚫⚫⚫⚫
+			     ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			      ⚫⚫⚫⚫⚫🔲⚫⚫⚫⚫⚫
+			       ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
 			        ⚫⚫⚫⚫⚫⚫⚫⚫⚫
-		`);
+		`;
+
+		expect(actual).to.deep.equal(expected);
 	});
 });
 
