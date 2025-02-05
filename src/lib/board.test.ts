@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
 	doTurn,
 	generateBoard,
@@ -11,6 +11,17 @@ import {
 	type Cell,
 } from "./board";
 import { round } from "./hexagon";
+
+/** https://gist.github.com/avilde/3736a903560b35fd587d213a3f79fad7 */
+export function seededRandom(seed: number): () => number {
+	return () => {
+		seed |= 0;
+		seed = (seed + 0x6d2b79f5) | 0;
+		let imul = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+		imul = (imul + Math.imul(imul ^ (imul >>> 7), 61 | imul)) ^ imul;
+		return ((imul ^ (imul >>> 14)) >>> 0) / 4294967296;
+	};
+}
 
 /** creates a board from a hardcoded string for use in tests */
 function cells([board]: TemplateStringsArray): Cell[] {
@@ -122,8 +133,33 @@ describe("generateBoard", () => {
 		expect(board.filter((cell) => cell.tower).length).toBe(25);
 	});
 
-	it("does not generate the same board every time", () => {
-		expect(generateBoard(3)).to.not.equal(generateBoard(3));
+	it("should use the Math.random function to determine the locations of the towers", () => {
+		const random = seededRandom(1234);
+		vi.spyOn(Math, "random").mockImplementation(() => random());
+
+		const actual = generateBoard(2);
+
+		const expected = cells`
+			        ⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			       ⚫⚫⚫⚫⚫⚫🔲⚫⚫⚫
+			      ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			     ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			    ⚫⚫⚫🔲⚫⚫⚫⚫⚫⚫🔲⚫⚫
+			   ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			  ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			 ⚫⚫⚫⚫⚫⚫⚫⚫⚫🔲⚫⚫⚫⚫⚫⚫
+			⚫🔲⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫🔲⚫
+			 ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			  ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			   ⚫⚫⚫🔲⚫⚫⚫⚫⚫⚫⚫🔲⚫⚫
+			    ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			     ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			      ⚫⚫⚫⚫⚫🔲⚫⚫⚫⚫⚫
+			       ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
+			        ⚫⚫⚫⚫⚫⚫⚫⚫⚫
+		`;
+
+		expect(actual).to.deep.equal(expected);
 	});
 });
 

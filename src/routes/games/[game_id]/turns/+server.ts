@@ -28,15 +28,22 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
 	}
 
 	await sql.begin(async (sql) => {
-		type queryResult = {
-			board: string[];
-			turn_number: number;
+		type QueryResult = (
+			| {
+					board: string[];
+					turn_number: number;
+			  }
+			| {
+					board: null;
+					turn_number: null;
+			  }
+		) & {
 			completed: boolean;
 			user_id: string;
 			color: Color | null;
-		}[];
+		};
 
-		const result = await sql<queryResult>`
+		const result = await sql<QueryResult[]>`
 			select
 				board,
 				turn as turn_number,
