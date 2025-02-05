@@ -12,6 +12,12 @@ Play connexagon now at https://connexagon.vercel.app
 
 1.  Clone this repository
 
+1.  Set git to rebase by default when pulling
+
+    ```bash
+    git config pull.rebase true
+    ```
+
 1.  Install npm dependencies
 
     ```bash
