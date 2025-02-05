@@ -13,5 +13,6 @@
 	"SQL-Formatter-VSCode.keywordCase": "lower",
 	"SQL-Formatter-VSCode.functionCase": "lower",
 	"SQL-Formatter-VSCode.identifierCase": "lower",
-	"SQL-Formatter-VSCode.dataTypeCase": "lower"
+	"SQL-Formatter-VSCode.dataTypeCase": "lower",
+	"git.allowForcePush": true
 }
