@@ -11,164 +11,164 @@ export type Cell = CompositeTypes<"cell"> & { tower: boolean };
 export type Point = [number, number];
 
 export function getSize(area: number): number {
-	return 0.5 + Math.sqrt(12 * area - 3) / 6;
+  return 0.5 + Math.sqrt(12 * area - 3) / 6;
 }
 
 export function getLayout(size: number): Point[] {
-	const layout: Point[] = [];
+  const layout: Point[] = [];
 
-	const rows = size * 2 - 1;
-	const rowOffset = (rows - 1) / 2;
+  const rows = size * 2 - 1;
+  const rowOffset = (rows - 1) / 2;
 
-	const horizontalSpacing = 2 * halfSqrt3;
-	const verticalSpacing = 1.5;
+  const horizontalSpacing = 2 * halfSqrt3;
+  const verticalSpacing = 1.5;
 
-	for (let row = 0; row < rows; row++) {
-		const columns = rows - Math.abs(row - (size - 1));
-		const columnOffset = (columns - 1) / 2;
+  for (let row = 0; row < rows; row++) {
+    const columns = rows - Math.abs(row - (size - 1));
+    const columnOffset = (columns - 1) / 2;
 
-		for (let column = 0; column < columns; column++) {
-			layout.push([
-				round((column - columnOffset) * horizontalSpacing),
-				(row - rowOffset) * verticalSpacing,
-			]);
-		}
-	}
+    for (let column = 0; column < columns; column++) {
+      layout.push([
+        round((column - columnOffset) * horizontalSpacing),
+        (row - rowOffset) * verticalSpacing,
+      ]);
+    }
+  }
 
-	return layout;
+  return layout;
 }
 
 export function getAdjacentCells(length: number, index: number): number[] {
-	const centerOfBoard = length / 2;
+  const centerOfBoard = length / 2;
 
-	// mirror if index is in the bottom half of the board
-	if (index > centerOfBoard) {
-		const mirror = (cell: number) => length - 1 - cell;
-		return getAdjacentCells(length, mirror(index)).map(mirror);
-	}
+  // mirror if index is in the bottom half of the board
+  if (index > centerOfBoard) {
+    const mirror = (cell: number) => length - 1 - cell;
+    return getAdjacentCells(length, mirror(index)).map(mirror);
+  }
 
-	const size = getSize(length);
+  const size = getSize(length);
 
-	const rowWidth = Math.round(Math.sqrt(2 * (index + triangleNumbers[size - 1] + 1)));
+  const rowWidth = Math.round(Math.sqrt(2 * (index + triangleNumbers[size - 1] + 1)));
 
-	const beginningOfRow = triangleNumbers[rowWidth - 1] - triangleNumbers[size - 1];
+  const beginningOfRow = triangleNumbers[rowWidth - 1] - triangleNumbers[size - 1];
 
-	const endOfRow = beginningOfRow + rowWidth - 1;
+  const endOfRow = beginningOfRow + rowWidth - 1;
 
-	const cells: number[] = [];
+  const cells: number[] = [];
 
-	// top neighbors
-	if (index >= size) {
-		// not first row
-		if (index !== beginningOfRow) {
-			cells.push(index - rowWidth);
-		}
-		if (index !== endOfRow) {
-			cells.push(index - rowWidth + 1);
-		}
-	}
+  // top neighbors
+  if (index >= size) {
+    // not first row
+    if (index !== beginningOfRow) {
+      cells.push(index - rowWidth);
+    }
+    if (index !== endOfRow) {
+      cells.push(index - rowWidth + 1);
+    }
+  }
 
-	// left and right neighbors
-	if (index !== beginningOfRow) {
-		cells.push(index - 1);
-	}
-	if (index !== endOfRow) {
-		cells.push(index + 1);
-	}
+  // left and right neighbors
+  if (index !== beginningOfRow) {
+    cells.push(index - 1);
+  }
+  if (index !== endOfRow) {
+    cells.push(index + 1);
+  }
 
-	// bottom neighbors
-	if (endOfRow < centerOfBoard) {
-		// not middle row
-		cells.push(index + rowWidth, index + rowWidth + 1);
-	} else {
-		// middle row
-		if (index !== beginningOfRow) {
-			cells.push(index + rowWidth - 1);
-		}
-		cells.push(index + rowWidth);
-	}
+  // bottom neighbors
+  if (endOfRow < centerOfBoard) {
+    // not middle row
+    cells.push(index + rowWidth, index + rowWidth + 1);
+  } else {
+    // middle row
+    if (index !== beginningOfRow) {
+      cells.push(index + rowWidth - 1);
+    }
+    cells.push(index + rowWidth);
+  }
 
-	return cells;
+  return cells;
 }
 
 const emptyCell: Readonly<Cell> = { tower: false, color: null };
 const towerCell: Readonly<Cell> = { tower: true, color: null };
 
 export function generateBoard(players: number): Cell[] {
-	const size = players + 7;
+  const size = players + 7;
 
-	const length = 3 * size * (size - 1) + 1;
+  const length = 3 * size * (size - 1) + 1;
 
-	const board = Array<Cell>(length).fill(emptyCell);
+  const board = Array<Cell>(length).fill(emptyCell);
 
-	const towerDistances = new Uint8Array(length).fill(size * 2);
+  const towerDistances = new Uint8Array(length).fill(size * 2);
 
-	function placeTower(index: number) {
-		board[index] = towerCell;
+  function placeTower(index: number) {
+    board[index] = towerCell;
 
-		towerDistances[index] = 0;
-		const distancesToPropagate = [index];
-		while (distancesToPropagate.length > 0) {
-			const index = distancesToPropagate.shift()!;
-			const distance = towerDistances[index];
-			for (const neighbor of getAdjacentCells(length, index)) {
-				if (towerDistances[neighbor] > distance + 1) {
-					towerDistances[neighbor] = distance + 1;
-					distancesToPropagate.push(neighbor);
-				}
-			}
-		}
-	}
+    towerDistances[index] = 0;
+    const distancesToPropagate = [index];
+    while (distancesToPropagate.length > 0) {
+      const index = distancesToPropagate.shift()!;
+      const distance = towerDistances[index];
+      for (const neighbor of getAdjacentCells(length, index)) {
+        if (towerDistances[neighbor] > distance + 1) {
+          towerDistances[neighbor] = distance + 1;
+          distancesToPropagate.push(neighbor);
+        }
+      }
+    }
+  }
 
-	function getRandomTowerPlacement(): number {
-		while (true) {
-			const index = Math.floor(Math.random() * length);
+  function getRandomTowerPlacement(): number {
+    while (true) {
+      const index = Math.floor(Math.random() * length);
 
-			if (towerDistances[index] <= 1) {
-				continue;
-			}
+      if (towerDistances[index] <= 1) {
+        continue;
+      }
 
-			if (getAdjacentCells(length, index).length < 6) {
-				continue;
-			}
+      if (getAdjacentCells(length, index).length < 6) {
+        continue;
+      }
 
-			return index;
-		}
-	}
+      return index;
+    }
+  }
 
-	for (let tower = 0; tower < 4 * players + 1; tower++) {
-		let furthest: number = getRandomTowerPlacement();
-		for (let option = 1; option < 12; option++) {
-			const randomIndex = getRandomTowerPlacement();
-			if (towerDistances[randomIndex] > towerDistances[furthest]) {
-				furthest = randomIndex;
-			}
-		}
+  for (let tower = 0; tower < 4 * players + 1; tower++) {
+    let furthest: number = getRandomTowerPlacement();
+    for (let option = 1; option < 12; option++) {
+      const randomIndex = getRandomTowerPlacement();
+      if (towerDistances[randomIndex] > towerDistances[furthest]) {
+        furthest = randomIndex;
+      }
+    }
 
-		placeTower(furthest);
-	}
+    placeTower(furthest);
+  }
 
-	return board;
+  return board;
 }
 
 export type TowerStats = {
-	towers: number[];
-	towersByColor: { [key in Color | "unclaimed"]: number };
+  towers: number[];
+  towersByColor: { [key in Color | "unclaimed"]: number };
 };
 
 /** finds all the towers in the board and counts how many towers of each color exist */
 export function getTowers(board: Cell[]): TowerStats {
-	const towers: number[] = [];
-	const towersByColor = { unclaimed: 0, red: 0, green: 0, blue: 0 };
+  const towers: number[] = [];
+  const towersByColor = { unclaimed: 0, red: 0, green: 0, blue: 0 };
 
-	for (const [i, cell] of board.entries()) {
-		if (cell.tower) {
-			towers.push(i);
-			towersByColor[cell.color ?? "unclaimed"] += 1;
-		}
-	}
+  for (const [i, cell] of board.entries()) {
+    if (cell.tower) {
+      towers.push(i);
+      towersByColor[cell.color ?? "unclaimed"] += 1;
+    }
+  }
 
-	return { towers, towersByColor };
+  return { towers, towersByColor };
 }
 
 /**
@@ -178,7 +178,7 @@ export function getTowers(board: Cell[]): TowerStats {
  * @returns the maximum number of cells the player may place this turn
  */
 export function getMaxTurnSize(turn: number, towers: number) {
-	return Math.min(4, turn + 1, 5 - towers);
+  return Math.min(4, turn + 1, 5 - towers);
 }
 
 export class InvalidTurnError extends Error {}
@@ -192,53 +192,53 @@ export class InvalidTurnError extends Error {}
  * @throws `InvalidTurnError` if the turn is not valid for the board
  */
 export function doTurn(board: Cell[], turn: number[], color: Color): number {
-	for (const i of turn) {
-		if (board[i].tower) {
-			throw new InvalidTurnError("you can not directly claim a tower");
-		}
+  for (const i of turn) {
+    if (board[i].tower) {
+      throw new InvalidTurnError("you can not directly claim a tower");
+    }
 
-		if (board[i].color !== null) {
-			throw new InvalidTurnError("you may not claim a cell that is already claimed");
-		}
+    if (board[i].color !== null) {
+      throw new InvalidTurnError("you may not claim a cell that is already claimed");
+    }
 
-		board[i].color = color;
-	}
+    board[i].color = color;
+  }
 
-	let claimedTowers = 0;
+  let claimedTowers = 0;
 
-	const checkedCells = new Set<number>();
-	for (const turnCell of turn) {
-		const cellsToCheck = [turnCell];
+  const checkedCells = new Set<number>();
+  for (const turnCell of turn) {
+    const cellsToCheck = [turnCell];
 
-		const towers = new Set<number>();
+    const towers = new Set<number>();
 
-		while (cellsToCheck.length > 0) {
-			const cell = cellsToCheck.pop()!;
+    while (cellsToCheck.length > 0) {
+      const cell = cellsToCheck.pop()!;
 
-			if (checkedCells.has(cell)) {
-				continue;
-			}
-			checkedCells.add(cell);
+      if (checkedCells.has(cell)) {
+        continue;
+      }
+      checkedCells.add(cell);
 
-			if (board[cell].tower && (board[cell].color === null || board[cell].color === color)) {
-				towers.add(cell);
-				continue;
-			}
+      if (board[cell].tower && (board[cell].color === null || board[cell].color === color)) {
+        towers.add(cell);
+        continue;
+      }
 
-			if (board[cell].color === color) {
-				cellsToCheck.push(...getAdjacentCells(board.length, cell));
-			}
-		}
+      if (board[cell].color === color) {
+        cellsToCheck.push(...getAdjacentCells(board.length, cell));
+      }
+    }
 
-		if (towers.size > 1) {
-			for (const tower of towers) {
-				if (board[tower].color != color) {
-					board[tower].color = color;
-					claimedTowers += 1;
-				}
-			}
-		}
-	}
+    if (towers.size > 1) {
+      for (const tower of towers) {
+        if (board[tower].color != color) {
+          board[tower].color = color;
+          claimedTowers += 1;
+        }
+      }
+    }
+  }
 
-	return claimedTowers;
+  return claimedTowers;
 }

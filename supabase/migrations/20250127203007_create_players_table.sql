@@ -1,9 +1,9 @@
 create table if not exists public.players (
-	user_id uuid not null,
-	game_id public.xid not null,
-	turn_order smallint,
-	color public.color not null,
-	created_at timestamp with time zone default now() not null
+  user_id uuid not null,
+  game_id public.xid not null,
+  turn_order smallint,
+  color public.color not null,
+  created_at timestamp with time zone default now() not null
 );
 
 alter table public.players owner to postgres;
@@ -28,7 +28,7 @@ add constraint players_user_id_profiles_fkey foreign key (user_id) references pu
 
 create policy "Enable read access for all users" on public.players for
 select
-	using (true);
+  using (true);
 
 alter table public.players enable row level security;
 
