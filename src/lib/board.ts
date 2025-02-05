@@ -124,12 +124,11 @@ export function generateBoard(players: number): Cell[] {
 		while (true) {
 			const index = Math.floor(Math.random() * length);
 
-			if (board[index].tower) {
+			if (towerDistances[index] <= 1) {
 				continue;
 			}
 
-			const neighbors = getAdjacentCells(length, index);
-			if (neighbors.length < 6 || neighbors.some((neighbor) => board[neighbor] === towerCell)) {
+			if (getAdjacentCells(length, index).length < 6) {
 				continue;
 			}
 
