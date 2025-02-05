@@ -26,6 +26,7 @@ export default ts.config(
 				"error",
 				{ allowConstantLoopConditions: true },
 			],
+			"@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true }],
 			"svelte/block-lang": ["error", { script: ["ts"] }],
 		},
 
