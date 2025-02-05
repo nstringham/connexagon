@@ -3,6 +3,9 @@
 	"cSpell.words": ["Connexagon", "Supabase"],
 	"eslint.validate": ["javascript", "typescript", "svelte"],
 	"eslint.rules.customizations": [{ "rule": "*", "severity": "downgrade" }],
+	"css.validate": false,
+	"stylelint.validate": ["css", "postcss", "svelte"],
+	"stylelint.config": { "extends": ["./stylelint.config"], "defaultSeverity": "warning" },
 	"[sql]": {
 		"editor.defaultFormatter": "ReneSaarsoo.sql-formatter-vsc"
 	},
