@@ -36,7 +36,6 @@ export default ts.config(
 				...globals.node,
 			},
 			parserOptions: {
-				extraFileExtensions: [".svelte"],
 				projectService: { allowDefaultProject: ["*.config.js"] },
 				tsconfigRootDir: import.meta.dirname,
 			},
@@ -45,19 +44,12 @@ export default ts.config(
 	{
 		files: ["**/*.svelte"],
 
+		extends: [ts.configs.disableTypeChecked],
+
 		languageOptions: {
 			parserOptions: {
 				parser: ts.parser,
 			},
-		},
-
-		rules: {
-			"@typescript-eslint/no-unsafe-assignment": "off",
-			"@typescript-eslint/no-unsafe-member-access": "off",
-			"@typescript-eslint/no-unsafe-argument": "off",
-			"@typescript-eslint/no-unsafe-call": "off",
-			"@typescript-eslint/no-unnecessary-condition": "off",
-			"@typescript-eslint/restrict-template-expressions": ["error", { allowAny: true }],
 		},
 	},
 	{ ignores: ["src/lib/database-types.ts"] },
