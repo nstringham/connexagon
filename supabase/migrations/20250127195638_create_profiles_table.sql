@@ -10,7 +10,7 @@ add constraint profiles_id_fkey foreign key (user_id) references auth.users (id)
 
 create policy "Enable read access for all users" on public.profiles for
 select
-	using (true);
+  using (true);
 
 alter table public.profiles enable row level security;
 

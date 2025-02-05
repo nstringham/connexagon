@@ -1,13 +1,13 @@
 {
-	"recommendations": [
-		"svelte.svelte-vscode",
-		"dbaeumer.vscode-eslint",
-		"esbenp.prettier-vscode",
-		"stylelint.vscode-stylelint",
-		"vitest.explorer",
-		"editorconfig.editorconfig",
-		"streetsidesoftware.code-spell-checker",
-		"ReneSaarsoo.sql-formatter-vsc",
-		"thebearingedge.vscode-sql-lit"
-	]
+  "recommendations": [
+    "svelte.svelte-vscode",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "stylelint.vscode-stylelint",
+    "vitest.explorer",
+    "editorconfig.editorconfig",
+    "streetsidesoftware.code-spell-checker",
+    "ReneSaarsoo.sql-formatter-vsc",
+    "thebearingedge.vscode-sql-lit"
+  ]
 }

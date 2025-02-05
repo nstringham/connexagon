@@ -1,8 +1,8 @@
 create table if not exists public.turns (
-	game_id public.xid not null,
-	turn_number smallint not null,
-	cells smallint[] not null,
-	created_at timestamp with time zone default now() not null
+  game_id public.xid not null,
+  turn_number smallint not null,
+  cells smallint[] not null,
+  created_at timestamp with time zone default now() not null
 );
 
 alter table public.turns owner to postgres;

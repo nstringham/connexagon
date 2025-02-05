@@ -1,66 +1,66 @@
 <script lang="ts" module>
-	let showSignModal = $state(false);
+  let showSignModal = $state(false);
 
-	export function openSignInModal() {
-		showSignModal = true;
-	}
+  export function openSignInModal() {
+    showSignModal = true;
+  }
 
-	export function closeSignInModal() {
-		showSignModal = false;
-	}
+  export function closeSignInModal() {
+    showSignModal = false;
+  }
 </script>
 
 <script lang="ts">
-	import type { SupabaseClient } from "@supabase/supabase-js";
+  import type { SupabaseClient } from "@supabase/supabase-js";
 
-	let dialogElement: HTMLDialogElement;
+  let dialogElement: HTMLDialogElement;
 
-	const { supabase }: { supabase: SupabaseClient } = $props();
+  const { supabase }: { supabase: SupabaseClient } = $props();
 
-	let email = $state("");
+  let email = $state("");
 
-	let password = $state("");
+  let password = $state("");
 
-	$effect(() => {
-		if (showSignModal) {
-			dialogElement.showModal();
-		} else {
-			dialogElement.close();
-		}
-	});
+  $effect(() => {
+    if (showSignModal) {
+      dialogElement.showModal();
+    } else {
+      dialogElement.close();
+    }
+  });
 
-	async function signIn() {
-		const { error } = await supabase.auth.signInWithPassword({ email, password });
-		if (error) {
-			throw error;
-		}
-		email = "";
-		password = "";
-		showSignModal = false;
-	}
+  async function signIn() {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      throw error;
+    }
+    email = "";
+    password = "";
+    showSignModal = false;
+  }
 
-	async function signUp() {
-		const { error } = await supabase.auth.signUp({ email, password });
-		if (error) {
-			throw error;
-		}
-		email = "";
-		password = "";
-		showSignModal = false;
-	}
+  async function signUp() {
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      throw error;
+    }
+    email = "";
+    password = "";
+    showSignModal = false;
+  }
 </script>
 
 <dialog bind:this={dialogElement} onclose={() => (showSignModal = false)}>
-	<form method="dialog">
-		<label>
-			Email
-			<input name="email" type="email" bind:value={email} />
-		</label>
-		<label>
-			Password
-			<input name="password" type="password" bind:value={password} />
-		</label>
-		<button type="submit" onclick={signIn}>Sign In</button>
-		<button type="submit" onclick={signUp}>Sign up</button>
-	</form>
+  <form method="dialog">
+    <label>
+      Email
+      <input name="email" type="email" bind:value={email} />
+    </label>
+    <label>
+      Password
+      <input name="password" type="password" bind:value={password} />
+    </label>
+    <button type="submit" onclick={signIn}>Sign In</button>
+    <button type="submit" onclick={signUp}>Sign up</button>
+  </form>
 </dialog>
