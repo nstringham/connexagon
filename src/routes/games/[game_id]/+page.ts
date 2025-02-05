@@ -11,9 +11,11 @@ export const load: PageLoad = async ({ params: { game_id }, parent, depends }) =
 		.select(
 			`
 				id,
+				host_user_id,
 				board,
 				turn,
 				winner,
+				completed_at,
 				players(user_id, turn_order, color, profile:profiles(name))
 			`,
 		)
@@ -24,8 +26,10 @@ export const load: PageLoad = async ({ params: { game_id }, parent, depends }) =
 	}
 
 	if (data == null || data.length == 0) {
-		kitError(404);
+		kitError(404, "invalid game id");
 	}
 
-	return { game: data[0] };
+	const game = data[0];
+
+	return { game };
 };

@@ -11,6 +11,7 @@ env:
   # these variables need to be present for SvelteKit sync but don't need to have actual values
   PUBLIC_SUPABASE_URL: ""
   PUBLIC_SUPABASE_ANON_KEY: ""
+  POSTGRES_URL: ""
 
 jobs:
   prettier:

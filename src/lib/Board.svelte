@@ -1,10 +1,8 @@
 <script lang="ts">
 	import type { SVGAttributes } from "svelte/elements";
-	import { getLayout, getSize } from "./board";
-	import type { CompositeTypes } from "./database-types";
+	import { getLayout, getSize, type Cell } from "./board";
 	import { getHexagonSvgPath, halfSqrt3 } from "./hexagon";
-
-	type Cell = CompositeTypes<"cell">;
+	import { dev } from "$app/environment";
 
 	const {
 		board,
@@ -105,6 +103,9 @@
 			{#if cell.tower && cell.color != null}
 				<path d="M{x},{y}{towerPath}" fill={cell.color} />
 			{/if}
+			{#if dev}
+				<text class="debug-info" {x} {y} font-size={strokeWidth * 3}>{i}</text>
+			{/if}
 		</g>
 	{/each}
 </svg>
@@ -116,5 +117,14 @@
 	g:focus-visible .cell {
 		paint-order: stroke;
 		stroke: currentcolor;
+	}
+
+	.debug-info {
+		text-anchor: middle;
+		dominant-baseline: central;
+		fill: white;
+		mix-blend-mode: exclusion;
+		pointer-events: none;
+		user-select: none;
 	}
 </style>
