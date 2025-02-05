@@ -1,14 +1,16 @@
 import { describe, it, expect, vi } from "vitest";
 import {
+  Color,
+  countTowers,
+  decodeHex,
   doTurn,
   generateBoard,
   getAdjacentCells,
   getLayout,
   getMaxTurnSize,
   getSize,
-  getTowers,
   InvalidTurnError,
-  type Cell,
+  type Board,
 } from "./board";
 import { round } from "./hexagon";
 
@@ -24,22 +26,53 @@ export function seededRandom(seed: number): () => number {
 }
 
 /** creates a board from a hardcoded string for use in tests */
-function cells([board]: TemplateStringsArray): Cell[] {
-  const lookup: { [key: string]: (() => Cell) | undefined } = {
-    "⚫": () => ({ tower: false, color: null }),
-    "🔴": () => ({ tower: false, color: "red" }),
-    "🟢": () => ({ tower: false, color: "green" }),
-    "🔵": () => ({ tower: false, color: "blue" }),
-    "🔲": () => ({ tower: true, color: null }),
-    "🟥": () => ({ tower: true, color: "red" }),
-    "🟩": () => ({ tower: true, color: "green" }),
-    "🟦": () => ({ tower: true, color: "blue" }),
+function fromEmoji([text]: TemplateStringsArray | [string]): Board {
+  const lookup: { [key: string]: { tower: boolean; color: Color } } = {
+    "⚫": { tower: false, color: Color.UNCLAIMED },
+    "🔴": { tower: false, color: Color.RED },
+    "🟢": { tower: false, color: Color.GREEN },
+    "🔵": { tower: false, color: Color.BLUE },
+    "🔲": { tower: true, color: Color.UNCLAIMED },
+    "🟥": { tower: true, color: Color.RED },
+    "🟩": { tower: true, color: Color.GREEN },
+    "🟦": { tower: true, color: Color.BLUE },
   };
 
-  return [...new Intl.Segmenter().segment(board.replaceAll(/\s/g, ""))].map(
-    ({ segment }) => lookup[segment]?.() ?? expect.fail(`invalid board character '${segment}'`),
-  );
+  const towers: number[] = [];
+  const cells: number[] = [];
+
+  const segments = [...new Intl.Segmenter().segment(text.replaceAll(/\s/g, ""))];
+
+  for (const [i, { segment }] of segments.entries()) {
+    if (!(segment in lookup)) {
+      throw new Error(`invalid board character '${segment}'`);
+    }
+
+    const { tower, color } = lookup[segment];
+
+    if (tower) {
+      towers.push(i);
+    }
+
+    cells.push(color);
+  }
+
+  return { towers, cells: new Uint8Array(cells) };
 }
+
+describe("decodeHex", () => {
+  it("should convert hex into bytes", () => {
+    expect(decodeHex("\\xcafed00d")).to.deep.equal(new Uint8Array([202, 254, 208, 13]));
+  });
+
+  it("should throw errors for bad input", () => {
+    expect(() => decodeHex("cafed00d")).toThrow('String should start with "\\x"');
+
+    expect(() => decodeHex("\\x12345")).toThrow("String should be an even number of characters");
+
+    expect(() => decodeHex("\\xabcdefgh")).toThrow("String should only contain hex characters");
+  });
+});
 
 describe("getSize", () => {
   it("returns the correct value", () => {
@@ -116,21 +149,21 @@ describe("getAdjacentCells", () => {
 
 describe("generateBoard", () => {
   it("generates a size 9 board with 9 towers for 2 player", () => {
-    const board = generateBoard(2);
-    expect(board.length).toBe(217);
-    expect(board.filter((cell) => cell.tower).length).toBe(9);
+    const { towers, cells } = generateBoard(2);
+    expect(cells.length).toBe(217);
+    expect(towers.length).toBe(9);
   });
 
   it("generates a size 10 board with 13 towers for 3 player", () => {
-    const board = generateBoard(3);
-    expect(board.length).toBe(271);
-    expect(board.filter((cell) => cell.tower).length).toBe(13);
+    const { towers, cells } = generateBoard(3);
+    expect(cells.length).toBe(271);
+    expect(towers.length).toBe(13);
   });
 
   it("generates a size 13 board with 25 towers for 6 player", () => {
-    const board = generateBoard(6);
-    expect(board.length).toBe(469);
-    expect(board.filter((cell) => cell.tower).length).toBe(25);
+    const { towers, cells } = generateBoard(6);
+    expect(cells.length).toBe(469);
+    expect(towers.length).toBe(25);
   });
 
   it("should use the Math.random function to determine the locations of the towers", () => {
@@ -139,7 +172,9 @@ describe("generateBoard", () => {
 
     const actual = generateBoard(2);
 
-    const expected = cells`
+    actual.towers.sort((a, b) => a - b);
+
+    const expected = fromEmoji`
               ⚫⚫⚫⚫⚫⚫⚫⚫⚫
              ⚫⚫⚫⚫⚫⚫🔲⚫⚫⚫
             ⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫⚫
@@ -163,10 +198,10 @@ describe("generateBoard", () => {
   });
 });
 
-describe("getTowers", () => {
+describe("countTowers", () => {
   it("finds nothing for an empty", () => {
     expect(
-      getTowers(cells`
+      countTowers(fromEmoji`
            ⚫⚫⚫⚫
           ⚫⚫⚫⚫⚫
          ⚫⚫⚫⚫⚫⚫
@@ -175,15 +210,12 @@ describe("getTowers", () => {
           ⚫⚫⚫⚫⚫
            ⚫⚫⚫⚫
       `),
-    ).to.deep.equal({
-      towers: [],
-      towersByColor: { unclaimed: 0, red: 0, green: 0, blue: 0 },
-    });
+    ).to.deep.equal([0, 0, 0, 0]);
   });
 
   it("finds nothing for board with no towers", () => {
     expect(
-      getTowers(cells`
+      countTowers(fromEmoji`
            ⚫🔴⚫⚫
           ⚫⚫🔴🔵⚫
          ⚫⚫⚫🔴🔵⚫
@@ -192,15 +224,12 @@ describe("getTowers", () => {
           🔵🔵⚫🟢🟢
            ⚫⚫⚫⚫
       `),
-    ).to.deep.equal({
-      towers: [],
-      towersByColor: { unclaimed: 0, red: 0, green: 0, blue: 0 },
-    });
+    ).to.deep.equal([0, 0, 0, 0]);
   });
 
   it("finds towers on a board with towers", () => {
     expect(
-      getTowers(cells`
+      countTowers(fromEmoji`
            ⚫🟥⚫⚫
           🔲⚫🔴🔵⚫
          ⚫⚫⚫🟥🔵🔲
@@ -209,10 +238,7 @@ describe("getTowers", () => {
           🔵🔵⚫🟢🟢
            ⚫⚫🟢🟩
       `),
-    ).to.deep.equal({
-      towers: [1, 4, 12, 14, 23, 36],
-      towersByColor: { unclaimed: 3, red: 2, green: 1, blue: 0 },
-    });
+    ).to.deep.equal([3, 2, 1, 0]);
   });
 });
 
@@ -244,7 +270,7 @@ describe("getMaxTurnSize", () => {
 
 describe("doTurn", () => {
   it("should update the board at the designated indexes", () => {
-    const board = cells`
+    const board = fromEmoji`
          ⚫⚫⚫⚫
         ⚫⚫⚫⚫⚫
        ⚫⚫⚫⚫⚫⚫
@@ -254,9 +280,9 @@ describe("doTurn", () => {
          ⚫⚫⚫⚫
     `;
 
-    expect(doTurn(board, [0, 4, 9], "red")).toBe(0);
+    expect(doTurn(board, [0, 4, 9], Color.RED)).toBe(0);
 
-    expect(board).to.deep.equal(cells`
+    expect(board).to.deep.equal(fromEmoji`
          🔴⚫⚫⚫
         🔴⚫⚫⚫⚫
        🔴⚫⚫⚫⚫⚫
@@ -268,7 +294,7 @@ describe("doTurn", () => {
   });
 
   it("should throw error if cell is already claimed", () => {
-    const board = cells`
+    const board = fromEmoji`
          🔵⚫⚫⚫
         ⚫⚫⚫⚫⚫
        ⚫⚫⚫⚫⚫⚫
@@ -278,11 +304,11 @@ describe("doTurn", () => {
          ⚫⚫⚫⚫
     `;
 
-    expect(() => doTurn(board, [0], "red")).toThrow(InvalidTurnError);
+    expect(() => doTurn(board, [0], Color.RED)).toThrow(InvalidTurnError);
   });
 
   it("should throw error if cell is tower", () => {
-    const board = cells`
+    const board = fromEmoji`
          🔲⚫⚫⚫
         ⚫⚫⚫⚫⚫
        ⚫⚫⚫⚫⚫⚫
@@ -292,11 +318,11 @@ describe("doTurn", () => {
          ⚫⚫⚫⚫
     `;
 
-    expect(() => doTurn(board, [0], "red")).toThrow(InvalidTurnError);
+    expect(() => doTurn(board, [0], Color.RED)).toThrow(InvalidTurnError);
   });
 
   it("should claim any connected towers and return the number of towers claimed", () => {
-    const board = cells`
+    const board = fromEmoji`
          ⚫⚫⚫⚫
         ⚫🔲⚫⚫⚫
        ⚫⚫⚫⚫⚫⚫
@@ -306,9 +332,9 @@ describe("doTurn", () => {
          ⚫⚫⚫⚫
     `;
 
-    expect(doTurn(board, [0, 4, 9], "red")).toBe(2);
+    expect(doTurn(board, [0, 4, 9], Color.RED)).toBe(2);
 
-    expect(board).to.deep.equal(cells`
+    expect(board).to.deep.equal(fromEmoji`
          🔴⚫⚫⚫
         🔴🟥⚫⚫⚫
        🔴⚫⚫⚫⚫⚫
@@ -320,7 +346,7 @@ describe("doTurn", () => {
   });
 
   it("should claim any towers connected towers claimed by the same color", () => {
-    const board = cells`
+    const board = fromEmoji`
          ⚫⚫⚫⚫
         ⚫🟥⚫⚫⚫
        ⚫⚫⚫⚫⚫⚫
@@ -330,9 +356,9 @@ describe("doTurn", () => {
          ⚫⚫⚫⚫
     `;
 
-    expect(doTurn(board, [0, 4, 9], "red")).toBe(1);
+    expect(doTurn(board, [0, 4, 9], Color.RED)).toBe(1);
 
-    expect(board).to.deep.equal(cells`
+    expect(board).to.deep.equal(fromEmoji`
          🔴⚫⚫⚫
         🔴🟥⚫⚫⚫
        🔴⚫⚫⚫⚫⚫
@@ -344,7 +370,7 @@ describe("doTurn", () => {
   });
 
   it("should not claim connected towers that are already claimed by another color", () => {
-    const board = cells`
+    const board = fromEmoji`
          ⚫⚫⚫⚫
         ⚫🟦⚫⚫⚫
        ⚫⚫⚫⚫⚫⚫
@@ -354,9 +380,9 @@ describe("doTurn", () => {
          ⚫⚫⚫⚫
     `;
 
-    expect(doTurn(board, [0, 4, 9], "red")).toBe(0);
+    expect(doTurn(board, [0, 4, 9], Color.RED)).toBe(0);
 
-    expect(board).to.deep.equal(cells`
+    expect(board).to.deep.equal(fromEmoji`
          🔴⚫⚫⚫
         🔴🟦⚫⚫⚫
        🔴⚫⚫⚫⚫⚫
@@ -368,7 +394,7 @@ describe("doTurn", () => {
   });
 
   it("should not claim towers that are not connected", () => {
-    const board = cells`
+    const board = fromEmoji`
          ⚫⚫⚫⚫
         ⚫🔲⚫⚫⚫
        ⚫⚫⚫⚫⚫⚫
@@ -378,9 +404,9 @@ describe("doTurn", () => {
          ⚫⚫⚫⚫
     `;
 
-    expect(doTurn(board, [4, 9, 11, 25], "red")).toBe(2);
+    expect(doTurn(board, [4, 9, 11, 25], Color.RED)).toBe(2);
 
-    expect(board).to.deep.equal(cells`
+    expect(board).to.deep.equal(fromEmoji`
          ⚫⚫⚫⚫
         🔴🟥⚫⚫⚫
        🔴⚫🔴⚫⚫⚫

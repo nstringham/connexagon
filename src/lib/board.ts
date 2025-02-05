@@ -1,12 +1,34 @@
-import type { CompositeTypes, Enums } from "./database-types";
 import { halfSqrt3, round } from "./hexagon";
 import triangleNumbers from "virtual:triangle-numbers";
 
-export type Color = Enums<"color">;
+export enum Color {
+  UNCLAIMED = 0,
+  RED,
+  GREEN,
+  BLUE,
+}
 
-export const colors: readonly Color[] = ["red", "green", "blue"];
+export const colors = Object.values(Color).filter((value) => typeof value === "number");
 
-export type Cell = CompositeTypes<"cell"> & { tower: boolean };
+export type Board = { towers: number[]; cells: Uint8Array };
+
+export function decodeHex(hex: string) {
+  if (!hex.startsWith("\\x")) {
+    throw new SyntaxError('String should start with "\\x"');
+  }
+  hex = hex.substring(2);
+  if (hex.length % 2 !== 0) {
+    throw new SyntaxError("String should be an even number of characters");
+  }
+  if (/[^\da-f]/i.test(hex)) {
+    throw new SyntaxError("String should only contain hex characters");
+  }
+  const bytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < bytes.length; i++) {
+    bytes[i] = parseInt(hex.substring(i * 2, i * 2 + 2), 16);
+  }
+  return bytes;
+}
 
 export type Point = [number, number];
 
@@ -91,20 +113,19 @@ export function getAdjacentCells(length: number, index: number): number[] {
   return cells;
 }
 
-const emptyCell: Readonly<Cell> = { tower: false, color: null };
-const towerCell: Readonly<Cell> = { tower: true, color: null };
-
-export function generateBoard(players: number): Cell[] {
+export function generateBoard(players: number): Board {
   const size = players + 7;
 
   const length = 3 * size * (size - 1) + 1;
 
-  const board = Array<Cell>(length).fill(emptyCell);
+  const cells = new Uint8Array(length);
+
+  const towers: number[] = [];
 
   const towerDistances = new Uint8Array(length).fill(size * 2);
 
   function placeTower(index: number) {
-    board[index] = towerCell;
+    towers.push(index);
 
     towerDistances[index] = 0;
     const distancesToPropagate = [index];
@@ -148,27 +169,18 @@ export function generateBoard(players: number): Cell[] {
     placeTower(furthest);
   }
 
-  return board;
+  return { towers, cells };
 }
 
-export type TowerStats = {
-  towers: number[];
-  towersByColor: { [key in Color | "unclaimed"]: number };
-};
+/** counts how many towers of each color exist */
+export function countTowers({ towers, cells }: Board): number[] {
+  const towersByColor = colors.map(() => 0);
 
-/** finds all the towers in the board and counts how many towers of each color exist */
-export function getTowers(board: Cell[]): TowerStats {
-  const towers: number[] = [];
-  const towersByColor = { unclaimed: 0, red: 0, green: 0, blue: 0 };
-
-  for (const [i, cell] of board.entries()) {
-    if (cell.tower) {
-      towers.push(i);
-      towersByColor[cell.color ?? "unclaimed"] += 1;
-    }
+  for (const tower of towers) {
+    towersByColor[cells[tower]] += 1;
   }
 
-  return { towers, towersByColor };
+  return towersByColor;
 }
 
 /**
@@ -191,17 +203,17 @@ export class InvalidTurnError extends Error {}
  * @returns the number of towers claimed by this turn
  * @throws `InvalidTurnError` if the turn is not valid for the board
  */
-export function doTurn(board: Cell[], turn: number[], color: Color): number {
+export function doTurn({ towers, cells }: Board, turn: number[], color: Color): number {
   for (const i of turn) {
-    if (board[i].tower) {
+    if (towers.includes(i)) {
       throw new InvalidTurnError("you can not directly claim a tower");
     }
 
-    if (board[i].color !== null) {
+    if (cells[i] !== 0) {
       throw new InvalidTurnError("you may not claim a cell that is already claimed");
     }
 
-    board[i].color = color;
+    cells[i] = color;
   }
 
   let claimedTowers = 0;
@@ -210,7 +222,7 @@ export function doTurn(board: Cell[], turn: number[], color: Color): number {
   for (const turnCell of turn) {
     const cellsToCheck = [turnCell];
 
-    const towers = new Set<number>();
+    const foundTowers = new Set<number>();
 
     while (cellsToCheck.length > 0) {
       const cell = cellsToCheck.pop()!;
@@ -220,20 +232,20 @@ export function doTurn(board: Cell[], turn: number[], color: Color): number {
       }
       checkedCells.add(cell);
 
-      if (board[cell].tower && (board[cell].color === null || board[cell].color === color)) {
-        towers.add(cell);
+      if (towers.includes(cell) && (cells[cell] === 0 || cells[cell] === color)) {
+        foundTowers.add(cell);
         continue;
       }
 
-      if (board[cell].color === color) {
-        cellsToCheck.push(...getAdjacentCells(board.length, cell));
+      if (cells[cell] === color) {
+        cellsToCheck.push(...getAdjacentCells(cells.length, cell));
       }
     }
 
-    if (towers.size > 1) {
-      for (const tower of towers) {
-        if (board[tower].color != color) {
-          board[tower].color = color;
+    if (foundTowers.size > 1) {
+      for (const tower of foundTowers) {
+        if (cells[tower] != color) {
+          cells[tower] = color;
           claimedTowers += 1;
         }
       }

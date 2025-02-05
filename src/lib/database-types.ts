@@ -5,34 +5,37 @@ export type Database = {
     Tables: {
       games: {
         Row: {
-          board: Database["public"]["CompositeTypes"]["cell"][] | null;
+          cell_colors: string;
           completed_at: string | null;
           created_at: string;
           host_user_id: string;
           id: string;
           started_at: string | null;
+          towers: number[];
           turn: number | null;
-          winner: Database["public"]["Enums"]["color"] | null;
+          winner: number;
         };
         Insert: {
-          board?: Database["public"]["CompositeTypes"]["cell"][] | null;
+          cell_colors?: string;
           completed_at?: string | null;
           created_at?: string;
           host_user_id: string;
           id?: string;
           started_at?: string | null;
+          towers?: number[];
           turn?: number | null;
-          winner?: Database["public"]["Enums"]["color"] | null;
+          winner?: number;
         };
         Update: {
-          board?: Database["public"]["CompositeTypes"]["cell"][] | null;
+          cell_colors?: string;
           completed_at?: string | null;
           created_at?: string;
           host_user_id?: string;
           id?: string;
           started_at?: string | null;
+          towers?: number[];
           turn?: number | null;
-          winner?: Database["public"]["Enums"]["color"] | null;
+          winner?: number;
         };
         Relationships: [
           {
@@ -46,21 +49,21 @@ export type Database = {
       };
       players: {
         Row: {
-          color: Database["public"]["Enums"]["color"];
+          color: number;
           created_at: string;
           game_id: string;
           turn_order: number | null;
           user_id: string;
         };
         Insert: {
-          color: Database["public"]["Enums"]["color"];
+          color: number;
           created_at?: string;
           game_id: string;
           turn_order?: number | null;
           user_id: string;
         };
         Update: {
-          color?: Database["public"]["Enums"]["color"];
+          color?: number;
           created_at?: string;
           game_id?: string;
           turn_order?: number | null;
@@ -140,6 +143,10 @@ export type Database = {
         Args: Record<PropertyKey, never>;
         Returns: string;
       };
+      get_max_color: {
+        Args: Record<PropertyKey, never>;
+        Returns: number;
+      };
       join_game:
         | {
             Args: {
@@ -198,13 +205,10 @@ export type Database = {
       };
     };
     Enums: {
-      color: "red" | "green" | "blue";
+      [_ in never]: never;
     };
     CompositeTypes: {
-      cell: {
-        tower: boolean | null;
-        color: Database["public"]["Enums"]["color"] | null;
-      };
+      [_ in never]: never;
     };
   };
 };
