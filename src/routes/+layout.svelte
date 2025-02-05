@@ -10,13 +10,13 @@
 	let { session, supabase } = $derived(data);
 
 	onMount(() => {
-		const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
+		const { data } = supabase.auth.onAuthStateChange(async (_, newSession) => {
 			if (newSession?.expires_at !== session?.expires_at) {
-				invalidate("supabase:auth");
+				await invalidate("supabase:auth");
 			}
 		});
 
-		return () => data.subscription.unsubscribe();
+		return () => void data.subscription.unsubscribe();
 	});
 
 	const signOut = async () => {

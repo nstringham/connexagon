@@ -18,7 +18,7 @@
 		if (error) {
 			throw error;
 		}
-		invalidateAll();
+		await invalidateAll();
 	}
 </script>
 

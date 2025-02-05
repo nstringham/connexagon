@@ -66,7 +66,7 @@
 			)
 			.subscribe();
 
-		return () => channel.unsubscribe();
+		return () => void channel.unsubscribe();
 	});
 
 	async function joinGame() {

@@ -44,7 +44,7 @@
 			return;
 		}
 
-		const cellIndex = parseInt(target.dataset.index as string);
+		const cellIndex = parseInt(target.dataset.index!);
 
 		if (board[cellIndex].tower || board[cellIndex].color != null) {
 			return;
