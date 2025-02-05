@@ -12,7 +12,8 @@ export const load: PageLoad = async ({ params: { game_id }, parent, depends }) =
       `
         id,
         host_user_id,
-        board,
+        towers,
+        cell_colors,
         turn,
         winner,
         completed_at,

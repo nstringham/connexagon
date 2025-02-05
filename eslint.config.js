@@ -27,6 +27,7 @@ export default ts.config(
         { allowConstantLoopConditions: true },
       ],
       "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true }],
+      "@typescript-eslint/no-unsafe-enum-comparison": "off",
       "svelte/block-lang": ["error", { script: ["ts"] }],
     },
 

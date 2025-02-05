@@ -1,4 +1,4 @@
-import { serializeBoard, sql } from "$lib/db.server";
+import { sql } from "$lib/db.server";
 import { error } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import { generateBoard } from "$lib/board";
@@ -46,12 +46,13 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
       error(400, "game must have at least 2 players to start");
     }
 
-    const board = generateBoard(players);
+    const { towers, cells } = generateBoard(players);
 
     const updateGame = sql`
       update public.games
       set
-        board = ${serializeBoard(board)},
+        towers = ${towers},
+        cell_colors = ${cells},
         turn = 0,
         started_at = now()
       where

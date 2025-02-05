@@ -1,7 +1,7 @@
-import { deserializeBoard, serializeBoard, sql } from "$lib/db.server";
+import { sql } from "$lib/db.server";
 import { error } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
-import { doTurn, getMaxTurnSize, getTowers, InvalidTurnError, type Color } from "$lib/board";
+import { countTowers, doTurn, getMaxTurnSize, InvalidTurnError, type Color } from "$lib/board";
 import type { Config } from "@sveltejs/adapter-vercel";
 
 export const config: Config = {
@@ -28,25 +28,20 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
   }
 
   await sql.begin(async (sql) => {
-    type QueryResult = (
-      | {
-          board: string[];
-          turn_number: number;
-        }
-      | {
-          board: null;
-          turn_number: null;
-        }
-    ) & {
+    type QueryResult = {
+      towers: number[];
+      cell_colors: Buffer;
       completed: boolean;
       user_id: string;
       color: Color | null;
-    };
+    } & ({ started: false; turn_number: true } | { started: true; turn_number: number });
 
     const result = await sql<QueryResult[]>`
       select
-        board,
+        towers,
+        cell_colors,
         turn as turn_number,
+        started_at is not null as started,
         completed_at is not null as completed,
         player.user_id,
         player.color
@@ -71,31 +66,31 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
       error(404, "invalid game id");
     }
 
-    const { board: rawBoard, turn_number, completed, user_id, color } = result[0];
+    const { towers, cell_colors, turn_number, started, completed, user_id, color } = result[0];
+
+    const cells = new Uint8Array(cell_colors);
 
     if (completed) {
       error(400, "game has already completed");
+    }
+
+    if (!started) {
+      error(400, "this game has not started yet");
     }
 
     if (user_id !== user.id) {
       error(403, "it's not your turn");
     }
 
-    if (rawBoard == null) {
-      error(400, "this game has not started yet");
-    }
-
-    if (turn.some((n) => n < 0 || n >= rawBoard.length)) {
-      error(400, `each cell index must be between 0 and ${rawBoard.length}`);
+    if (turn.some((n) => n < 0 || n >= cells.length)) {
+      error(400, `each cell index must be between 0 and ${cells.length}`);
     }
 
     if (color == null) {
       error(400, "you must have a color to make a turn");
     }
 
-    const board = deserializeBoard(rawBoard);
-
-    const { towersByColor } = getTowers(board);
+    const towersByColor = countTowers({ towers, cells });
 
     const maxTurnSize = getMaxTurnSize(turn_number, towersByColor[color]);
 
@@ -106,7 +101,7 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
     let claimedTowers: number;
 
     try {
-      claimedTowers = doTurn(board, turn, color);
+      claimedTowers = doTurn({ towers, cells }, turn, color);
     } catch (e) {
       if (e instanceof InvalidTurnError) {
         error(400, e.message);
@@ -121,7 +116,7 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
       updateGame = sql`
         update public.games
         set
-          board = ${serializeBoard(board)},
+          cell_colors = ${cells},
           winner = ${color},
           completed_at = now()
         where
@@ -131,7 +126,7 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
       updateGame = sql`
         update public.games
         set
-          board = ${serializeBoard(board)},
+          cell_colors = ${cells},
           turn = ${turn_number + 1}
         where
           id = ${game_id}

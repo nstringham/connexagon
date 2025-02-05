@@ -1,9 +1,9 @@
 <script lang="ts">
   import { dev } from "$app/environment";
   import { invalidate } from "$app/navigation";
-  import { colors, getMaxTurnSize, getTowers, type Cell, type Color } from "$lib/board.js";
+  import { Color, colors, getMaxTurnSize, countTowers, decodeHex } from "$lib/board";
   import Board from "$lib/Board.svelte";
-  import type { Tables } from "$lib/database-types.js";
+  import type { Tables } from "$lib/database-types";
 
   const { data } = $props();
   const { supabase, user } = $derived(data);
@@ -25,11 +25,12 @@
           table: "games",
           filter: `id=eq.${game_id}`,
         },
-        ({ new: { id, host_user_id, board, turn, winner, completed_at } }) => {
+        ({ new: { id, host_user_id, towers, cell_colors, turn, winner, completed_at } }) => {
           game = {
             id,
             host_user_id,
-            board,
+            towers,
+            cell_colors: "\\x" + new TextDecoder("ascii").decode(decodeHex(cell_colors)), // workaround for https://github.com/supabase/realtime-js/issues/453
             turn,
             winner,
             completed_at,
@@ -83,9 +84,9 @@
     game.turn == null ? false : game.players[game.turn % game.players.length].color == userColor,
   );
 
-  const board = $derived(game.board as Cell[] | null);
+  const cells = $derived(decodeHex(game.cell_colors));
 
-  const { towersByColor } = $derived(getTowers(board ?? []));
+  const towersByColor = $derived(countTowers({ towers: game.towers, cells }));
 
   const maxAllowedSelection = $derived(
     !isTurn || userColor == undefined ? 0 : getMaxTurnSize(game.turn!, towersByColor[userColor]),
@@ -133,17 +134,19 @@
   }
 </script>
 
-{#if board == null}
+{#if cells.length === 0}
   {#if userColor != null}
     <label>
       Color:
       <select
         name="color"
         value={userColor}
-        onchange={({ currentTarget }) => changeColor(currentTarget.value as Color)}
+        onchange={({ currentTarget }) => changeColor(parseInt(currentTarget.value) as Color)}
       >
         {#each colorOptions as { color, available }}
-          <option value={color} disabled={!available}>{color}</option>
+          {#if color !== 0}
+            <option value={color} disabled={!available}>{Color[color]}</option>
+          {/if}
         {/each}
       </select>
     </label>
@@ -154,11 +157,11 @@
     <button onclick={joinGame}>Join Game</button>
   {/if}
 {:else}
-  <div style:--user-color={userColor}>
-    <Board class="board" {board} bind:selection {maxAllowedSelection} />
+  <div style:--user-color={userColor == undefined ? null : Color[userColor]}>
+    <Board class="board" towers={game.towers} {cells} bind:selection {maxAllowedSelection} />
   </div>
   {#if isGameOver}
-    <h1 style:color={game.winner}>
+    <h1 style:color={game.winner == 0 ? null : Color[game.winner]}>
       {game.players.find((player) => player.color === game.winner)?.profile.name ?? "nobody"} won!
     </h1>
   {:else if isTurn}

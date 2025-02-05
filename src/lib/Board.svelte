@@ -1,21 +1,23 @@
 <script lang="ts">
   import type { SVGAttributes } from "svelte/elements";
-  import { getLayout, getSize, type Cell } from "./board";
+  import { Color, getLayout, getSize } from "./board";
   import { getHexagonSvgPath, halfSqrt3 } from "./hexagon";
   import { dev } from "$app/environment";
 
   const {
-    board,
+    towers,
+    cells,
     selection = $bindable([]),
     maxAllowedSelection = 0,
     ...restProps
   }: {
-    board: Cell[];
+    towers: number[];
+    cells: Uint8Array;
     selection?: number[];
     maxAllowedSelection?: number;
   } & SVGAttributes<SVGSVGElement> = $props();
 
-  const size = $derived(getSize(board.length));
+  const size = $derived(getSize(cells.length));
 
   const layout = $derived(getLayout(size));
 
@@ -44,7 +46,7 @@
 
     const cellIndex = parseInt(target.dataset.index!);
 
-    if (board[cellIndex].tower || board[cellIndex].color != null) {
+    if (towers.includes(cellIndex) || cells[cellIndex] !== 0) {
       return;
     }
 
@@ -78,9 +80,10 @@
     }
   }}
 >
-  {#each board as cell, i}
+  {#each cells as color, i}
     {@const [x, y] = layout[i]}
-    {@const selectable = cell.color == null && !cell.tower}
+    {@const tower = towers.includes(i)}
+    {@const selectable = color === 0 && !tower}
     {@const selected = selection.includes(i)}
     <!-- this is ok because we have event listeners on the outer <svg> element -->
     <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
@@ -94,14 +97,14 @@
       <path
         class="cell"
         d="M{x},{y}{cellPath}"
-        fill={cell.tower ? "currentcolor" : (cell.color ?? "light-dark(#ebebeb, #181818)")}
+        fill={tower ? "currentcolor" : (Color[color] ?? "light-dark(#ebebeb, #181818)")}
         stroke-width={strokeWidth * 2}
       />
       {#if selected}
         <path d="M{x},{y}{haloPath}" fill="none" stroke="var(--user-color)" />
       {/if}
-      {#if cell.tower && cell.color != null}
-        <path d="M{x},{y}{towerPath}" fill={cell.color} />
+      {#if tower && color !== 0}
+        <path d="M{x},{y}{towerPath}" fill={Color[color]} />
       {/if}
       {#if dev}
         <text class="debug-info" {x} {y} font-size={strokeWidth * 3}>{i}</text>
