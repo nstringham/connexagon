@@ -6,13 +6,5 @@
   "css.validate": false,
   "stylelint.validate": ["css", "postcss", "svelte"],
   "stylelint.config": { "extends": ["./stylelint.config"], "defaultSeverity": "warning" },
-  "[sql]": {
-    "editor.defaultFormatter": "ReneSaarsoo.sql-formatter-vsc"
-  },
-  "SQL-Formatter-VSCode.dialect": "postgresql",
-  "SQL-Formatter-VSCode.keywordCase": "lower",
-  "SQL-Formatter-VSCode.functionCase": "lower",
-  "SQL-Formatter-VSCode.identifierCase": "lower",
-  "SQL-Formatter-VSCode.dataTypeCase": "lower",
   "git.allowForcePush": true
 }
