@@ -7,7 +7,6 @@
     "vitest.explorer",
     "editorconfig.editorconfig",
     "streetsidesoftware.code-spell-checker",
-    "ReneSaarsoo.sql-formatter-vsc",
     "thebearingedge.vscode-sql-lit"
   ]
 }
