@@ -4,8 +4,12 @@ import triangleNumbers from "virtual:triangle-numbers";
 export enum Color {
   UNCLAIMED = 0,
   RED,
+  GOLD,
   GREEN,
+  AQUA,
   BLUE,
+  PURPLE,
+  PINK,
 }
 
 export const colors = Object.values(Color).filter((value) => typeof value === "number");

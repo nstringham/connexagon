@@ -41,7 +41,7 @@ drop type public.cell;
 drop type public.color;
 
 create or replace function public.get_max_color () returns smallint language sql immutable as $$
-  select 3
+  select 7
 $$;
 
 create or replace function public.join_game (game_id_to_join text, user_id uuid) returns void language sql as $$
