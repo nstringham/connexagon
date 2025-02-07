@@ -1,6 +1,6 @@
 {
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "cSpell.words": ["Connexagon", "Supabase"],
+  "cSpell.words": ["Connexagon", "resvg", "Supabase"],
   "eslint.validate": ["javascript", "typescript", "svelte"],
   "eslint.rules.customizations": [{ "rule": "*", "severity": "downgrade" }],
   "css.validate": false,
