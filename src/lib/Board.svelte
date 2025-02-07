@@ -9,6 +9,7 @@
     cells,
     selection = $bindable([]),
     maxAllowedSelection = 0,
+    aspectRatio = 1,
     cssColors = defaultCssColors,
     ...restProps
   }: {
@@ -16,6 +17,7 @@
     cells: Uint8Array;
     selection?: number[];
     maxAllowedSelection?: number;
+    aspectRatio?: number;
     cssColors?: typeof defaultCssColors;
   } & SVGAttributes<SVGSVGElement> = $props();
 
@@ -23,7 +25,13 @@
 
   const layout = $derived(getLayout(size));
 
-  const viewBoxSize = $derived((size * 2 - 1) * halfSqrt3);
+  const viewBoxSize = $derived((size * 2 - 1) * halfSqrt3 * 2);
+
+  const [viewBoxWidth, viewBoxHeight] = $derived(
+    aspectRatio > 1
+      ? [viewBoxSize * aspectRatio, viewBoxSize]
+      : [viewBoxSize, viewBoxSize / aspectRatio],
+  );
 
   const strokeWidth = 1 - halfSqrt3;
 
@@ -71,7 +79,7 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <svg
   {...restProps}
-  viewBox="-{viewBoxSize} -{viewBoxSize} {viewBoxSize * 2} {viewBoxSize * 2}"
+  viewBox="-{viewBoxWidth / 2} -{viewBoxHeight / 2} {viewBoxWidth} {viewBoxHeight}"
   stroke-width={strokeWidth}
   onclick={(event) => {
     onSelect(event);
