@@ -32,6 +32,9 @@ export function decodeHex(hex: string) {
     throw new SyntaxError('String should start with "\\x"');
   }
   hex = hex.substring(2);
+  if ("fromHex" in Uint8Array) {
+    return (Uint8Array.fromHex as (hex: string) => Uint8Array)(hex);
+  }
   if (hex.length % 2 !== 0) {
     throw new SyntaxError("String should be an even number of characters");
   }
