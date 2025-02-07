@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { SVGAttributes } from "svelte/elements";
-  import { Color, cssColors, getLayout, getSize } from "./board";
+  import { Color, cssColors as defaultCssColors, getLayout, getSize } from "./board";
   import { getHexagonSvgPath, halfSqrt3 } from "./hexagon";
   import { dev } from "$app/environment";
 
@@ -9,12 +9,14 @@
     cells,
     selection = $bindable([]),
     maxAllowedSelection = 0,
+    cssColors = defaultCssColors,
     ...restProps
   }: {
     towers: Set<number>;
     cells: Uint8Array;
     selection?: number[];
     maxAllowedSelection?: number;
+    cssColors?: typeof defaultCssColors;
   } & SVGAttributes<SVGSVGElement> = $props();
 
   const size = $derived(getSize(cells.length));
