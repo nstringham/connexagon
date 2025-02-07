@@ -51,7 +51,7 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
     const updateGame = sql`
       update public.games
       set
-        towers = ${towers},
+        towers = ${[...towers.values()]},
         cell_colors = ${cells},
         turn = 0,
         started_at = now()

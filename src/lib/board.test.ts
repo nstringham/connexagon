@@ -42,10 +42,10 @@ function fromEmoji([text]: TemplateStringsArray | [string]): Board {
     "🟪": { tower: true, color: Color.PURPLE },
   };
 
-  const towers: number[] = [];
-  const cells: number[] = [];
-
   const segments = [...new Intl.Segmenter().segment(text.replaceAll(/\s/g, ""))];
+
+  const towers = new Set<number>();
+  const cells = new Uint8Array(segments.length);
 
   for (const [i, { segment }] of segments.entries()) {
     if (!(segment in lookup)) {
@@ -55,13 +55,13 @@ function fromEmoji([text]: TemplateStringsArray | [string]): Board {
     const { tower, color } = lookup[segment];
 
     if (tower) {
-      towers.push(i);
+      towers.add(i);
     }
 
-    cells.push(color);
+    cells[i] = color;
   }
 
-  return { towers, cells: new Uint8Array(cells) };
+  return { towers, cells };
 }
 
 describe("decodeHex", () => {
@@ -155,19 +155,19 @@ describe("generateBoard", () => {
   it("generates a size 9 board with 9 towers for 2 player", () => {
     const { towers, cells } = generateBoard(2);
     expect(cells.length).toBe(217);
-    expect(towers.length).toBe(9);
+    expect(towers.size).toBe(9);
   });
 
   it("generates a size 10 board with 13 towers for 3 player", () => {
     const { towers, cells } = generateBoard(3);
     expect(cells.length).toBe(271);
-    expect(towers.length).toBe(13);
+    expect(towers.size).toBe(13);
   });
 
   it("generates a size 13 board with 25 towers for 6 player", () => {
     const { towers, cells } = generateBoard(6);
     expect(cells.length).toBe(469);
-    expect(towers.length).toBe(25);
+    expect(towers.size).toBe(25);
   });
 
   it("should use the Math.random function to determine the locations of the towers", () => {
@@ -175,8 +175,6 @@ describe("generateBoard", () => {
     vi.spyOn(Math, "random").mockImplementation(() => random());
 
     const actual = generateBoard(2);
-
-    actual.towers.sort((a, b) => a - b);
 
     const expected = fromEmoji`
               ⚫⚫⚫⚫⚫⚫⚫⚫⚫

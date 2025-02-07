@@ -25,7 +25,7 @@ export const cssColors: { readonly [color in Color]: string | undefined } = {
 
 export const colors = Object.values(Color).filter((value) => typeof value === "number");
 
-export type Board = { towers: number[]; cells: Uint8Array };
+export type Board = { towers: Set<number>; cells: Uint8Array };
 
 export function decodeHex(hex: string) {
   if (!hex.startsWith("\\x")) {
@@ -138,12 +138,12 @@ export function generateBoard(players: number): Board {
 
   const cells = new Uint8Array(length);
 
-  const towers: number[] = [];
+  const towers = new Set<number>();
 
   const towerDistances = new Uint8Array(length).fill(size * 2);
 
   function placeTower(index: number) {
-    towers.push(index);
+    towers.add(index);
 
     towerDistances[index] = 0;
     const distancesToPropagate = [index];
@@ -223,7 +223,7 @@ export class InvalidTurnError extends Error {}
  */
 export function doTurn({ towers, cells }: Board, turn: number[], color: Color): number {
   for (const i of turn) {
-    if (towers.includes(i)) {
+    if (towers.has(i)) {
       throw new InvalidTurnError("you can not directly claim a tower");
     }
 
@@ -250,7 +250,7 @@ export function doTurn({ towers, cells }: Board, turn: number[], color: Color): 
       }
       checkedCells.add(cell);
 
-      if (towers.includes(cell) && (cells[cell] === 0 || cells[cell] === color)) {
+      if (towers.has(cell) && (cells[cell] === 0 || cells[cell] === color)) {
         foundTowers.add(cell);
         continue;
       }
