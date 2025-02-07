@@ -4,8 +4,11 @@ import { render } from "svelte/server";
 import type { RequestHandler } from "./$types";
 import { error as kitError } from "@sveltejs/kit";
 
-export const GET: RequestHandler = async ({ locals: { supabase }, url }) => {
-  const { data, error } = await supabase.from("games").select("towers,cell_colors");
+export const GET: RequestHandler = async ({ locals: { supabase }, params: { game_id }, url }) => {
+  const { data, error } = await supabase
+    .from("games")
+    .select("towers,cell_colors")
+    .eq("id", game_id);
   if (error) {
     throw error;
   }
