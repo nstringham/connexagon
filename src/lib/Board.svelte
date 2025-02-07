@@ -11,7 +11,7 @@
     maxAllowedSelection = 0,
     ...restProps
   }: {
-    towers: number[];
+    towers: Set<number>;
     cells: Uint8Array;
     selection?: number[];
     maxAllowedSelection?: number;
@@ -46,7 +46,7 @@
 
     const cellIndex = parseInt(target.dataset.index!);
 
-    if (towers.includes(cellIndex) || cells[cellIndex] !== 0) {
+    if (towers.has(cellIndex) || cells[cellIndex] !== 0) {
       return;
     }
 
@@ -82,7 +82,7 @@
 >
   {#each cells as color, i}
     {@const [x, y] = layout[i]}
-    {@const tower = towers.includes(i)}
+    {@const tower = towers.has(i)}
     {@const selectable = color === 0 && !tower}
     {@const selected = selection.includes(i)}
     <!-- this is ok because we have event listeners on the outer <svg> element -->

@@ -66,7 +66,17 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
       error(404, "invalid game id");
     }
 
-    const { towers, cell_colors, turn_number, started, completed, user_id, color } = result[0];
+    const {
+      towers: towersArray,
+      cell_colors,
+      turn_number,
+      started,
+      completed,
+      user_id,
+      color,
+    } = result[0];
+
+    const towers = new Set(towersArray);
 
     const cells = new Uint8Array(cell_colors);
 

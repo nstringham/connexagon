@@ -84,9 +84,11 @@
     game.turn == null ? false : game.players[game.turn % game.players.length].color == userColor,
   );
 
+  const towers = $derived(new Set(game.towers));
+
   const cells = $derived(decodeHex(game.cell_colors));
 
-  const towersByColor = $derived(countTowers({ towers: game.towers, cells }));
+  const towersByColor = $derived(countTowers({ towers, cells }));
 
   const maxAllowedSelection = $derived(
     !isTurn || userColor == undefined ? 0 : getMaxTurnSize(game.turn!, towersByColor[userColor]),
@@ -158,7 +160,7 @@
   {/if}
 {:else}
   <div style:--user-color={cssColors[userColor as Color]}>
-    <Board class="board" towers={game.towers} {cells} bind:selection {maxAllowedSelection} />
+    <Board class="board" {towers} {cells} bind:selection {maxAllowedSelection} />
   </div>
   {#if isGameOver}
     <h1 style:color={cssColors[game.winner as Color]}>
