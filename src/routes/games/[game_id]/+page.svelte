@@ -6,7 +6,7 @@
   import type { Tables } from "$lib/database-types";
 
   const { data } = $props();
-  const { supabase, user } = $derived(data);
+  const { origin, supabase, user } = $derived(data);
 
   let game = $state(data.game);
 
@@ -135,6 +135,10 @@
     }
   }
 </script>
+
+<svelte:head>
+  <meta property="og:image" content="{origin}/games/{game.id}/preview?width=1200&height=630" />
+</svelte:head>
 
 {#if cells.length === 0}
   {#if userColor != null}
