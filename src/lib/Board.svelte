@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { SVGAttributes } from "svelte/elements";
-  import { Color, getLayout, getSize } from "./board";
+  import { Color, cssColors, getLayout, getSize } from "./board";
   import { getHexagonSvgPath, halfSqrt3 } from "./hexagon";
   import { dev } from "$app/environment";
 
@@ -97,14 +97,16 @@
       <path
         class="cell"
         d="M{x},{y}{cellPath}"
-        fill={tower ? "currentcolor" : (Color[color] ?? "light-dark(#ebebeb, #181818)")}
+        fill={tower
+          ? "currentcolor"
+          : (cssColors[color as Color] ?? "light-dark(#ebebeb, #181818)")}
         stroke-width={strokeWidth * 2}
       />
       {#if selected}
         <path d="M{x},{y}{haloPath}" fill="none" stroke="var(--user-color)" />
       {/if}
       {#if tower && color !== 0}
-        <path d="M{x},{y}{towerPath}" fill={Color[color]} />
+        <path d="M{x},{y}{towerPath}" fill={cssColors[color as Color]} />
       {/if}
       {#if dev}
         <text class="debug-info" {x} {y} font-size={strokeWidth * 3}>{i}</text>

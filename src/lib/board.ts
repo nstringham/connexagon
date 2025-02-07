@@ -12,6 +12,17 @@ export enum Color {
   PINK,
 }
 
+export const cssColors: { readonly [color in Color]: string | undefined } = {
+  [Color.UNCLAIMED]: undefined,
+  [Color.RED]: "var(--red)",
+  [Color.GOLD]: "var(--gold)",
+  [Color.GREEN]: "var(--green)",
+  [Color.AQUA]: "var(--aqua)",
+  [Color.BLUE]: "var(--blue)",
+  [Color.PURPLE]: "var(--purple)",
+  [Color.PINK]: "var(--pink)",
+};
+
 export const colors = Object.values(Color).filter((value) => typeof value === "number");
 
 export type Board = { towers: number[]; cells: Uint8Array };
