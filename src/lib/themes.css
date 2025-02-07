@@ -2,4 +2,12 @@
   color-scheme: light dark;
   background-color: light-dark(white, #121212);
   color: light-dark(black, white);
+
+  --red: oklch(57.18% 0.2585 28.49);
+  --gold: oklch(83.55% 0.1872 79.7);
+  --green: oklch(65.65% 0.242 147.99);
+  --aqua: oklch(76.32% 0.1714 195.79);
+  --blue: oklch(46.12% 0.2486 261.57);
+  --purple: oklch(48.48% 0.2438 311.03);
+  --pink: oklch(77.26% 0.1955 356.27);
 }

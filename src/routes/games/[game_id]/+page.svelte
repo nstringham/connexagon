@@ -1,7 +1,7 @@
 <script lang="ts">
   import { dev } from "$app/environment";
   import { invalidate } from "$app/navigation";
-  import { Color, colors, getMaxTurnSize, countTowers, decodeHex } from "$lib/board";
+  import { Color, colors, getMaxTurnSize, countTowers, decodeHex, cssColors } from "$lib/board";
   import Board from "$lib/Board.svelte";
   import type { Tables } from "$lib/database-types";
 
@@ -157,11 +157,11 @@
     <button onclick={joinGame}>Join Game</button>
   {/if}
 {:else}
-  <div style:--user-color={userColor == undefined ? null : Color[userColor]}>
+  <div style:--user-color={cssColors[userColor as Color]}>
     <Board class="board" towers={game.towers} {cells} bind:selection {maxAllowedSelection} />
   </div>
   {#if isGameOver}
-    <h1 style:color={game.winner == 0 ? null : Color[game.winner]}>
+    <h1 style:color={cssColors[game.winner as Color]}>
       {game.players.find((player) => player.color === game.winner)?.profile.name ?? "nobody"} won!
     </h1>
   {:else if isTurn}

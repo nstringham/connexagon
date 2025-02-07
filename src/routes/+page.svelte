@@ -1,5 +1,6 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
+  import { type Color, cssColors } from "$lib/board.js";
 
   const { data } = $props();
   const { games, supabase } = $derived(data);
@@ -20,7 +21,7 @@
     <li>
       <a href="/games/{game.id}">
         {#each game.players as player}
-          <span style:color={player.color}>{player.profile.name}</span>
+          <span style:color={cssColors[player.color as Color]}>{player.profile.name}</span>
         {/each}
       </a>
     </li>
