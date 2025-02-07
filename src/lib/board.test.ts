@@ -30,12 +30,16 @@ function fromEmoji([text]: TemplateStringsArray | [string]): Board {
   const lookup: { [key: string]: { tower: boolean; color: Color } } = {
     "⚫": { tower: false, color: Color.UNCLAIMED },
     "🔴": { tower: false, color: Color.RED },
+    "🟡": { tower: false, color: Color.GOLD },
     "🟢": { tower: false, color: Color.GREEN },
     "🔵": { tower: false, color: Color.BLUE },
+    "🟣": { tower: false, color: Color.PURPLE },
     "🔲": { tower: true, color: Color.UNCLAIMED },
     "🟥": { tower: true, color: Color.RED },
+    "🟨": { tower: true, color: Color.GOLD },
     "🟩": { tower: true, color: Color.GREEN },
     "🟦": { tower: true, color: Color.BLUE },
+    "🟪": { tower: true, color: Color.PURPLE },
   };
 
   const towers: number[] = [];
@@ -210,7 +214,7 @@ describe("countTowers", () => {
           ⚫⚫⚫⚫⚫
            ⚫⚫⚫⚫
       `),
-    ).to.deep.equal([0, 0, 0, 0]);
+    ).to.deep.equal([0, 0, 0, 0, 0, 0, 0, 0]);
   });
 
   it("finds nothing for board with no towers", () => {
@@ -224,7 +228,7 @@ describe("countTowers", () => {
           🔵🔵⚫🟢🟢
            ⚫⚫⚫⚫
       `),
-    ).to.deep.equal([0, 0, 0, 0]);
+    ).to.deep.equal([0, 0, 0, 0, 0, 0, 0, 0]);
   });
 
   it("finds towers on a board with towers", () => {
@@ -238,7 +242,7 @@ describe("countTowers", () => {
           🔵🔵⚫🟢🟢
            ⚫⚫🟢🟩
       `),
-    ).to.deep.equal([3, 2, 1, 0]);
+    ).to.deep.equal([3, 2, 0, 1, 0, 0, 0, 0]);
   });
 });
 
