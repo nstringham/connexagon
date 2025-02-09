@@ -46,7 +46,7 @@
 
     const cellIndex = parseInt(target.dataset.index!);
 
-    if (towers.has(cellIndex) || cells[cellIndex] !== 0) {
+    if (towers.has(cellIndex) || cells[cellIndex] !== Color.UNCLAIMED) {
       return;
     }
 
@@ -83,7 +83,7 @@
   {#each cells as color, i}
     {@const [x, y] = layout[i]}
     {@const tower = towers.has(i)}
-    {@const selectable = color === 0 && !tower}
+    {@const selectable = color === Color.UNCLAIMED && !tower}
     {@const selected = selection.includes(i)}
     <!-- this is ok because we have event listeners on the outer <svg> element -->
     <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
