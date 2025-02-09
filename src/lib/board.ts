@@ -38,7 +38,7 @@ export function decodeHex(hex: string) {
   if (hex.length % 2 !== 0) {
     throw new SyntaxError("String should be an even number of characters");
   }
-  if (/[^\da-f]/i.test(hex)) {
+  if (/[^0-9a-f]/i.test(hex)) {
     throw new SyntaxError("String should only contain hex characters");
   }
   const bytes = new Uint8Array(hex.length / 2);
@@ -227,7 +227,7 @@ export function doTurn({ towers, cells }: Board, turn: number[], color: Color): 
       throw new InvalidTurnError("you can not directly claim a tower");
     }
 
-    if (cells[i] !== 0) {
+    if (cells[i] !== Color.UNCLAIMED) {
       throw new InvalidTurnError("you may not claim a cell that is already claimed");
     }
 
@@ -250,7 +250,7 @@ export function doTurn({ towers, cells }: Board, turn: number[], color: Color): 
       }
       checkedCells.add(cell);
 
-      if (towers.has(cell) && (cells[cell] === 0 || cells[cell] === color)) {
+      if (towers.has(cell) && (cells[cell] === Color.UNCLAIMED || cells[cell] === color)) {
         foundTowers.add(cell);
         continue;
       }
