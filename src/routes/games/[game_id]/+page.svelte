@@ -138,6 +138,7 @@
 
 <svelte:head>
   <meta property="og:image" content="{origin}/games/{game.id}/preview?width=1200&height=630" />
+  <meta name="twitter:card" content="summary_large_image" />
 </svelte:head>
 
 {#if cells.length === 0}
