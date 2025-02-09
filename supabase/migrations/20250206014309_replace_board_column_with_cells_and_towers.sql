@@ -2,7 +2,7 @@ alter table public.games
 drop constraint board_and_started_at_match;
 
 alter table public.games
-add constraint board_and_started_at_match check ((started_at is null) = (turn is null));
+add constraint turn_and_started_at_match check ((started_at is null) = (turn is null));
 
 alter table public.games
 drop column board;
@@ -57,7 +57,7 @@ create or replace function public.join_game (game_id_to_join text, user_id uuid)
         from
           (
             select
-              generate_series(0, public.get_max_color ()) as color
+              generate_series(1, public.get_max_color ()) as color
           ) as all_colors
           left join public.players on players.game_id = game_id_to_join
           and players.color = all_colors.color
