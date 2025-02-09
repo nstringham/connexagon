@@ -1,6 +1,6 @@
 # Connexagon
 
-Play connexagon now at https://connexagon.vercel.app
+Play connexagon now at https://connexagon.com
 
 ## Setting up a Local Development Environment
 
