@@ -33,8 +33,8 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
       cell_colors: Buffer;
       completed: boolean;
       user_id: string;
-      color: Color | null;
-    } & ({ started: false; turn_number: true } | { started: true; turn_number: number });
+      color: Color;
+    } & ({ started: false; turn_number: null } | { started: true; turn_number: number });
 
     const result = await sql<QueryResult[]>`
       select
@@ -94,10 +94,6 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
 
     if (turn.some((n) => n < 0 || n >= cells.length)) {
       error(400, `each cell index must be between 0 and ${cells.length}`);
-    }
-
-    if (color == null) {
-      error(400, "you must have a color to make a turn");
     }
 
     const towersByColor = countTowers({ towers, cells });
