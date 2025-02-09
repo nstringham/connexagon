@@ -2,7 +2,12 @@ import { Color, decodeHex } from "$lib/board";
 import Board from "$lib/Board.svelte";
 import { render } from "svelte/server";
 import type { RequestHandler } from "./$types";
-import { error as kitError } from "@sveltejs/kit";
+import { error as kitError, type Config } from "@sveltejs/kit";
+import { Resvg } from "@resvg/resvg-js";
+
+export const config: Config = {
+  runtime: "nodejs22.x",
+};
 
 export const GET: RequestHandler = async ({ locals: { supabase }, params: { game_id }, url }) => {
   const { data, error } = await supabase
@@ -48,8 +53,6 @@ export const GET: RequestHandler = async ({ locals: { supabase }, params: { game
   if (width * height > 10_000_000) {
     kitError(404, "image too large");
   }
-
-  const { Resvg } = await import("./resvg");
 
   const resvg = new Resvg(svg, {
     fitTo: { mode: "width", value: width },
