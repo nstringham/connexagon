@@ -1,66 +1,97 @@
 <script lang="ts" module>
-  let showSignModal = $state(false);
+  // eslint-disable-next-line no-undef -- eslint doesn't know about App
+  function setModalState(signInModalState: App.PageState["signInModalState"]) {
+    pushState("", { signInModalState });
+  }
 
   export function openSignInModal() {
-    showSignModal = true;
+    setModalState("sign-in-options");
   }
 
   export function closeSignInModal() {
-    showSignModal = false;
+    setModalState(undefined);
   }
 </script>
 
 <script lang="ts">
+  import { pushState } from "$app/navigation";
+
+  import { page } from "$app/state";
+
   import type { SupabaseClient } from "@supabase/supabase-js";
 
   let dialogElement: HTMLDialogElement;
 
   const { supabase }: { supabase: SupabaseClient } = $props();
 
-  let email = $state("");
+  const signInModalState = $derived(page.state.signInModalState);
 
-  let password = $state("");
+  const showSignModal = $derived(signInModalState != undefined);
+
+  let email = $state("");
+  let token = $state("");
 
   $effect(() => {
     if (showSignModal) {
       dialogElement.showModal();
     } else {
       dialogElement.close();
+      email = "";
+      token = "";
     }
   });
 
-  async function signIn() {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+  async function signInWithEmail(event: SubmitEvent) {
+    event.preventDefault();
+    const { error } = await supabase.auth.signInWithOtp({ email });
     if (error) {
       throw error;
     }
-    email = "";
-    password = "";
-    showSignModal = false;
+    token = "";
+    setModalState("enter-otp");
   }
 
-  async function signUp() {
-    const { error } = await supabase.auth.signUp({ email, password });
+  async function signInWithOtp(event: SubmitEvent) {
+    event.preventDefault();
+    const { error } = await supabase.auth.verifyOtp({ email, token, type: "email" });
     if (error) {
       throw error;
     }
-    email = "";
-    password = "";
-    showSignModal = false;
+    closeSignInModal();
   }
 </script>
 
-<dialog bind:this={dialogElement} onclose={() => (showSignModal = false)}>
-  <form method="dialog">
-    <label>
-      Email
-      <input name="email" type="email" bind:value={email} />
-    </label>
-    <label>
-      Password
-      <input name="password" type="password" bind:value={password} />
-    </label>
-    <button type="submit" onclick={signIn}>Sign In</button>
-    <button type="submit" onclick={signUp}>Sign up</button>
-  </form>
+<dialog bind:this={dialogElement} onclose={closeSignInModal}>
+  <div class={signInModalState}>
+    {#if signInModalState == "sign-in-options"}
+      <button disabled>Sign in with Google</button>
+      <button disabled>Sign in with Microsoft</button>
+      <button onclick={() => setModalState("sign-in-with-email")}>Sign in with Email</button>
+      <button disabled>Continue as Guest</button>
+    {:else if signInModalState == "sign-in-with-email"}
+      <form onsubmit={signInWithEmail}>
+        <label>
+          Email
+          <input name="email" type="email" bind:value={email} />
+        </label>
+        <button type="submit">Send me a code</button>
+      </form>
+    {:else if signInModalState == "enter-otp"}
+      <form onsubmit={signInWithOtp}>
+        <p>A one time code was sent to {email}</p>
+        <label>
+          Code
+          <input name="token" type="text" minlength="6" maxlength="6" bind:value={token} />
+        </label>
+        <button type="submit">Submit</button>
+      </form>
+    {/if}
+  </div>
 </dialog>
+
+<style>
+  .sign-in-options {
+    display: grid;
+    gap: 12px;
+  }
+</style>
