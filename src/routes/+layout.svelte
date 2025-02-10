@@ -1,7 +1,7 @@
 <script lang="ts">
   import "modern-normalize";
   import "$lib/themes.css";
-  import { invalidate } from "$app/navigation";
+  import { invalidate, invalidateAll } from "$app/navigation";
   import { PUBLIC_SUPABASE_URL } from "$env/static/public";
   import SignInModal, { openSignInModal } from "$lib/SignInModal.svelte";
   import { onMount } from "svelte";
@@ -10,8 +10,10 @@
   let { session, supabase } = $derived(data);
 
   onMount(() => {
-    const { data } = supabase.auth.onAuthStateChange(async (_, newSession) => {
-      if (newSession?.expires_at !== session?.expires_at) {
+    const { data } = supabase.auth.onAuthStateChange(async (event, newSession) => {
+      if (event === "SIGNED_OUT") {
+        invalidateAll();
+      } else if (newSession?.expires_at !== session?.expires_at) {
         await invalidate("supabase:auth");
       }
     });
@@ -20,7 +22,7 @@
   });
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut({ scope: "local" });
     if (error) {
       throw error;
     }
