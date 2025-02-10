@@ -59,6 +59,14 @@
     }
     closeSignInModal();
   }
+
+  async function signInAnonymously() {
+    const { error } = await supabase.auth.signInAnonymously();
+    if (error) {
+      throw error;
+    }
+    closeSignInModal();
+  }
 </script>
 
 <dialog bind:this={dialogElement} onclose={closeSignInModal}>
@@ -67,7 +75,7 @@
       <button disabled>Sign in with Google</button>
       <button disabled>Sign in with Microsoft</button>
       <button onclick={() => setModalState("sign-in-with-email")}>Sign in with Email</button>
-      <button disabled>Continue as Guest</button>
+      <button onclick={signInAnonymously}>Continue as Guest</button>
     {:else if signInModalState == "sign-in-with-email"}
       <form onsubmit={signInWithEmail}>
         <label>
