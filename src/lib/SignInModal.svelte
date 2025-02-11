@@ -18,7 +18,7 @@
 
   import { page } from "$app/state";
 
-  import type { SupabaseClient } from "@supabase/supabase-js";
+  import type { Provider, SupabaseClient } from "@supabase/supabase-js";
 
   let dialogElement: HTMLDialogElement;
 
@@ -40,6 +40,18 @@
       token = "";
     }
   });
+
+  async function signInWithOAuth(provider: Provider) {
+    const redirectUrl = new URL("/auth/callback", location.href);
+    redirectUrl.searchParams.set("next", location.href);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo: redirectUrl.href },
+    });
+    if (error) {
+      throw error;
+    }
+  }
 
   async function signInWithEmail(event: SubmitEvent) {
     event.preventDefault();
@@ -70,8 +82,8 @@
 <dialog bind:this={dialogElement} onclose={closeSignInModal}>
   <div class={signInModalState}>
     {#if signInModalState == "sign-in-options"}
-      <button disabled>Sign in with Google</button>
-      <button disabled>Sign in with Microsoft</button>
+      <button onclick={() => signInWithOAuth("google")}>Sign in with Google</button>
+      <button onclick={() => signInWithOAuth("azure")}>Sign in with Microsoft</button>
       <button onclick={() => setModalState("sign-in-with-email")}>Sign in with Email</button>
       <button onclick={signInAnonymously}>Continue as Guest</button>
     {:else if signInModalState == "sign-in-with-email"}
