@@ -4,7 +4,7 @@ import type { LayoutLoad } from "./$types";
 import type { Database } from "$lib/database-types";
 import { browser } from "$app/environment";
 
-export const load: LayoutLoad = async ({ data: { origin, cookies }, depends, fetch }) => {
+export const load: LayoutLoad = async ({ data: { cookies }, depends, fetch }) => {
   /**
    * Declare a dependency so the layout can be invalidated, for example, on
    * session refresh.
@@ -39,5 +39,5 @@ export const load: LayoutLoad = async ({ data: { origin, cookies }, depends, fet
     data: { user },
   } = await supabase.auth.getUser();
 
-  return { origin, session, supabase, user };
+  return { session, supabase, user };
 };
