@@ -83,7 +83,7 @@
   <div class={signInModalState}>
     {#if signInModalState == "sign-in-options"}
       <button onclick={() => signInWithOAuth("google")}>Sign in with Google</button>
-      <button onclick={() => signInWithOAuth("azure")}>Sign in with Microsoft</button>
+      <button onclick={() => signInWithOAuth("discord")}>Sign in with Discord</button>
       <button onclick={() => setModalState("sign-in-with-email")}>Sign in with Email</button>
       <button onclick={signInAnonymously}>Continue as Guest</button>
     {:else if signInModalState == "sign-in-with-email"}
