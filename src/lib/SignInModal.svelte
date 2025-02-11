@@ -1,4 +1,6 @@
 <script lang="ts" module>
+  import { pushState } from "$app/navigation";
+
   // eslint-disable-next-line no-undef -- eslint doesn't know about App
   function setModalState(signInModalState: App.PageState["signInModalState"]) {
     pushState("", { signInModalState });
@@ -14,15 +16,13 @@
 </script>
 
 <script lang="ts">
-  import { pushState } from "$app/navigation";
-
   import { page } from "$app/state";
 
-  import type { Provider, SupabaseClient } from "@supabase/supabase-js";
+  import type { Provider, SupabaseClient, User } from "@supabase/supabase-js";
 
   let dialogElement: HTMLDialogElement;
 
-  const { supabase }: { supabase: SupabaseClient } = $props();
+  const { supabase, user }: { supabase: SupabaseClient; user: User | null } = $props();
 
   const signInModalState = $derived(page.state.signInModalState);
 
@@ -30,6 +30,12 @@
 
   let email = $state("");
   let token = $state("");
+
+  $effect(() => {
+    if (showSignModal && user != null) {
+      closeSignInModal();
+    }
+  });
 
   $effect(() => {
     if (showSignModal) {

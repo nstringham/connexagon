@@ -7,7 +7,7 @@
   import { onMount } from "svelte";
 
   let { data, children } = $props();
-  let { session, supabase } = $derived(data);
+  let { supabase, session, user } = $derived(data);
 
   onMount(() => {
     const { data } = supabase.auth.onAuthStateChange(async (event, newSession) => {
@@ -45,7 +45,7 @@
 
 {@render children()}
 
-<SignInModal {supabase} />
+<SignInModal {supabase} {user} />
 
 <style>
   header {
