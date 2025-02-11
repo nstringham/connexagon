@@ -1,12 +1,13 @@
 <script lang="ts">
   import { dev } from "$app/environment";
   import { invalidate } from "$app/navigation";
+  import { page } from "$app/state";
   import { Color, colors, getMaxTurnSize, countTowers, decodeHex, cssColors } from "$lib/board";
   import Board from "$lib/Board.svelte";
   import type { Tables } from "$lib/database-types";
 
   const { data } = $props();
-  const { origin, supabase, user } = $derived(data);
+  const { supabase, user } = $derived(data);
 
   let game = $state(data.game);
 
@@ -137,7 +138,10 @@
 </script>
 
 <svelte:head>
-  <meta property="og:image" content="{origin}/games/{game.id}/preview?width=1200&height=630" />
+  <meta
+    property="og:image"
+    content="{page.url.origin}/games/{game.id}/preview?width=1200&height=630"
+  />
   <meta name="twitter:card" content="summary_large_image" />
 </svelte:head>
 
