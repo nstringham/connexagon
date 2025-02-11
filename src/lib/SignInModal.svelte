@@ -57,7 +57,6 @@
     if (error) {
       throw error;
     }
-    closeSignInModal();
   }
 
   async function signInAnonymously() {
@@ -65,7 +64,6 @@
     if (error) {
       throw error;
     }
-    closeSignInModal();
   }
 </script>
 
