@@ -1,47 +1,43 @@
 <script lang="ts" module>
-  import { pushState } from "$app/navigation";
+  import { pushState, replaceState } from "$app/navigation";
 
   // eslint-disable-next-line no-undef -- eslint doesn't know about App
   function setModalState(signInModalState: App.PageState["signInModalState"]) {
-    pushState("", { signInModalState });
+    if (page.state.signInModalState !== signInModalState) {
+      pushState("", { signInModalState });
+    }
   }
 
   export function openSignInModal() {
     setModalState("sign-in-options");
   }
-
-  export function closeSignInModal() {
-    setModalState(undefined);
-  }
 </script>
 
 <script lang="ts">
   import { page } from "$app/state";
-
   import type { Provider, SupabaseClient, User } from "@supabase/supabase-js";
-
-  let dialogElement: HTMLDialogElement;
+  import Modal from "./Modal.svelte";
 
   const { supabase, user }: { supabase: SupabaseClient; user: User | null } = $props();
 
   const signInModalState = $derived(page.state.signInModalState);
 
-  const showSignModal = $derived(signInModalState != undefined);
+  let open = $state(false);
 
   let email = $state("");
   let token = $state("");
 
   $effect(() => {
-    if (showSignModal && user != null) {
+    if (signInModalState != undefined && user != null) {
       closeSignInModal();
     }
   });
 
   $effect(() => {
-    if (showSignModal) {
-      dialogElement.showModal();
+    if (signInModalState != undefined) {
+      open = true;
     } else {
-      dialogElement.close();
+      open = false;
       email = "";
       token = "";
     }
@@ -83,9 +79,15 @@
       throw error;
     }
   }
+
+  function closeSignInModal() {
+    if (page.state.signInModalState !== undefined) {
+      replaceState("", { signInModalState: undefined });
+    }
+  }
 </script>
 
-<dialog bind:this={dialogElement} onclose={closeSignInModal}>
+<Modal {open} onclose={() => closeSignInModal()}>
   <div class={signInModalState}>
     {#if signInModalState == "sign-in-options"}
       <button onclick={() => signInWithOAuth("google")}>Sign in with Google</button>
@@ -111,7 +113,7 @@
       </form>
     {/if}
   </div>
-</dialog>
+</Modal>
 
 <style>
   .sign-in-options {
