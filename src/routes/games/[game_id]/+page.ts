@@ -1,12 +1,12 @@
 import type { PageLoad } from "./$types";
-import { error as kitError } from "@sveltejs/kit";
+import { error } from "@sveltejs/kit";
 
 export const load: PageLoad = async ({ params: { game_id }, parent, depends }) => {
   depends(`supabase:games:${game_id}`);
 
   const { supabase } = await parent();
 
-  const { data, error } = await supabase
+  const { data, error: dbError } = await supabase
     .from("games")
     .select(
       `
@@ -22,12 +22,12 @@ export const load: PageLoad = async ({ params: { game_id }, parent, depends }) =
     )
     .eq("id", game_id);
 
-  if (error) {
-    console.error(error);
+  if (dbError) {
+    console.error(dbError);
   }
 
   if (data == null || data.length == 0) {
-    kitError(404, "invalid game id");
+    error(404, "invalid game id");
   }
 
   const game = data[0];

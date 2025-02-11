@@ -2,7 +2,7 @@ import { Color, decodeHex } from "$lib/board";
 import Board from "$lib/Board.svelte";
 import { render } from "svelte/server";
 import type { RequestHandler } from "./$types";
-import { error as kitError, type Config } from "@sveltejs/kit";
+import { error, type Config } from "@sveltejs/kit";
 import { Resvg } from "@resvg/resvg-js";
 
 export const config: Config = {
@@ -10,16 +10,16 @@ export const config: Config = {
 };
 
 export const GET: RequestHandler = async ({ locals: { supabase }, params: { game_id }, url }) => {
-  const { data, error } = await supabase
+  const { data, error: dbError } = await supabase
     .from("games")
     .select("towers,cell_colors")
     .eq("id", game_id);
-  if (error) {
-    throw error;
+  if (dbError) {
+    throw dbError;
   }
 
   if (data.length != 1) {
-    kitError(404, "invalid game id");
+    error(404, "invalid game id");
   }
 
   const { towers, cell_colors } = data[0];
@@ -51,7 +51,7 @@ export const GET: RequestHandler = async ({ locals: { supabase }, params: { game
   }
 
   if (width * height > 10_000_000) {
-    kitError(404, "image too large");
+    error(404, "image too large");
   }
 
   const resvg = new Resvg(svg, {
