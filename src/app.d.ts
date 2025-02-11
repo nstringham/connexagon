@@ -15,9 +15,7 @@ declare global {
     interface PageData {
       session: Session | null;
     }
-    interface PageState {
-      signInModalState?: "sign-in-options" | "sign-in-with-email" | "enter-otp";
-    }
+    // interface PageState {}
     // interface Platform {}
   }
 }

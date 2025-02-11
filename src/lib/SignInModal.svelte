@@ -1,26 +1,17 @@
 <script lang="ts" module>
-  import { pushState, replaceState } from "$app/navigation";
-
-  // eslint-disable-next-line no-undef -- eslint doesn't know about App
-  function setModalState(signInModalState: App.PageState["signInModalState"]) {
-    if (page.state.signInModalState !== signInModalState) {
-      pushState("", { signInModalState });
-    }
-  }
+  let modalState: "closed" | "sign-in-options" | "sign-in-with-email" | "enter-otp" =
+    $state("closed");
 
   export function openSignInModal() {
-    setModalState("sign-in-options");
+    modalState = "sign-in-options";
   }
 </script>
 
 <script lang="ts">
-  import { page } from "$app/state";
   import type { Provider, SupabaseClient, User } from "@supabase/supabase-js";
   import Modal from "./Modal.svelte";
 
   const { supabase, user }: { supabase: SupabaseClient; user: User | null } = $props();
-
-  const signInModalState = $derived(page.state.signInModalState);
 
   let open = $state(false);
 
@@ -28,13 +19,13 @@
   let token = $state("");
 
   $effect(() => {
-    if (signInModalState != undefined && user != null) {
-      closeSignInModal();
+    if (modalState !== "closed" && user != null) {
+      modalState = "closed";
     }
   });
 
   $effect(() => {
-    if (signInModalState != undefined) {
+    if (modalState !== "closed") {
       open = true;
     } else {
       open = false;
@@ -62,7 +53,7 @@
       throw error;
     }
     token = "";
-    setModalState("enter-otp");
+    modalState = "enter-otp";
   }
 
   async function signInWithOtp(event: SubmitEvent) {
@@ -79,22 +70,17 @@
       throw error;
     }
   }
-
-  function closeSignInModal() {
-    if (page.state.signInModalState !== undefined) {
-      replaceState("", { signInModalState: undefined });
-    }
-  }
 </script>
 
-<Modal {open} onclose={() => closeSignInModal()}>
-  <div class={signInModalState}>
-    {#if signInModalState == "sign-in-options"}
+<Modal bind:open>
+  <div class={modalState}>
+    {#if modalState === "sign-in-options"}
       <button onclick={() => signInWithOAuth("google")}>Sign in with Google</button>
       <button onclick={() => signInWithOAuth("discord")}>Sign in with Discord</button>
-      <button onclick={() => setModalState("sign-in-with-email")}>Sign in with Email</button>
-      <button onclick={signInAnonymously}>Continue as Guest</button>
-    {:else if signInModalState == "sign-in-with-email"}
+      <button onclick={() => (modalState = "sign-in-with-email")}>Sign in with email</button>
+      <button onclick={signInAnonymously}>Continue as guest</button>
+    {:else if modalState === "sign-in-with-email"}
+      <button onclick={() => (modalState = "sign-in-options")}>Go back</button>
       <form onsubmit={signInWithEmail}>
         <label>
           Email
@@ -102,7 +88,8 @@
         </label>
         <button type="submit">Send me a code</button>
       </form>
-    {:else if signInModalState == "enter-otp"}
+    {:else if modalState === "enter-otp"}
+      <button onclick={() => (modalState = "sign-in-with-email")}>Go back</button>
       <form onsubmit={signInWithOtp}>
         <p>A one time code was sent to {email}</p>
         <label>
