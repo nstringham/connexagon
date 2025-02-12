@@ -5,11 +5,11 @@
 
   let {
     open = $bindable(false),
-    onclose,
+    preventCancel,
     children,
   }: {
     open: boolean;
-    onclose?: (event: Event) => void;
+    preventCancel?: boolean;
     children: Snippet;
   } = $props();
 
@@ -24,9 +24,13 @@
 
 <dialog
   bind:this={dialogElement}
-  onclose={(event) => {
+  oncancel={(event) => {
+    if (preventCancel) {
+      event.preventDefault();
+    }
+  }}
+  onclose={() => {
     open = false;
-    onclose?.(event);
   }}
 >
   {@render children()}
