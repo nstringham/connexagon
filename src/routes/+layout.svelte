@@ -5,9 +5,10 @@
   import { PUBLIC_SUPABASE_URL } from "$env/static/public";
   import SignInModal, { openSignInModal } from "$lib/SignInModal.svelte";
   import { onMount } from "svelte";
+  import EditNameModal from "$lib/EditNameModal.svelte";
 
   let { data, children } = $props();
-  let { supabase, session, user } = $derived(data);
+  let { supabase, session, user, profilePromise } = $derived(data);
 
   onMount(() => {
     const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
@@ -25,6 +26,8 @@
       throw error;
     }
   };
+
+  let showEditNameModal = $state(false);
 </script>
 
 <svelte:head>
@@ -35,6 +38,7 @@
   <h1><a href="/">Connexagon</a></h1>
 
   {#if session != null}
+    <button onclick={() => (showEditNameModal = true)}>Edit Name</button>
     <button onclick={signOut}>Sign Out</button>
   {:else}
     <button onclick={openSignInModal}>Sign In</button>
@@ -45,13 +49,20 @@
 
 <SignInModal {supabase} {user} />
 
+{#if user != null}
+  {#await profilePromise then profile}
+    <EditNameModal bind:open={showEditNameModal} {profile} {supabase} {user} />
+  {/await}
+{/if}
+
 <style>
   header {
     padding: 12px;
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: 1fr;
+    grid-auto-flow: column;
     align-items: center;
-    justify-content: space-between;
+    gap: 12px;
 
     h1 {
       margin: 0;

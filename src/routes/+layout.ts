@@ -39,5 +39,22 @@ export const load: LayoutLoad = async ({ data: { cookies }, depends, fetch }) =>
     data: { user },
   } = await supabase.auth.getUser();
 
-  return { session, supabase, user };
+  async function getProfile() {
+    if (user == null) {
+      return null;
+    }
+
+    const { data: profiles, error } = await supabase
+      .from("profiles")
+      .select("name")
+      .eq("user_id", user.id);
+
+    if (error) {
+      throw error;
+    }
+
+    return profiles[0] ?? null;
+  }
+
+  return { session, supabase, user, profilePromise: getProfile() };
 };
