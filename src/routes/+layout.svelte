@@ -3,9 +3,9 @@
   import "$lib/themes.css";
   import { invalidate } from "$app/navigation";
   import { PUBLIC_SUPABASE_URL } from "$env/static/public";
-  import SignInModal, { openSignInModal } from "$lib/SignInModal.svelte";
   import { onMount } from "svelte";
-  import EditNameModal from "$lib/EditNameModal.svelte";
+  import EditNameButton from "$lib/EditNameButton.svelte";
+  import { showModal } from "$lib/modal";
 
   let { data, children } = $props();
   let { supabase, session, user, profilePromise } = $derived(data);
@@ -20,14 +20,18 @@
     return () => void data.subscription.unsubscribe();
   });
 
+  $effect(() => {
+    if (user == null) {
+      import("$lib/SignInModal.svelte");
+    }
+  });
+
   const signOut = async () => {
     const { error } = await supabase.auth.signOut({ scope: "local" });
     if (error) {
       throw error;
     }
   };
-
-  let showEditNameModal = $state(false);
 </script>
 
 <svelte:head>
@@ -37,23 +41,22 @@
 <header>
   <h1><a href="/">Connexagon</a></h1>
 
-  {#if session != null}
-    <button onclick={() => (showEditNameModal = true)}>Edit Name</button>
+  {#if user != null}
+    <EditNameButton {profilePromise} {supabase} {user} />
+
     <button onclick={signOut}>Sign Out</button>
   {:else}
-    <button onclick={openSignInModal}>Sign In</button>
+    <button onclick={() => showModal(signInForm)}>Sign In</button>
   {/if}
 </header>
 
 {@render children()}
 
-<SignInModal {supabase} {user} />
-
-{#if user != null}
-  {#await profilePromise then profile}
-    <EditNameModal bind:open={showEditNameModal} {profile} {supabase} {user} />
+{#snippet signInForm()}
+  {#await import("$lib/SignInModal.svelte") then { default: SignInModal }}
+    <SignInModal {supabase} {user} />
   {/await}
-{/if}
+{/snippet}
 
 <style>
   header {

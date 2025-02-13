@@ -1,38 +1,30 @@
 <script lang="ts" module>
-  let promise: Promise<TurnstileObject> | undefined;
+  const script = document.createElement("script");
+  script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+  script.async = true;
+  document.body.appendChild(script);
 
-  export function loadTurnstileScript() {
-    if (promise == undefined) {
-      const script = document.createElement("script");
-      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-      script.async = true;
-      document.body.appendChild(script);
+  await new Promise<unknown>((resolve, reject) => {
+    script.addEventListener("load", resolve, { once: true });
+    script.addEventListener("error", reject, { once: true });
+  });
 
-      promise = new Promise((resolve, reject) => {
-        script.addEventListener("load", () => resolve(window.turnstile), { once: true });
-        script.addEventListener("error", reject, { once: true });
-      });
-    }
-
-    return promise;
-  }
+  const turnstile = window.turnstile;
 </script>
 
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  import type { TurnstileObject, RenderParameters } from "turnstile-types";
+  import type { RenderParameters } from "turnstile-types";
 
   let element: HTMLDivElement;
 
   const props: RenderParameters = $props();
 
   onMount(async () => {
-    const turnstile = await loadTurnstileScript();
     turnstile.render(element, props);
   });
 
   onDestroy(async () => {
-    const turnstile = await loadTurnstileScript();
     turnstile.remove(element);
   });
 </script>
