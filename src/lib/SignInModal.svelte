@@ -1,6 +1,10 @@
 <script lang="ts" module>
-  let modalState: "closed" | "sign-in-options" | "sign-in-with-email" | "enter-otp" =
-    $state("closed");
+  let modalState:
+    | "closed"
+    | "sign-in-options"
+    | "sign-in-with-email"
+    | "enter-otp"
+    | "anonymous-captcha" = $state("closed");
 
   export function openSignInModal() {
     modalState = "sign-in-options";
@@ -10,12 +14,15 @@
 <script lang="ts">
   import type { Provider, SupabaseClient, User } from "@supabase/supabase-js";
   import Modal from "./Modal.svelte";
+  import { Turnstile } from "svelte-turnstile";
+  import { PUBLIC_TURNSTILE_SITE_KEY } from "$env/static/public";
 
   const { supabase, user }: { supabase: SupabaseClient; user: User | null } = $props();
 
   let open = $state(false);
 
   let email = $state("");
+  let captchaToken = $state("");
   let token = $state("");
 
   $effect(() => {
@@ -47,8 +54,11 @@
   }
 
   async function signInWithEmail(event: SubmitEvent) {
+    if (captchaToken == "") {
+      throw new Error("cannot sign in without completing CAPTCHA");
+    }
     event.preventDefault();
-    const { error } = await supabase.auth.signInWithOtp({ email });
+    const { error } = await supabase.auth.signInWithOtp({ email, options: { captchaToken } });
     if (error) {
       throw error;
     }
@@ -64,8 +74,8 @@
     }
   }
 
-  async function signInAnonymously() {
-    const { error } = await supabase.auth.signInAnonymously();
+  async function signInAnonymously(captchaToken: string) {
+    const { error } = await supabase.auth.signInAnonymously({ options: { captchaToken } });
     if (error) {
       throw error;
     }
@@ -78,7 +88,7 @@
       <button onclick={() => signInWithOAuth("google")}>Sign in with Google</button>
       <button onclick={() => signInWithOAuth("discord")}>Sign in with Discord</button>
       <button onclick={() => (modalState = "sign-in-with-email")}>Sign in with email</button>
-      <button onclick={signInAnonymously}>Continue as guest</button>
+      <button onclick={() => (modalState = "anonymous-captcha")}>Continue as guest</button>
     {:else if modalState === "sign-in-with-email"}
       <button onclick={() => (modalState = "sign-in-options")}>Go back</button>
       <form onsubmit={signInWithEmail}>
@@ -86,7 +96,11 @@
           Email
           <input name="email" type="email" bind:value={email} />
         </label>
-        <button type="submit">Send me a code</button>
+        <Turnstile
+          siteKey={PUBLIC_TURNSTILE_SITE_KEY}
+          on:callback={({ detail }) => (captchaToken = detail.token)}
+        />
+        <button type="submit" disabled={captchaToken === ""}>Send me a code</button>
       </form>
     {:else if modalState === "enter-otp"}
       <button onclick={() => (modalState = "sign-in-with-email")}>Go back</button>
@@ -98,6 +112,11 @@
         </label>
         <button type="submit">Submit</button>
       </form>
+    {:else if modalState === "anonymous-captcha"}
+      <Turnstile
+        siteKey={PUBLIC_TURNSTILE_SITE_KEY}
+        on:callback={({ detail }) => signInAnonymously(detail.token)}
+      />
     {/if}
   </div>
 </Modal>

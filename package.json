@@ -52,6 +52,7 @@
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.48.0",
     "modern-normalize": "^3.0.1",
-    "postgres": "^3.4.5"
+    "postgres": "^3.4.5",
+    "svelte-turnstile": "^0.10.0"
   }
 }
