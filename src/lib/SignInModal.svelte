@@ -14,8 +14,8 @@
 <script lang="ts">
   import type { Provider, SupabaseClient, User } from "@supabase/supabase-js";
   import Modal from "./Modal.svelte";
-  import { Turnstile } from "svelte-turnstile";
   import { PUBLIC_TURNSTILE_SITE_KEY } from "$env/static/public";
+  import Turnstile, { loadTurnstileScript } from "./Turnstile.svelte";
 
   const { supabase, user }: { supabase: SupabaseClient; user: User | null } = $props();
 
@@ -34,6 +34,7 @@
   $effect(() => {
     if (modalState !== "closed") {
       open = true;
+      loadTurnstileScript();
     } else {
       open = false;
       email = "";
@@ -97,8 +98,8 @@
           <input name="email" type="email" bind:value={email} />
         </label>
         <Turnstile
-          siteKey={PUBLIC_TURNSTILE_SITE_KEY}
-          on:callback={({ detail }) => (captchaToken = detail.token)}
+          sitekey={PUBLIC_TURNSTILE_SITE_KEY}
+          callback={(token) => (captchaToken = token)}
         />
         <button type="submit" disabled={captchaToken === ""}>Send me a code</button>
       </form>
@@ -114,8 +115,8 @@
       </form>
     {:else if modalState === "anonymous-captcha"}
       <Turnstile
-        siteKey={PUBLIC_TURNSTILE_SITE_KEY}
-        on:callback={({ detail }) => signInAnonymously(detail.token)}
+        sitekey={PUBLIC_TURNSTILE_SITE_KEY}
+        callback={(token) => signInAnonymously(token)}
       />
     {/if}
   </div>
