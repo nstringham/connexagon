@@ -418,4 +418,28 @@ describe("doTurn", () => {
          ⚫⚫⚫⚫
     `);
   });
+
+  it("should connect same tower to multiple towers in the same turn", () => {
+    const board = fromEmoji`
+         ⚫⚫⚫⚫
+        ⚫🔲⚫⚫⚫
+       ⚫⚫⚫⚫⚫⚫
+      ⚫⚫⚫🔲⚫⚫⚫
+       ⚫⚫⚫⚫⚫⚫
+        ⚫⚫⚫🔲⚫
+         ⚫⚫⚫⚫
+    `;
+
+    expect(doTurn(board, [11, 25], Color.RED)).toBe(3);
+
+    expect(board).to.deep.equal(fromEmoji`
+         ⚫⚫⚫⚫
+        ⚫🟥⚫⚫⚫
+       ⚫⚫🔴⚫⚫⚫
+      ⚫⚫⚫🟥⚫⚫⚫
+       ⚫⚫⚫🔴⚫⚫
+        ⚫⚫⚫🟥⚫
+         ⚫⚫⚫⚫
+    `);
+  });
 });
