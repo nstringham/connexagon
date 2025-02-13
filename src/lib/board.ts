@@ -245,15 +245,15 @@ export function doTurn({ towers, cells }: Board, turn: number[], color: Color): 
     while (cellsToCheck.length > 0) {
       const cell = cellsToCheck.pop()!;
 
-      if (checkedCells.has(cell)) {
-        continue;
-      }
-      checkedCells.add(cell);
-
       if (towers.has(cell) && (cells[cell] === Color.UNCLAIMED || cells[cell] === color)) {
         foundTowers.add(cell);
         continue;
       }
+
+      if (checkedCells.has(cell)) {
+        continue;
+      }
+      checkedCells.add(cell);
 
       if (cells[cell] === color) {
         cellsToCheck.push(...getAdjacentCells(cells.length, cell));
