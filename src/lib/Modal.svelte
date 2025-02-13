@@ -1,24 +1,24 @@
 <script lang="ts">
-  import type { Snippet } from "svelte";
+  import { onDestroy, onMount, type Snippet } from "svelte";
 
   let dialogElement: HTMLDialogElement;
 
   let {
-    open = $bindable(false),
-    preventCancel,
+    preventCancel = false,
+    onclose,
     children,
   }: {
-    open: boolean;
     preventCancel?: boolean;
+    onclose?: (event: Event & { currentTarget: EventTarget & HTMLDialogElement }) => void;
     children: Snippet;
   } = $props();
 
-  $effect(() => {
-    if (open) {
-      dialogElement.showModal();
-    } else {
-      dialogElement.close();
-    }
+  onMount(() => {
+    dialogElement.showModal();
+  });
+
+  onDestroy(() => {
+    dialogElement.close();
   });
 </script>
 
@@ -31,9 +31,7 @@
       event.preventDefault();
     }
   }}
-  onclose={() => {
-    open = false;
-  }}
+  {onclose}
   onclick={(event) => {
     if (preventCancel) {
       return;

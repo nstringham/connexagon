@@ -76,29 +76,31 @@
   }
 </script>
 
-<Modal bind:open preventCancel={profile == null}>
-  <form onsubmit={save}>
-    <label>
-      Name:<br />
-      <input
-        type="text"
-        name="name"
-        bind:value={name}
-        required
-        minlength="3"
-        maxlength="12"
-        pattern="[a-zA-Z][a-zA-Z0-9_ ]+[a-zA-Z0-9]"
-      />
-      {#if dirty && validationError != null}
-        <p class="error">{validationError}</p>
-      {/if}
-    </label>
+{#if open}
+  <Modal onclose={() => (open = false)} preventCancel={profile == null}>
+    <form onsubmit={save}>
+      <label>
+        Name:<br />
+        <input
+          type="text"
+          name="name"
+          bind:value={name}
+          required
+          minlength="3"
+          maxlength="12"
+          pattern="[a-zA-Z][a-zA-Z0-9_ ]+[a-zA-Z0-9]"
+        />
+        {#if dirty && validationError != null}
+          <p class="error">{validationError}</p>
+        {/if}
+      </label>
 
-    <div>
-      <button type="submit" disabled={validationError != null}>Save</button>
-    </div>
-  </form>
-</Modal>
+      <div>
+        <button type="submit" disabled={validationError != null}>Save</button>
+      </div>
+    </form>
+  </Modal>
+{/if}
 
 <style>
   .error {

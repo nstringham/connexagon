@@ -19,17 +19,9 @@
 
   const { supabase, user }: { supabase: SupabaseClient; user: User | null } = $props();
 
-  let open = $state(false);
-
   let email = $state("");
   let captchaToken = $state("");
   let token = $state("");
-
-  $effect(() => {
-    if (!open) {
-      modalState = "closed";
-    }
-  });
 
   $effect(() => {
     if (modalState !== "closed" && user != null) {
@@ -39,10 +31,8 @@
 
   $effect(() => {
     if (modalState !== "closed") {
-      open = true;
       loadTurnstileScript();
     } else {
-      open = false;
       email = "";
       token = "";
     }
@@ -89,53 +79,55 @@
   }
 </script>
 
-<Modal bind:open>
-  <div class={modalState}>
-    {#if modalState === "sign-in-options"}
-      <button onclick={() => signInWithOAuth("google")}>Sign in with Google</button>
-      <button onclick={() => signInWithOAuth("discord")}>Sign in with Discord</button>
-      <button onclick={() => (modalState = "sign-in-with-email")}>Sign in with email</button>
-      <button onclick={() => (modalState = "anonymous-captcha")}>Continue as guest</button>
-    {:else if modalState === "sign-in-with-email"}
-      <button onclick={() => (modalState = "sign-in-options")}>Go back</button>
-      <form onsubmit={signInWithEmail}>
-        <label>
-          Email
-          <!-- svelte-ignore a11y_autofocus -->
-          <input autofocus name="email" type="email" bind:value={email} />
-        </label>
+{#if modalState !== "closed"}
+  <Modal onclose={() => (modalState = "closed")}>
+    <div class={modalState}>
+      {#if modalState === "sign-in-options"}
+        <button onclick={() => signInWithOAuth("google")}>Sign in with Google</button>
+        <button onclick={() => signInWithOAuth("discord")}>Sign in with Discord</button>
+        <button onclick={() => (modalState = "sign-in-with-email")}>Sign in with email</button>
+        <button onclick={() => (modalState = "anonymous-captcha")}>Continue as guest</button>
+      {:else if modalState === "sign-in-with-email"}
+        <button onclick={() => (modalState = "sign-in-options")}>Go back</button>
+        <form onsubmit={signInWithEmail}>
+          <label>
+            Email
+            <!-- svelte-ignore a11y_autofocus -->
+            <input autofocus name="email" type="email" bind:value={email} />
+          </label>
+          <Turnstile
+            sitekey={PUBLIC_TURNSTILE_SITE_KEY}
+            callback={(token) => (captchaToken = token)}
+          />
+          <button type="submit" disabled={captchaToken === ""}>Send me a code</button>
+        </form>
+      {:else if modalState === "enter-otp"}
+        <button onclick={() => (modalState = "sign-in-with-email")}>Go back</button>
+        <form onsubmit={signInWithOtp}>
+          <p>A one time code was sent to {email}</p>
+          <label>
+            Code
+            <!-- svelte-ignore a11y_autofocus -->
+            <input
+              autofocus
+              name="token"
+              type="text"
+              minlength="6"
+              maxlength="6"
+              bind:value={token}
+            />
+          </label>
+          <button type="submit">Submit</button>
+        </form>
+      {:else if modalState === "anonymous-captcha"}
         <Turnstile
           sitekey={PUBLIC_TURNSTILE_SITE_KEY}
-          callback={(token) => (captchaToken = token)}
+          callback={(token) => signInAnonymously(token)}
         />
-        <button type="submit" disabled={captchaToken === ""}>Send me a code</button>
-      </form>
-    {:else if modalState === "enter-otp"}
-      <button onclick={() => (modalState = "sign-in-with-email")}>Go back</button>
-      <form onsubmit={signInWithOtp}>
-        <p>A one time code was sent to {email}</p>
-        <label>
-          Code
-          <!-- svelte-ignore a11y_autofocus -->
-          <input
-            autofocus
-            name="token"
-            type="text"
-            minlength="6"
-            maxlength="6"
-            bind:value={token}
-          />
-        </label>
-        <button type="submit">Submit</button>
-      </form>
-    {:else if modalState === "anonymous-captcha"}
-      <Turnstile
-        sitekey={PUBLIC_TURNSTILE_SITE_KEY}
-        callback={(token) => signInAnonymously(token)}
-      />
-    {/if}
-  </div>
-</Modal>
+      {/if}
+    </div>
+  </Modal>
+{/if}
 
 <style>
   .sign-in-options {
