@@ -26,6 +26,12 @@
   let token = $state("");
 
   $effect(() => {
+    if (!open) {
+      modalState = "closed";
+    }
+  });
+
+  $effect(() => {
     if (modalState !== "closed" && user != null) {
       modalState = "closed";
     }
