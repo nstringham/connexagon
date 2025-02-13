@@ -2,29 +2,29 @@
   import { invalidateAll } from "$app/navigation";
   import type { SupabaseClient, User } from "@supabase/supabase-js";
   import type { Database } from "./database-types";
-  import Modal from "./Modal.svelte";
+  import { showModal } from "./modal";
 
   let {
-    profile,
+    profilePromise,
     supabase,
     user,
-    open = $bindable(false),
   }: {
-    profile: { name: string } | null;
+    profilePromise: Promise<{ name: string } | null>;
     supabase: SupabaseClient<Database>;
     user: User;
-    open: boolean;
   } = $props();
 
   let name = $state("");
 
   $effect(() => {
-    if (profile != null) {
-      name = profile.name;
-    } else {
-      name = "";
-      open = true;
-    }
+    profilePromise.then((profile) => {
+      if (profile != null) {
+        name = profile.name;
+      } else {
+        name = "";
+        showModal(editModal, { preventCancel: true });
+      }
+    });
   });
 
   function getValidationError(name: string): string | null {
@@ -66,41 +66,41 @@
   });
 
   async function save(event: SubmitEvent) {
-    event.preventDefault();
     const { error } = await supabase.from("profiles").upsert({ user_id: user.id, name });
     if (error) {
+      event.preventDefault();
       throw error;
     }
-    open = false;
+
     await invalidateAll();
   }
 </script>
 
-{#if open}
-  <Modal onclose={() => (open = false)} preventCancel={profile == null}>
-    <form onsubmit={save}>
-      <label>
-        Name:<br />
-        <input
-          type="text"
-          name="name"
-          bind:value={name}
-          required
-          minlength="3"
-          maxlength="12"
-          pattern="[a-zA-Z][a-zA-Z0-9_ ]+[a-zA-Z0-9]"
-        />
-        {#if dirty && validationError != null}
-          <p class="error">{validationError}</p>
-        {/if}
-      </label>
+<button onclick={() => showModal(editModal)}>Edit Name</button>
 
-      <div>
-        <button type="submit" disabled={validationError != null}>Save</button>
-      </div>
-    </form>
-  </Modal>
-{/if}
+{#snippet editModal()}
+  <form method="dialog" onsubmit={save}>
+    <label>
+      Name:<br />
+      <input
+        type="text"
+        name="name"
+        bind:value={name}
+        required
+        minlength="3"
+        maxlength="12"
+        pattern="[a-zA-Z][a-zA-Z0-9_ ]+[a-zA-Z0-9]"
+      />
+      {#if dirty && validationError != null}
+        <p class="error">{validationError}</p>
+      {/if}
+    </label>
+
+    <div>
+      <button type="submit" disabled={validationError != null}>Save</button>
+    </div>
+  </form>
+{/snippet}
 
 <style>
   .error {

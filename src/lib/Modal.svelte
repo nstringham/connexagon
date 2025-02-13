@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, onMount, type Snippet } from "svelte";
+  import { onDestroy, onMount, setContext, type Snippet } from "svelte";
 
   let dialogElement: HTMLDialogElement;
 
@@ -15,6 +15,7 @@
 
   onMount(() => {
     dialogElement.showModal();
+    setContext("modal", dialogElement);
   });
 
   onDestroy(() => {
