@@ -95,7 +95,8 @@
       <form onsubmit={signInWithEmail}>
         <label>
           Email
-          <input name="email" type="email" bind:value={email} />
+          <!-- svelte-ignore a11y_autofocus -->
+          <input autofocus name="email" type="email" bind:value={email} />
         </label>
         <Turnstile
           sitekey={PUBLIC_TURNSTILE_SITE_KEY}
@@ -109,7 +110,15 @@
         <p>A one time code was sent to {email}</p>
         <label>
           Code
-          <input name="token" type="text" minlength="6" maxlength="6" bind:value={token} />
+          <!-- svelte-ignore a11y_autofocus -->
+          <input
+            autofocus
+            name="token"
+            type="text"
+            minlength="6"
+            maxlength="6"
+            bind:value={token}
+          />
         </label>
         <button type="submit">Submit</button>
       </form>
