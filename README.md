@@ -38,7 +38,7 @@ Play connexagon now at https://connexagon.com
     PUBLIC_SUPABASE_URL=<your API URL>
     PUBLIC_SUPABASE_ANON_KEY=<your anon key>
     POSTGRES_URL=<your DB URL>
-    PUBLIC_TURNSTILE_SITE_KEY=
+    PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA
     ```
 
 1.  Start SvelteKit in development mode
