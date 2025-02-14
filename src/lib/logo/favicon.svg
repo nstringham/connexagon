@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2.5 -2.5 5 5" fill="#00cdd0">
+  <defs>
+    <path id="hex" d="m0,0.866l0.75,-0.433v-0.866l-0.75,-0.433l-0.75,0.433v0.866z"/>
+  </defs>
+  <use href="#hex" x="0.866" y="-1.5" />
+  <use href="#hex" x="-0.866" y="-1.5" />
+  <use href="#hex" x="-1.732" y="0" />
+  <use href="#hex" x="-0.866" y="1.5" />
+  <use href="#hex" x="0.866" y="1.5" />
+</svg>
