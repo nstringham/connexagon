@@ -2,7 +2,11 @@
 
 /** @type {import('stylelint').Config} */
 export default {
+  plugins: ["stylelint-no-unsupported-browser-features"],
   extends: ["stylelint-config-standard"],
+  rules: {
+    "plugin/no-unsupported-browser-features": true,
+  },
   overrides: [
     {
       files: ["**/*.svelte"],
