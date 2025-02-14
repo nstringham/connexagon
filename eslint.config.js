@@ -3,6 +3,7 @@ import prettier from "eslint-config-prettier";
 import js from "@eslint/js";
 import { includeIgnoreFile } from "@eslint/compat";
 import svelte from "eslint-plugin-svelte";
+import compat from "eslint-plugin-compat";
 import globals from "globals";
 import { fileURLToPath } from "node:url";
 import ts from "typescript-eslint";
@@ -16,6 +17,7 @@ export default ts.config(
   ...svelte.configs["flat/recommended"],
   prettier,
   ...svelte.configs["flat/prettier"],
+  compat.configs["flat/recommended"],
   {
     rules: {
       curly: "error",
