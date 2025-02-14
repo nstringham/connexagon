@@ -1,6 +1,7 @@
 import { defineConfig } from "vitest/config";
 import { sveltekit } from "@sveltejs/kit/vite";
 import virtual from "vite-plugin-virtual";
+import browserslistToEsbuild from "browserslist-to-esbuild";
 
 export default defineConfig({
   plugins: [
@@ -9,6 +10,10 @@ export default defineConfig({
       "virtual:triangle-numbers": [...getTriangleNumbers()],
     }),
   ],
+
+  build: {
+    target: browserslistToEsbuild(),
+  },
 
   test: {
     include: ["src/**/*.{test,spec}.{js,ts}"],
