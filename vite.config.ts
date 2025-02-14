@@ -14,6 +14,7 @@ export default defineConfig({
   build: {
     target: browserslistToEsbuild(),
     modulePreload: { polyfill: false },
+    sourcemap: true,
   },
 
   test: {
