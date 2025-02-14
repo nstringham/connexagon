@@ -13,6 +13,7 @@ export default defineConfig({
 
   build: {
     target: browserslistToEsbuild(),
+    modulePreload: { polyfill: false },
   },
 
   test: {
