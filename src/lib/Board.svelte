@@ -139,6 +139,7 @@
     text-anchor: middle;
     dominant-baseline: central;
     fill: white;
+    /* stylelint-disable-next-line plugin/no-unsupported-browser-features -- Only used in development */
     mix-blend-mode: exclusion;
     pointer-events: none;
     user-select: none;
