@@ -91,14 +91,12 @@
         maxlength="12"
         pattern="[a-zA-Z][a-zA-Z0-9_ ]+[a-zA-Z0-9]"
       />
-      {#if dirty && validationError != null}
-        <p class="error">{validationError}</p>
-      {/if}
     </label>
+    {#if dirty && validationError != null}
+      <p class="error">{validationError}</p>
+    {/if}
 
-    <div>
-      <button type="submit" disabled={validationError != null}>Save</button>
-    </div>
+    <button type="submit" disabled={validationError != null}>Save</button>
   </form>
 {/snippet}
 
