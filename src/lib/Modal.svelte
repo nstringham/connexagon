@@ -41,10 +41,10 @@
     const rect = event.currentTarget.getBoundingClientRect();
 
     if (
-      rect.left > event.clientX ||
-      rect.right < event.clientX ||
-      rect.top > event.clientY ||
-      rect.bottom < event.clientY
+      event.clientX < rect.left ||
+      event.clientX > rect.right ||
+      event.clientY < rect.top ||
+      event.clientY > rect.bottom
     ) {
       dialogElement.close();
     }
