@@ -8,6 +8,7 @@
   import { showModal } from "$lib/modal";
   import Button from "$lib/Button.svelte";
   import svgFavicon from "$lib/logo/favicon.svg";
+  import appleTouchIcon from "$lib/logo/square-icon-180.png";
 
   let { data, children } = $props();
   let { supabase, session, user, profilePromise } = $derived(data);
@@ -38,6 +39,7 @@
 
 <svelte:head>
   <link rel="icon" href={svgFavicon} type="image/svg+xml" />
+  <link rel="apple-touch-icon" href={appleTouchIcon} />
   <link rel="preconnect" href={PUBLIC_SUPABASE_URL} />
 </svelte:head>
 
