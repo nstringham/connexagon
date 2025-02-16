@@ -30,9 +30,3 @@
 </script>
 
 <div bind:this={element}></div>
-
-<style>
-  div {
-    display: contents;
-  }
-</style>
