@@ -20,11 +20,11 @@
 
   const props: RenderParameters = $props();
 
-  onMount(async () => {
+  onMount(() => {
     turnstile.render(element, props);
   });
 
-  onDestroy(async () => {
+  onDestroy(() => {
     turnstile.remove(element);
   });
 </script>
