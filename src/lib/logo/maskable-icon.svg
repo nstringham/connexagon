@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-3.75 -3.75 7.5 7.5">
   <defs>
-    <path id="hex" d="m0,0.866l0.75,-0.433v-0.866l-0.75,-0.433l-0.75,0.433v0.866z"/>
+    <path id="hex" d="m0,0.866l0.75,-0.433v-0.866l-0.75,-0.433l-0.75,0.433v0.866z" />
   </defs>
-  <rect fill="#00cdd0" x="-3.75" y="-3.75" width="7.5" height="7.5"/>
+  <rect fill="#00cdd0" x="-3.75" y="-3.75" width="7.5" height="7.5" />
   <g fill="#fff">
     <use href="#hex" x="0.866" y="-1.5" />
     <use href="#hex" x="-0.866" y="-1.5" />
