@@ -8,6 +8,7 @@
   import { showModal } from "$lib/modal";
   import Button from "$lib/Button.svelte";
   import svgFavicon from "$lib/logo/favicon.svg";
+  import pngFavicon from "$lib/logo/favicon-192.png";
   import appleTouchIcon from "$lib/logo/square-icon-180.png";
 
   let { data, children } = $props();
@@ -38,7 +39,8 @@
 </script>
 
 <svelte:head>
-  <link rel="icon" href={svgFavicon} type="image/svg+xml" />
+  <link rel="icon" href={svgFavicon} type="image/svg+xml" sizes="any" />
+  <link rel="icon" href={pngFavicon} type="image/png" sizes="192x192" />
   <link rel="apple-touch-icon" href={appleTouchIcon} />
   <link rel="preconnect" href={PUBLIC_SUPABASE_URL} />
 </svelte:head>
