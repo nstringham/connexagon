@@ -7,6 +7,7 @@
   import EditNameButton from "$lib/EditNameButton.svelte";
   import { showModal } from "$lib/modal";
   import Button from "$lib/Button.svelte";
+  import svgFavicon from "$lib/logo/favicon.svg";
 
   let { data, children } = $props();
   let { supabase, session, user, profilePromise } = $derived(data);
@@ -36,6 +37,7 @@
 </script>
 
 <svelte:head>
+  <link rel="icon" href={svgFavicon} type="image/svg+xml" />
   <link rel="preconnect" href={PUBLIC_SUPABASE_URL} />
 </svelte:head>
 
