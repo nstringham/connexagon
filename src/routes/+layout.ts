@@ -56,5 +56,7 @@ export const load: LayoutLoad = async ({ data: { cookies }, depends, fetch }) =>
     return profiles[0] ?? null;
   }
 
-  return { session, supabase, user, profilePromise: getProfile() };
+  const lightModeCookie = cookies.find((cookie) => cookie.name === "lightMode")?.value === "true";
+
+  return { session, supabase, user, profilePromise: getProfile(), lightModeCookie };
 };
