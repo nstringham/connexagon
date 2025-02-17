@@ -16,6 +16,9 @@
     "generate-types": "supabase gen types typescript --local --schema public > src/lib/database-types.ts && prettier --write src/lib/database-types.ts",
     "prepare": "svelte-kit sync"
   },
+  "engines": {
+    "node": ">=22"
+  },
   "devDependencies": {
     "@eslint/compat": "^1.2.5",
     "@eslint/js": "^9.18.0",
