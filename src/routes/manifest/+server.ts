@@ -4,7 +4,9 @@ import type { RequestHandler } from "./$types";
 import anySvg from "$lib/logo/icon.svg";
 import maskableSvg from "$lib/logo/maskable-icon.svg";
 
-export const GET: RequestHandler = ({ url }) => {
+export const GET: RequestHandler = ({ url, setHeaders }) => {
+  setHeaders({ "Vercel-CDN-Cache-Control": "public, max-age=31536000, immutable" });
+
   const lightMode = url.searchParams.get("light-mode") !== "true";
 
   const manifest: WebAppManifest = {
