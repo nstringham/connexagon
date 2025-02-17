@@ -3,3 +3,4 @@ last 2 versions
 Firefox ESR
 not dead and fully supports es6-module and fully supports css-lch-lab
 not KaiOS > 0
+Node >= 22
