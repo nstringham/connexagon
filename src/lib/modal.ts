@@ -3,7 +3,6 @@ import Modal from "./Modal.svelte";
 
 export function showModal(children: Snippet, { preventCancel }: { preventCancel?: boolean } = {}) {
   return new Promise<void>((resolve) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- this is ok because we have no exports
     const modal = mount(Modal, {
       target: document.getElementById("modal-container")!,
       props: {

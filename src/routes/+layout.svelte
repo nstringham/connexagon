@@ -16,6 +16,8 @@
   let { data, children } = $props();
   let { supabase, session, user, profilePromise, lightModeCookie } = $derived(data);
 
+  // svelte-ignore state_referenced_locally
+  // this is ok because MediaQuery is already reactive
   const lightMode = new MediaQuery("prefers-color-scheme: light", lightModeCookie);
 
   $effect(() => {
