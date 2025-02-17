@@ -14,9 +14,13 @@
   import appleTouchIcon from "$lib/logo/square-icon-180.png";
 
   let { data, children } = $props();
-  let { supabase, session, user, profilePromise } = $derived(data);
+  let { supabase, session, user, profilePromise, lightModeCookie } = $derived(data);
 
-  const lightMode = new MediaQuery("prefers-color-scheme: light");
+  const lightMode = new MediaQuery("prefers-color-scheme: light", lightModeCookie);
+
+  $effect(() => {
+    document.cookie = `lightMode=${lightMode.current}`;
+  });
 
   onMount(() => {
     const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
