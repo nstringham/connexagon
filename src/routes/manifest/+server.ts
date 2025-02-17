@@ -5,15 +5,15 @@ import anySvg from "$lib/logo/icon.svg";
 import maskableSvg from "$lib/logo/maskable-icon.svg";
 
 export const GET: RequestHandler = ({ url }) => {
-  const darkMode = url.searchParams.get("dark-mode") != "false";
+  const lightMode = url.searchParams.get("light-mode") !== "true";
 
   const manifest: WebAppManifest = {
     id: "/",
     name: "Connexagon",
     start_url: "/",
     display: "standalone",
-    theme_color: darkMode ? "#121212" : "#ffffff",
-    background_color: darkMode ? "#121212" : "#ffffff",
+    theme_color: lightMode ? "#ffffff" : "#121212",
+    background_color: lightMode ? "#ffffff" : "#121212",
     icons: [
       {
         src: anySvg,
