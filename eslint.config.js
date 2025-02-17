@@ -39,7 +39,7 @@ export default ts.config(
         ...globals.node,
       },
       parserOptions: {
-        projectService: { allowDefaultProject: ["*.config.js"] },
+        projectService: { allowDefaultProject: ["*.config.js", "src/service-worker.ts"] },
         tsconfigRootDir: import.meta.dirname,
       },
     },
