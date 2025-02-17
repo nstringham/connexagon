@@ -4,19 +4,16 @@ import type { RequestHandler } from "./$types";
 import anySvg from "$lib/logo/icon.svg";
 import maskableSvg from "$lib/logo/maskable-icon.svg";
 
-export const GET: RequestHandler = ({ request, setHeaders }) => {
-  setHeaders({
-    Vary: "Sec-CH-Prefers-Color-Scheme",
-  });
-
-  const prefersLight = request.headers.get("Sec-CH-Prefers-Color-Scheme") == "light";
+export const GET: RequestHandler = ({ url }) => {
+  const darkMode = url.searchParams.get("dark-mode") != "false";
 
   const manifest: WebAppManifest = {
+    id: "/",
     name: "Connexagon",
     start_url: "/",
     display: "standalone",
-    theme_color: prefersLight ? "#ffffff" : "#121212",
-    background_color: prefersLight ? "#ffffff" : "#121212",
+    theme_color: darkMode ? "#121212" : "#ffffff",
+    background_color: darkMode ? "#121212" : "#ffffff",
     icons: [
       {
         src: anySvg,
