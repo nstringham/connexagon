@@ -7,7 +7,7 @@ import maskableSvg from "$lib/logo/maskable-icon.svg";
 export const GET: RequestHandler = ({ url, setHeaders }) => {
   setHeaders({ "Vercel-CDN-Cache-Control": "public, max-age=31536000, immutable" });
 
-  const lightMode = url.searchParams.get("light-mode") !== "true";
+  const lightMode = url.searchParams.get("light-mode") === "true";
 
   const manifest: WebAppManifest = {
     id: "/",
