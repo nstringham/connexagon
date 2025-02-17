@@ -16,14 +16,17 @@
 
 <button onclick={createGame}>Create Game</button>
 
-<ul>
-  {#each games as { game }}
-    <li>
-      <a href="/games/{game.id}">
-        {#each game.players as player}
-          <span style:color={cssColors[player.color as Color]}>{player.profile.name}</span>
-        {/each}
-      </a>
-    </li>
-  {/each}
-</ul>
+{#each games as group}
+  <h2>{group.name}</h2>
+  <ul>
+    {#each group.games! as game}
+      <li>
+        <a href="/games/{game.id}">
+          {#each game.players as player}
+            <span style:color={cssColors[player.color as Color]}>{player.profile.name}</span>
+          {/each}
+        </a>
+      </li>
+    {/each}
+  </ul>
+{/each}
