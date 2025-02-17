@@ -7,12 +7,16 @@
   import EditNameButton from "$lib/EditNameButton.svelte";
   import { showModal } from "$lib/modal";
   import Button from "$lib/Button.svelte";
+  import { MediaQuery } from "svelte/reactivity";
+
   import svgFavicon from "$lib/logo/favicon.svg";
   import pngFavicon from "$lib/logo/favicon-192.png";
   import appleTouchIcon from "$lib/logo/square-icon-180.png";
 
   let { data, children } = $props();
   let { supabase, session, user, profilePromise } = $derived(data);
+
+  const lightMode = new MediaQuery("prefers-color-scheme: light");
 
   onMount(() => {
     const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
@@ -39,6 +43,7 @@
 </script>
 
 <svelte:head>
+  <link rel="manifest" href="manifest?dark-mode={!lightMode.current}" />
   <link rel="icon" href={svgFavicon} type="image/svg+xml" sizes="any" />
   <link rel="icon" href={pngFavicon} type="image/png" sizes="192x192" />
   <link rel="apple-touch-icon" href={appleTouchIcon} />
