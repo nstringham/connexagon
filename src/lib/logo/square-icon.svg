@@ -1,4 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-3 -3 6 6">
+  <style> [fill="#00cdd0"] { fill: oklch(76% 0.17 196deg); } </style>
   <defs>
     <path id="hex" d="m0,0.866l0.75,-0.433v-0.866l-0.75,-0.433l-0.75,0.433v0.866z" />
   </defs>
