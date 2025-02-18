@@ -1,28 +1,44 @@
-import { Color, decodeHex } from "$lib/board";
+import { Color } from "$lib/board";
 import Board from "$lib/Board.svelte";
 import { render } from "svelte/server";
 import type { RequestHandler } from "./$types";
 import { error, type Config } from "@sveltejs/kit";
 import { Resvg } from "@resvg/resvg-js";
+import { sql } from "$lib/db.server";
 
 export const config: Config = {
   runtime: "nodejs22.x",
 };
 
-export const GET: RequestHandler = async ({ locals: { supabase }, params: { game_id }, url }) => {
-  const { data, error: dbError } = await supabase
-    .from("games")
-    .select("towers,cell_colors")
-    .eq("id", game_id);
-  if (dbError) {
-    throw dbError;
-  }
+export const GET: RequestHandler = async ({ params: { game_id }, url }) => {
+  const result = await sql<{ towers: number[]; cell_colors: Buffer; players: number }[]>`
+    select
+      game.towers,
+      game.cell_colors,
+      count(*)::int as players
+    from
+      public.games as game
+      join public.players as player on player.game_id = game.id
+    where
+      game.id = ${game_id}
+    group by
+      game.id
+  `;
 
-  if (data.length != 1) {
+  if (result.length != 1) {
     error(404, "invalid game id");
   }
 
-  const { towers, cell_colors } = data[0];
+  const { towers, cell_colors, players } = result[0];
+
+  function getCells(): Uint8Array {
+    if (cell_colors.length !== 0) {
+      return new Uint8Array(cell_colors);
+    } else {
+      const size = players + 7;
+      return new Uint8Array(3 * size * (size - 1) + 1);
+    }
+  }
 
   const width = Number(url.searchParams.get("width") ?? 768);
   const height = Number(url.searchParams.get("height") ?? width);
@@ -30,7 +46,7 @@ export const GET: RequestHandler = async ({ locals: { supabase }, params: { game
   const { body: svg } = render(Board, {
     props: {
       towers: new Set(towers),
-      cells: decodeHex(cell_colors),
+      cells: getCells(),
       aspectRatio: width / height,
       cssColors: {
         [Color.UNCLAIMED]: "#ebebeb",
