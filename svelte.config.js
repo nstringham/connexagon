@@ -10,5 +10,6 @@ export default {
     adapter: adapter({
       runtime: "nodejs22.x",
     }),
+    paths: { relative: false },
   },
 };
