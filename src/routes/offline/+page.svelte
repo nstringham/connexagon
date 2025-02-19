@@ -6,12 +6,18 @@
 
     const title = document.querySelector("#title");
     const description = document.querySelector("#description");
+    const reload = document.querySelector("#reload");
 
     if (!navigator.onLine) {
       title.innerHTML = "You are offline!";
       description.innerHTML = "Please connect to the internet to play Connexagon.";
-      window.addEventListener("online", () => setTimeout(location.reload()));
+      window.addEventListener("online", () => location.reload());
     }
+
+    reload.addEventListener("click", (event) => {
+      location.reload();
+      event.preventDefault();
+    });
   </script>
 
   <style>
@@ -32,5 +38,5 @@
 <form class="offline-grid">
   <h1 id="title">Cannot connect to server!</h1>
   <p id="description">Check your internet connection and try again.</p>
-  <button type="submit">Try Again</button>
+  <button id="reload" type="submit">Try Again</button>
 </form>
