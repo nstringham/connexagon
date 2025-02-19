@@ -11,7 +11,7 @@
     if (!navigator.onLine) {
       title.innerHTML = "You are offline!";
       description.innerHTML = "Please connect to the internet to play Connexagon.";
-      window.addEventListener("online", () => location.reload());
+      window.addEventListener("online", () => setTimeout(() => location.reload(), 500));
     }
 
     reload.addEventListener("click", (event) => {
