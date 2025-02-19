@@ -4,17 +4,22 @@
 /// <reference lib="webworker" />
 declare const self: ServiceWorkerGlobalScope;
 
-import { version } from "$service-worker";
+import { build, files, version } from "$service-worker";
 
 const CACHE = `cache-${version}`;
 
+const OFFLINE_PAGE = "/offline";
+
+const ASSETS = [...build, ...files];
+
 self.addEventListener("install", (event) => {
-  async function addOfflinePageToCache() {
+  async function addFilesToCache() {
     const cache = await caches.open(CACHE);
-    await cache.add(new Request("/offline"));
+    await cache.addAll(ASSETS);
+    await cache.add(OFFLINE_PAGE);
   }
 
-  event.waitUntil(addOfflinePageToCache());
+  event.waitUntil(addFilesToCache());
   void self.skipWaiting();
 });
 
@@ -51,10 +56,26 @@ self.addEventListener("fetch", (event) => {
         console.log("Fetch failed; returning offline page instead.", error);
 
         const cache = await caches.open(CACHE);
-        return (await cache.match("/offline"))!;
+        return (await cache.match(OFFLINE_PAGE))!;
       }
     }
 
     event.respondWith(respond());
+    return;
+  }
+
+  const url = new URL(event.request.url);
+
+  if (ASSETS.includes(url.pathname)) {
+    async function respond() {
+      const cache = await caches.open(CACHE);
+
+      const response = await cache.match(url.pathname);
+
+      return response!;
+    }
+
+    event.respondWith(respond());
+    return;
   }
 });
