@@ -49,7 +49,7 @@
 </script>
 
 <svelte:head>
-  <link rel="manifest" href="manifest?light-mode={lightMode.current}" />
+  <link rel="manifest" href="/manifest?light-mode={lightMode.current}" />
   <link rel="icon" href={svgFavicon} type="image/svg+xml" sizes="any" />
   <link rel="icon" href={pngFavicon} type="image/png" sizes="192x192" />
   <link rel="apple-touch-icon" href={appleTouchIcon} />
