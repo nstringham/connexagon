@@ -2,13 +2,9 @@ import { Color } from "$lib/board";
 import Board from "$lib/Board.svelte";
 import { render } from "svelte/server";
 import type { RequestHandler } from "./$types";
-import { error, type Config } from "@sveltejs/kit";
+import { error } from "@sveltejs/kit";
 import { Resvg } from "@resvg/resvg-js";
 import { sql } from "$lib/db.server";
-
-export const config: Config = {
-  runtime: "nodejs22.x",
-};
 
 export const GET: RequestHandler = async ({ params: { game_id }, url }) => {
   const result = await sql<{ towers: number[]; cell_colors: Buffer; players: number }[]>`

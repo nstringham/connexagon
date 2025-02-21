@@ -8,7 +8,7 @@ export default {
 
   kit: {
     adapter: adapter({
-      runtime: "edge",
+      runtime: "nodejs22.x",
     }),
   },
 };

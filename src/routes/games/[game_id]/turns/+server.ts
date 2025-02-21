@@ -2,11 +2,6 @@ import { sql } from "$lib/db.server";
 import { error } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import { countTowers, doTurn, getMaxTurnSize, InvalidTurnError, type Color } from "$lib/board";
-import type { Config } from "@sveltejs/adapter-vercel";
-
-export const config: Config = {
-  runtime: "nodejs22.x",
-};
 
 function isIntegerArray(value: unknown): value is number[] {
   return Array.isArray(value) && value.every((n) => Number.isInteger(n));
