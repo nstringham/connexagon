@@ -3,6 +3,7 @@
   import { PUBLIC_TURNSTILE_SITE_KEY } from "$env/static/public";
   import Turnstile from "./Turnstile.svelte";
   import { getContext } from "svelte";
+  import Button from "./Button.svelte";
 
   const { supabase, user }: { supabase: SupabaseClient; user: User | null } = $props();
 
@@ -65,12 +66,12 @@
 
 <div class={modalState}>
   {#if modalState === "sign-in-options"}
-    <button onclick={() => signInWithOAuth("google")}>Sign in with Google</button>
-    <button onclick={() => signInWithOAuth("discord")}>Sign in with Discord</button>
-    <button onclick={() => (modalState = "sign-in-with-email")}>Sign in with email</button>
-    <button onclick={() => (modalState = "anonymous-captcha")}>Continue as guest</button>
+    <Button onclick={() => signInWithOAuth("google")}>Sign in with Google</Button>
+    <Button onclick={() => signInWithOAuth("discord")}>Sign in with Discord</Button>
+    <Button onclick={() => (modalState = "sign-in-with-email")}>Sign in with Email</Button>
+    <Button onclick={() => (modalState = "anonymous-captcha")}>Continue as Guest</Button>
   {:else if modalState === "sign-in-with-email"}
-    <button onclick={() => (modalState = "sign-in-options")}>Go back</button>
+    <Button onclick={() => (modalState = "sign-in-options")}>Go back</Button>
     <form onsubmit={signInWithEmail}>
       <label>
         Email
@@ -78,10 +79,10 @@
         <input autofocus name="email" type="email" bind:value={email} />
       </label>
       <Turnstile sitekey={PUBLIC_TURNSTILE_SITE_KEY} callback={(token) => (captchaToken = token)} />
-      <button type="submit" disabled={captchaToken === ""}>Send me a code</button>
+      <Button type="submit" disabled={captchaToken === ""}>Send me a code</Button>
     </form>
   {:else if modalState === "enter-otp"}
-    <button onclick={() => (modalState = "sign-in-with-email")}>Go back</button>
+    <Button onclick={() => (modalState = "sign-in-with-email")}>Go back</Button>
     <form onsubmit={signInWithOtp}>
       <p>A one time code was sent to {email}</p>
       <label>
@@ -89,7 +90,7 @@
         <!-- svelte-ignore a11y_autofocus -->
         <input autofocus name="token" type="text" minlength="6" maxlength="6" bind:value={token} />
       </label>
-      <button type="submit">Submit</button>
+      <Button type="submit">Submit</Button>
     </form>
   {:else if modalState === "anonymous-captcha"}
     <Turnstile sitekey={PUBLIC_TURNSTILE_SITE_KEY} callback={(token) => signInAnonymously(token)} />

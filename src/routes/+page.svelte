@@ -1,9 +1,10 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { type Color, cssColors } from "$lib/board.js";
+  import Button from "$lib/Button.svelte";
 
   const { data } = $props();
-  const { games, supabase } = $derived(data);
+  const { games, supabase, user } = $derived(data);
 
   async function createGame() {
     const { error, data: gameId } = await supabase.rpc("create_game");
@@ -14,8 +15,8 @@
   }
 </script>
 
-<button onclick={createGame}>Create Game</button>
-<a href="/browse">Join Game</a>
+<Button onclick={createGame} disabled={user == null}>Create Game</Button>
+<Button href="/browse">Join Game</Button>
 
 {#each games as group}
   <h2>{group.name}</h2>

@@ -6,6 +6,7 @@
   import { onMount } from "svelte";
   import EditNameButton from "$lib/EditNameButton.svelte";
   import { showModal } from "$lib/modal";
+  import Button from "$lib/Button.svelte";
 
   let { data, children } = $props();
   let { supabase, session, user, profilePromise } = $derived(data);
@@ -44,9 +45,9 @@
   {#if user != null}
     <EditNameButton {profilePromise} {supabase} {user} />
 
-    <button onclick={signOut}>Sign Out</button>
+    <Button onclick={signOut}>Sign Out</Button>
   {:else}
-    <button onclick={() => showModal(signInForm)}>Sign In</button>
+    <Button onclick={() => showModal(signInForm)}>Sign In</Button>
   {/if}
 </header>
 

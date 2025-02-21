@@ -3,6 +3,7 @@
   import type { SupabaseClient, User } from "@supabase/supabase-js";
   import type { Database } from "./database-types";
   import { showModal } from "./modal";
+  import Button from "./Button.svelte";
 
   let {
     profilePromise,
@@ -76,7 +77,7 @@
   }
 </script>
 
-<button onclick={() => showModal(editModal)}>Edit Name</button>
+<Button onclick={() => showModal(editModal)}>Edit Name</Button>
 
 {#snippet editModal()}
   <form method="dialog" onsubmit={save}>
@@ -96,7 +97,7 @@
       <p class="error">{validationError}</p>
     {/if}
 
-    <button type="submit" disabled={validationError != null}>Save</button>
+    <Button type="submit" disabled={validationError != null}>Save</Button>
   </form>
 {/snippet}
 

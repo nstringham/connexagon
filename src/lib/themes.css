@@ -10,4 +10,5 @@
   --blue: oklch(46% 0.25 262deg);
   --purple: oklch(48% 0.24 311deg);
   --pink: oklch(77% 0.19 356deg);
+  --primary: light-dark(var(--blue), var(--aqua));
 }
