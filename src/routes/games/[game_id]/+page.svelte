@@ -4,6 +4,7 @@
   import { page } from "$app/state";
   import { Color, colors, getMaxTurnSize, countTowers, decodeHex, cssColors } from "$lib/board";
   import Board from "$lib/Board.svelte";
+  import Button from "$lib/Button.svelte";
   import type { Tables } from "$lib/database-types";
 
   const { data } = $props();
@@ -162,10 +163,10 @@
       </select>
     </label>
     {#if user?.id === game.host_user_id}
-      <button onclick={startGame} disabled={game.players.length < 2}>Start game</button>
+      <Button onclick={startGame} disabled={game.players.length < 2}>Start game</Button>
     {/if}
   {:else}
-    <button onclick={joinGame} disabled={user == null}>Join Game</button>
+    <Button onclick={joinGame} disabled={user == null}>Join Game</Button>
   {/if}
 {:else}
   <div style:--user-color={cssColors[userColor as Color]}>
@@ -176,7 +177,7 @@
       {game.players.find((player) => player.color === game.winner)?.profile.name ?? "nobody"} won!
     </h1>
   {:else if isTurn}
-    <button onclick={makeTurn} disabled={selection.length === 0}>Make turn</button>
+    <Button onclick={makeTurn} disabled={selection.length === 0}>Make turn</Button>
   {/if}
 {/if}
 
