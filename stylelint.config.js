@@ -5,7 +5,7 @@ export default {
   plugins: ["stylelint-no-unsupported-browser-features"],
   extends: ["stylelint-config-standard"],
   rules: {
-    "plugin/no-unsupported-browser-features": true,
+    "plugin/no-unsupported-browser-features": [true, { ignore: ["css-clip-path"] }],
   },
   overrides: [
     {
