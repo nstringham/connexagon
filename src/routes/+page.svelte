@@ -15,6 +15,7 @@
 </script>
 
 <button onclick={createGame}>Create Game</button>
+<a href="/browse">Join Game</a>
 
 {#each games as group}
   <h2>{group.name}</h2>
