@@ -165,7 +165,7 @@
       <button onclick={startGame} disabled={game.players.length < 2}>Start game</button>
     {/if}
   {:else}
-    <button onclick={joinGame}>Join Game</button>
+    <button onclick={joinGame} disabled={user == null}>Join Game</button>
   {/if}
 {:else}
   <div style:--user-color={cssColors[userColor as Color]}>
