@@ -37,6 +37,7 @@
   .hexagon-button {
     appearance: none;
     border: none;
+    padding: 0;
     text-decoration: none;
     display: inline grid;
     color: var(--primary);
@@ -47,11 +48,12 @@
   }
 
   .hexagon-button > * {
-    grid-area: 1/2/1/2;
+    grid-area: 1 / 1 / 1 / 1;
     place-self: stretch;
   }
 
   .hexagon-button > .background {
+    z-index: -1;
     background-color: var(--primary);
     opacity: var(--background-opacity);
     clip-path: polygon(
