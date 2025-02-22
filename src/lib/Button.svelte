@@ -3,6 +3,7 @@
 
   type CommonProps = {
     children: Snippet;
+    id?: string;
   };
 
   type LinkProps = {
