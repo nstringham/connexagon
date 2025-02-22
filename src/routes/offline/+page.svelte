@@ -1,3 +1,7 @@
+<script lang="ts">
+  import Button from "$lib/Button.svelte";
+</script>
+
 <svelte:head>
   <script type="module">
     if (location.pathname.startsWith("/offline")) {
@@ -38,5 +42,5 @@
 <form class="offline-grid">
   <h1 id="title">Cannot connect to server!</h1>
   <p id="description">Check your internet connection and try again.</p>
-  <button id="reload" type="submit">Try Again</button>
+  <Button id="reload" type="submit">Try Again</Button>
 </form>
