@@ -9,7 +9,7 @@ export const load: PageLoad = async ({ parent }) => {
       `
         id,
         created_at,
-        players(user_id, turn_order, color, profile:profiles(name))
+        players(user_id, color, profile:profiles(name))
       `,
     )
     .is("started_at", null);
