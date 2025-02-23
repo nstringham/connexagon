@@ -6,7 +6,7 @@ export const load: PageLoad = async ({ params: { game_id }, parent, depends }) =
 
   const { supabase } = await parent();
 
-  const { data, error: dbError } = await supabase
+  const { data: game, error: dbError } = await supabase
     .from("games")
     .select(
       `
@@ -20,17 +20,16 @@ export const load: PageLoad = async ({ params: { game_id }, parent, depends }) =
         players(user_id, turn_order, color, profile:profiles(name))
       `,
     )
-    .eq("id", game_id);
+    .eq("id", game_id)
+    .single();
 
   if (dbError) {
     console.error(dbError);
   }
 
-  if (data == null || data.length == 0) {
+  if (game == null) {
     error(404, "invalid game id");
   }
-
-  const game = data[0];
 
   return { game };
 };

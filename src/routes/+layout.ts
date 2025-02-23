@@ -44,16 +44,17 @@ export const load: LayoutLoad = async ({ data: { cookies }, depends, fetch }) =>
       return null;
     }
 
-    const { data: profiles, error } = await supabase
+    const { data: profile, error } = await supabase
       .from("profiles")
       .select("name")
-      .eq("user_id", user.id);
+      .eq("user_id", user.id)
+      .single();
 
     if (error) {
       throw error;
     }
 
-    return profiles[0] ?? null;
+    return profile;
   }
 
   const lightModeCookie = cookies.find((cookie) => cookie.name === "lightMode")?.value === "true";
