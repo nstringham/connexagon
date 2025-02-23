@@ -22,6 +22,11 @@ export default defineConfig({
     target: browserslistToEsbuild(),
     modulePreload: { polyfill: false },
     sourcemap: true,
+    assetsInlineLimit: (filePath) => {
+      if (filePath.includes("/src/lib/logo/")) {
+        return false;
+      }
+    },
   },
 
   test: {
