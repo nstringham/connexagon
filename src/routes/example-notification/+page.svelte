@@ -40,11 +40,8 @@
 <p>This demo shows how to register for push notifications and how to send them.</p>
 
 <form method="POST" action="?/sendNotification">
-  Notification delay: <input type="number" name="delay" value="5" />
-  seconds Notification
-  <br />
-  Time-To-Live: <input type="number" name="ttl" value="0" /> seconds
-  <br />
+  Notification delay: <input type="number" name="delay" value="5" /> seconds <br />
+  Notification Time-To-Live: <input type="number" name="ttl" value="0" /> seconds <br />
   <input type="hidden" name="subscription" value={JSON.stringify(subscription)} />
-  <Button type="submit">Try to conquer Italy!</Button>
+  <Button type="submit">Send Push Notification</Button>
 </form>
