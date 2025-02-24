@@ -7,9 +7,7 @@ export default {
   preprocess: vitePreprocess(),
 
   kit: {
-    adapter: adapter({
-      runtime: "nodejs22.x",
-    }),
+    adapter: adapter(),
     paths: { relative: false },
   },
 };
