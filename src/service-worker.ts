@@ -81,7 +81,8 @@ self.addEventListener("fetch", (event) => {
 });
 
 self.addEventListener("push", (event) => {
-  console.log(event.data);
+  const data = event.data?.json();
+  console.log(data);
 
   const notificationTitle = "Background Message Title";
   const notificationOptions = {
@@ -91,3 +92,5 @@ self.addEventListener("push", (event) => {
 
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
+
+console.log("data");
