@@ -80,17 +80,49 @@ self.addEventListener("fetch", (event) => {
   }
 });
 
+type NotificationData = {
+  url?: string;
+};
+
 self.addEventListener("push", (event) => {
   const data = event.data?.json();
   console.log(data);
 
-  const notificationTitle = "Background Message Title";
-  const notificationOptions = {
-    body: "Background Message body.",
-    icon: "/games/cutraal1ivj0atmoo3h0/preview",
+  const notification = data.notification as {
+    body: string;
+    image: string;
+    tag: string;
+    title: string;
   };
 
-  self.registration.showNotification(notificationTitle, notificationOptions);
+  void self.registration.showNotification(notification.title, {
+    body: notification.body,
+    icon: notification.image,
+    tag: notification.tag,
+    data: { url: "/games/cutraal1ivj0atmoo3h0" } satisfies NotificationData,
+  });
 });
 
-console.log("data");
+self.addEventListener("notificationclick", (event) => {
+  console.log("On notification click: ", event.notification.tag);
+  event.notification.close();
+
+  const url = (event.notification.data as NotificationData).url ?? "/";
+
+  // This looks to see if the current is already open and
+  // focuses if it is
+  event.waitUntil(
+    self.clients.matchAll({ type: "window" }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url === url && "focus" in client) {
+          return client.focus();
+        }
+      }
+      if ("openWindow" in self.clients) {
+        return self.clients.openWindow(url);
+      }
+    }),
+  );
+});
+
+console.log("notificationclick");
