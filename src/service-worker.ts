@@ -80,17 +80,13 @@ self.addEventListener("fetch", (event) => {
   }
 });
 
-import { getMessaging } from "firebase/messaging/sw";
-import { onBackgroundMessage } from "firebase/messaging/sw";
+self.addEventListener("push", (event) => {
+  console.log(event.data);
 
-const messaging = getMessaging();
-onBackgroundMessage(messaging, (payload) => {
-  console.log("[firebase-messaging-sw.js] Received background message ", payload);
-  // Customize notification here
   const notificationTitle = "Background Message Title";
   const notificationOptions = {
     body: "Background Message body.",
-    icon: "/firebase-logo.png",
+    icon: "/games/cutraal1ivj0atmoo3h0/preview",
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
