@@ -80,13 +80,39 @@ self.addEventListener("fetch", (event) => {
   }
 });
 
+type NotificationData = {
+  url?: string;
+};
+
 // Register event listener for the 'push' event.
 self.addEventListener("push", function (event) {
   // Keep the service worker alive until the notification is created.
   event.waitUntil(
-    // Show a notification with title 'ServiceWorker Cookbook' and body 'Alea iacta est'.
-    self.registration.showNotification("ServiceWorker Cookbook", {
-      body: "Alea iacta est",
+    self.registration.showNotification("It's Your Turn", {
+      body: "Click here to open connexagon",
+      data: { url: "/" } satisfies NotificationData,
+    }),
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  console.log("On notification click: ", event.notification.tag);
+  event.notification.close();
+
+  const url = (event.notification.data as NotificationData).url ?? "/";
+
+  // This looks to see if the current is already open and
+  // focuses if it is
+  event.waitUntil(
+    self.clients.matchAll({ type: "window" }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url === url && "focus" in client) {
+          return client.focus();
+        }
+      }
+      if ("openWindow" in self.clients) {
+        return self.clients.openWindow(url);
+      }
     }),
   );
 });
