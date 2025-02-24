@@ -31,6 +31,11 @@
       }
     });
 
+    import("$lib/firebase-client").then(async ({ getFcmToken }) => {
+      const token = await getFcmToken();
+      console.log(token);
+    });
+
     return () => void data.subscription.unsubscribe();
   });
 
