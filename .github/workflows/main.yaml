@@ -13,6 +13,8 @@ env:
   PUBLIC_SUPABASE_ANON_KEY: ""
   POSTGRES_URL: ""
   PUBLIC_TURNSTILE_SITE_KEY: ""
+  PUBLIC_VAPID_KEY: ""
+  PRIVATE_VAPID_KEY: ""
 
 jobs:
   prettier:

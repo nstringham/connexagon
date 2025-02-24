@@ -39,6 +39,14 @@ Play connexagon now at https://connexagon.com
     PUBLIC_SUPABASE_ANON_KEY=<your anon key>
     POSTGRES_URL=<your DB URL>
     PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA
+    PUBLIC_VAPID_KEY=<VAPID Public Key>
+    PRIVATE_VAPID_KEY=<VAPID Private Key>
+    ```
+
+    You can generate a pair of VAPID keys with this command:
+
+    ```bash
+    npx web-push generate-vapid-keys
     ```
 
 1.  Start SvelteKit in development mode
