@@ -1,0 +1,30 @@
+import { PRIVATE_VAPID_KEY } from "$env/static/private";
+import { PUBLIC_VAPID_KEY } from "$env/static/public";
+import { sql } from "./db.server";
+import webPush from "web-push";
+
+webPush.setVapidDetails("https://connexagon.com/", PUBLIC_VAPID_KEY, PRIVATE_VAPID_KEY);
+
+export type NotificationData = { url?: string };
+
+export type NotificationPayload = Omit<NotificationOptions, "data"> & {
+  title: string;
+  data?: NotificationData;
+};
+
+export async function sendNotification(user_id: string, notification: NotificationPayload) {
+  const subscriptions = await sql<{ subscription: webPush.PushSubscription }[]>`
+    select
+      subscription
+    from
+      push_subscriptions
+    where
+      user_id = ${user_id}
+  `;
+
+  return Promise.all(
+    subscriptions.map(({ subscription }) =>
+      webPush.sendNotification(subscription, JSON.stringify(notification)),
+    ),
+  );
+}
