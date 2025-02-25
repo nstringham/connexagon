@@ -5,6 +5,7 @@
 declare const self: ServiceWorkerGlobalScope;
 
 import { build, files, version } from "$service-worker";
+import type { NotificationData, NotificationPayload } from "./lib/notifications.server";
 
 const CACHE = `cache-${version}`;
 
@@ -80,19 +81,12 @@ self.addEventListener("fetch", (event) => {
   }
 });
 
-type NotificationData = {
-  url?: string;
-};
-
 // Register event listener for the 'push' event.
-self.addEventListener("push", function (event) {
+self.addEventListener("push", (event) => {
+  const { title, ...options } = event.data?.json() as NotificationPayload;
+
   // Keep the service worker alive until the notification is created.
-  event.waitUntil(
-    self.registration.showNotification("It's Your Turn", {
-      body: "Click here to open connexagon",
-      data: { url: "/" } satisfies NotificationData,
-    }),
-  );
+  event.waitUntil(self.registration.showNotification(title, options));
 });
 
 self.addEventListener("notificationclick", (event) => {

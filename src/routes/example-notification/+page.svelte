@@ -90,6 +90,7 @@
 {/if}
 
 <form method="POST" action="?/sendNotification">
+  Notification Message:<input type="text" name="title" value="It's Your Turn" /> <br />
   Notification delay: <input type="number" name="delay" value="5" /> seconds <br />
   <Button type="submit">Send Push Notification</Button>
 </form>
