@@ -5,7 +5,7 @@
 declare const self: ServiceWorkerGlobalScope;
 
 import { build, files, version } from "$service-worker";
-import type { NotificationData, NotificationPayload } from "./lib/notifications.server";
+import type { NotificationPayload } from "./lib/notifications.server";
 
 const CACHE = `cache-${version}`;
 
@@ -93,7 +93,9 @@ self.addEventListener("notificationclick", (event) => {
   console.log("On notification click: ", event.notification.tag);
   event.notification.close();
 
-  const url = (event.notification.data as NotificationData).url ?? "/";
+  const data = event.notification.data as NotificationPayload["data"];
+
+  const url = data?.url ?? "/";
 
   // This looks to see if the current is already open and
   // focuses if it is

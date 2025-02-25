@@ -5,11 +5,9 @@ import webPush from "web-push";
 
 webPush.setVapidDetails("https://connexagon.com/", PUBLIC_VAPID_KEY, PRIVATE_VAPID_KEY);
 
-export type NotificationData = { url?: string };
-
 export type NotificationPayload = Omit<NotificationOptions, "data"> & {
   title: string;
-  data?: NotificationData;
+  data?: { url?: string };
 };
 
 export async function sendNotification(user_id: string, notification: NotificationPayload) {
