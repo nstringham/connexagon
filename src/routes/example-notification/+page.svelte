@@ -3,26 +3,27 @@
   import { onMount } from "svelte";
   import { urlBase64ToUint8Array } from "./tools";
   import { PUBLIC_VAPID_KEY } from "$env/static/public";
+  import type { Json } from "$lib/database-types";
+  import { invalidate } from "$app/navigation";
 
-  let subscription: PushSubscription | undefined = $state();
+  const { data } = $props();
+
+  const { supabase, user, subscriptions } = $derived(data);
+
+  let currentSubscription: PushSubscription | null = $state(null);
+
+  let notificationsEnabled = $derived(
+    subscriptions.some((subscription) => subscription.endpoint == currentSubscription?.endpoint),
+  );
 
   onMount(async () => {
     if (Notification.permission == "granted") {
-      subscription = await getSubscription();
+      const registration = await navigator.serviceWorker.ready;
+      currentSubscription = await registration.pushManager.getSubscription();
     }
   });
 
-  async function getSubscription() {
-    if (Notification == undefined) {
-      alert("Your browser does not support notifications");
-      return;
-    }
-
-    if ((await Notification.requestPermission()) != "granted") {
-      alert("Please allow notifications");
-      return;
-    }
-
+  async function subscribe() {
     const registration = await navigator.serviceWorker.ready;
 
     // Use the PushManager to get the user's subscription to the push service.
@@ -44,18 +45,51 @@
       applicationServerKey: convertedVapidKey,
     });
   }
+
+  async function enableNotifications() {
+    if (user == null) {
+      alert("Your must be logged in to enable notifications");
+      return;
+    }
+
+    if (Notification == undefined) {
+      alert("Your browser does not support notifications");
+      return;
+    }
+
+    if ((await Notification.requestPermission()) != "granted") {
+      alert("Please allow notifications");
+      return;
+    }
+
+    currentSubscription = await subscribe();
+
+    await supabase
+      .from("push_subscriptions")
+      .insert({ subscription: currentSubscription.toJSON() as Json });
+
+    await invalidate("supabase:push_subscriptions");
+  }
+
+  async function disableNotifications() {
+    await supabase
+      .from("push_subscriptions")
+      .delete()
+      .eq("subscription->>endpoint", currentSubscription!.endpoint);
+
+    await invalidate("supabase:push_subscriptions");
+  }
 </script>
 
 <p>This demo shows how to register for push notifications and how to send them.</p>
 
+{#if notificationsEnabled}
+  <Button onclick={disableNotifications}>Disable Notifications</Button>
+{:else}
+  <Button onclick={enableNotifications}>Enable Notifications</Button>
+{/if}
+
 <form method="POST" action="?/sendNotification">
   Notification delay: <input type="number" name="delay" value="5" /> seconds <br />
-  Notification Time-To-Live: <input type="number" name="ttl" value="0" /> seconds <br />
-  <input type="hidden" name="subscription" value={JSON.stringify(subscription)} />
-  {#if subscription == undefined}
-    <Button type="button" onclick={async () => (subscription = await getSubscription())}>
-      Enable Notifications
-    </Button>
-  {/if}
-  <Button type="submit" disabled={subscription == undefined}>Send Push Notification</Button>
+  <Button type="submit">Send Push Notification</Button>
 </form>
