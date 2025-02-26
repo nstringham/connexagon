@@ -15,6 +15,8 @@ add constraint push_subscriptions_pkey primary key (id);
 alter table public.push_subscriptions
 add constraint push_subscriptions_user_id_fkey foreign key (user_id) references auth.users (id) on delete cascade not valid;
 
+create unique index push_subscriptions_unique_subscription on public.push_subscriptions (user_id, (subscription::text));
+
 alter table public.push_subscriptions
 add constraint subscription_schema check (
   json_matches_schema (
