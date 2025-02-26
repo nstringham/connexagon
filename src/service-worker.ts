@@ -81,34 +81,30 @@ self.addEventListener("fetch", (event) => {
   }
 });
 
-// Register event listener for the 'push' event.
 self.addEventListener("push", (event) => {
-  const { title, ...options } = event.data?.json() as NotificationPayload;
+  const { title, ...options } = event.data!.json() as NotificationPayload;
 
-  // Keep the service worker alive until the notification is created.
   event.waitUntil(self.registration.showNotification(title, options));
 });
 
 self.addEventListener("notificationclick", (event) => {
-  console.log("On notification click: ", event.notification.tag);
   event.notification.close();
 
   const data = event.notification.data as NotificationPayload["data"];
 
-  const url = data?.url ?? "/";
-
-  // This looks to see if the current is already open and
-  // focuses if it is
-  event.waitUntil(
-    self.clients.matchAll({ type: "window" }).then((clientList) => {
-      for (const client of clientList) {
-        if (client.url === url && "focus" in client) {
-          return client.focus();
-        }
-      }
-      if ("openWindow" in self.clients) {
-        return self.clients.openWindow(url);
-      }
-    }),
-  );
+  event.waitUntil(focusOrOpenTab(data?.url ?? "/"));
 });
+
+async function focusOrOpenTab(url: string) {
+  const clientList = await self.clients.matchAll({ type: "window" });
+
+  for (const client of clientList) {
+    if (client.url === url && "focus" in client) {
+      return client.focus();
+    }
+  }
+
+  if ("openWindow" in self.clients) {
+    return self.clients.openWindow(url);
+  }
+}
