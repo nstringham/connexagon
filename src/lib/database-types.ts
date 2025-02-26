@@ -104,20 +104,26 @@ export type Database = {
       push_subscriptions: {
         Row: {
           created_at: string;
+          endpoint: string;
+          expiration_time: number | null;
           id: number;
-          subscription: Json;
+          keys: Json;
           user_id: string;
         };
         Insert: {
           created_at?: string;
+          endpoint: string;
+          expiration_time?: number | null;
           id?: number;
-          subscription: Json;
+          keys: Json;
           user_id?: string;
         };
         Update: {
           created_at?: string;
+          endpoint?: string;
+          expiration_time?: number | null;
           id?: number;
-          subscription?: Json;
+          keys?: Json;
           user_id?: string;
         };
         Relationships: [];

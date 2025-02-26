@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database, Json } from "./database-types";
+import type { Database } from "./database-types";
+import type webPush from "web-push";
 import { PUBLIC_VAPID_KEY } from "$env/static/public";
 import { invalidate } from "$app/navigation";
 
@@ -30,9 +31,11 @@ export async function subscribeToNotifications(supabase: SupabaseClient<Database
 
   const subscription = await subscribeToPush();
 
+  const { endpoint, expirationTime, keys } = subscription.toJSON() as webPush.PushSubscription;
+
   const { error: supabaseError } = await supabase
     .from("push_subscriptions")
-    .insert({ subscription: subscription.toJSON() as Json });
+    .insert({ endpoint, expiration_time: expirationTime, keys });
 
   void invalidate("supabase:push_subscriptions");
 
@@ -51,7 +54,7 @@ export async function unsubscribeFromNotifications(supabase: SupabaseClient<Data
   const { error: supabaseError } = await supabase
     .from("push_subscriptions")
     .delete()
-    .eq("subscription->>endpoint", subscription.endpoint);
+    .eq("endpoint", subscription.endpoint);
 
   void invalidate("supabase:push_subscriptions");
 
