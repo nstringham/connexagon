@@ -11,9 +11,11 @@ export type NotificationPayload = Omit<NotificationOptions, "data"> & {
 };
 
 export async function sendNotification(user_id: string, notification: NotificationPayload) {
-  const subscriptions = await sql<{ subscription: webPush.PushSubscription }[]>`
+  const subscriptions = await sql<webPush.PushSubscription[]>`
     select
-      subscription
+      endpoint,
+      expiration_time as "expirationTime",
+      keys
     from
       push_subscriptions
     where
@@ -21,7 +23,7 @@ export async function sendNotification(user_id: string, notification: Notificati
   `;
 
   return Promise.all(
-    subscriptions.map(({ subscription }) =>
+    subscriptions.map((subscription) =>
       webPush.sendNotification(subscription, JSON.stringify(notification)),
     ),
   );

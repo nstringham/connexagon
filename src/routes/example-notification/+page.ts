@@ -9,14 +9,14 @@ export const load: PageLoad = async ({ parent, depends }) => {
     return { subscriptions: [] };
   }
 
-  const { data, error: subscriptionError } = await supabase
+  const { data: subscriptions, error: subscriptionError } = await supabase
     .from("push_subscriptions")
-    .select("subscription")
+    .select("endpoint")
     .eq("user_id", user.id);
 
   if (subscriptionError) {
     throw subscriptionError;
   }
 
-  return { subscriptions: data.map((row) => row.subscription as PushSubscriptionJSON) };
+  return { subscriptions };
 };
