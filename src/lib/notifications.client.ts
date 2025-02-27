@@ -2,7 +2,6 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "./database-types";
 import type webPush from "web-push";
 import { PUBLIC_VAPID_KEY } from "$env/static/public";
-import { invalidate } from "$app/navigation";
 
 async function subscribeToPush() {
   const registration = await navigator.serviceWorker.ready;
