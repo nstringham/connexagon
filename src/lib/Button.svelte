@@ -1,4 +1,5 @@
 <script lang="ts">
+  import "$lib/hexagons.css";
   import type { Snippet } from "svelte";
   import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
 
@@ -24,7 +25,7 @@
 {/if}
 
 {#snippet insides()}
-  <div class="background"></div>
+  <div class="background clip-hexagon"></div>
   <div class="children">{@render children()}</div>
 {/snippet}
 
@@ -37,9 +38,10 @@
     display: inline grid;
     color: var(--primary);
     background-color: transparent;
-    height: 40px;
+    height: var(--size);
 
     --background-opacity: 0.125;
+    --size: 40px;
   }
 
   .hexagon-button > * {
@@ -51,19 +53,11 @@
     z-index: -1;
     background-color: var(--primary);
     opacity: var(--background-opacity);
-    clip-path: polygon(
-      calc(40px / 3.4641) 0,
-      calc(100% - 40px / 3.4641) 0,
-      100% 50%,
-      calc(100% - 40px / 3.4641) 100%,
-      calc(40px / 3.4641) 100%,
-      0 50%
-    );
   }
 
   .hexagon-button > .children {
     align-self: center;
-    padding: 0 calc(40px / 2);
+    padding: 0 calc(var(--size) / 2);
     font-size: 14pt;
     font-weight: 500;
   }
