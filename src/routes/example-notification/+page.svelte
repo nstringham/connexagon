@@ -7,6 +7,7 @@
     isDeviceSubscribedToNotifications,
   } from "$lib/notifications.client.js";
   import { enhance } from "$app/forms";
+  import Switch from "$lib/Switch.svelte";
 
   const { data } = $props();
 
@@ -30,8 +31,10 @@
 <p>This demo shows how to register for push notifications and how to send them.</p>
 
 <p>
-  Enable Notifications
-  <input type="checkbox" bind:checked={notificationsEnabled} disabled={user == null} />
+  <label>
+    Enable Notifications
+    <Switch bind:checked={notificationsEnabled} disabled={user == null} />
+  </label>
 </p>
 
 <form method="POST" action="?/sendNotification" use:enhance>
