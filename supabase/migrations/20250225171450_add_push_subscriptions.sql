@@ -64,3 +64,23 @@ with
       ) = user_id
     )
   );
+
+create or replace function unsubscribe_from_push (endpoint_to_delete text) returns void language sql security definer as $$
+  delete from public.push_subscriptions
+  where
+    endpoint = endpoint_to_delete;
+$$;
+
+create or replace function subscribe_to_push (
+  endpoint text,
+  expiration_time double precision,
+  keys json
+) returns void language sql as $$
+  select
+    unsubscribe_from_push (endpoint);
+
+  insert into
+    public.push_subscriptions (endpoint, expiration_time, keys)
+  values
+    (endpoint, expiration_time, keys);
+$$;

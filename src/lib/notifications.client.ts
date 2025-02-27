@@ -33,9 +33,12 @@ export async function subscribeToNotifications(supabase: SupabaseClient<Database
 
   const { endpoint, expirationTime, keys } = subscription.toJSON() as webPush.PushSubscription;
 
-  const { error: supabaseError } = await supabase
-    .from("push_subscriptions")
-    .insert({ endpoint, expiration_time: expirationTime, keys });
+  const { error: supabaseError } = await supabase.rpc("subscribe_to_push", {
+    endpoint,
+
+    expiration_time: expirationTime!, // supabase assumes that all arguments are not allowed to be null
+    keys,
+  });
 
   void invalidate("supabase:push_subscriptions");
 
@@ -51,10 +54,9 @@ export async function unsubscribeFromNotifications(supabase: SupabaseClient<Data
     return;
   }
 
-  const { error: supabaseError } = await supabase
-    .from("push_subscriptions")
-    .delete()
-    .eq("endpoint", subscription.endpoint);
+  const { error: supabaseError } = await supabase.rpc("unsubscribe_from_push", {
+    endpoint_to_delete: subscription.endpoint,
+  });
 
   void invalidate("supabase:push_subscriptions");
 
