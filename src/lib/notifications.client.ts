@@ -19,11 +19,6 @@ async function subscribeToPush() {
   });
 }
 
-async function getCurrentPushSubscription() {
-  const registration = await navigator.serviceWorker.ready;
-  return registration.pushManager.getSubscription();
-}
-
 export async function subscribeToNotifications(supabase: SupabaseClient<Database>) {
   if ((await Notification.requestPermission()) != "granted") {
     throw new Error("Please allow notifications");
@@ -35,16 +30,18 @@ export async function subscribeToNotifications(supabase: SupabaseClient<Database
 
   const { error: supabaseError } = await supabase.rpc("subscribe_to_push", {
     endpoint,
-
     expiration_time: expirationTime!, // supabase assumes that all arguments are not allowed to be null
     keys,
   });
 
-  void invalidate("supabase:push_subscriptions");
-
   if (supabaseError) {
     throw supabaseError;
   }
+}
+
+async function getCurrentPushSubscription() {
+  const registration = await navigator.serviceWorker.ready;
+  return registration.pushManager.getSubscription();
 }
 
 export async function unsubscribeFromNotifications(supabase: SupabaseClient<Database>) {
@@ -58,14 +55,30 @@ export async function unsubscribeFromNotifications(supabase: SupabaseClient<Data
     endpoint_to_delete: subscription.endpoint,
   });
 
-  void invalidate("supabase:push_subscriptions");
-
   if (supabaseError) {
     throw supabaseError;
   }
+}
 
-  const unsubscribedSuccessfully = await subscription.unsubscribe();
-  if (!unsubscribedSuccessfully) {
-    throw new Error("unsubscribe from push was not successful");
+export async function isDeviceSubscribedToNotifications(supabase: SupabaseClient<Database>) {
+  if (Notification.permission !== "granted") {
+    return false;
   }
+
+  const subscription = await getCurrentPushSubscription();
+
+  if (subscription == null) {
+    return false;
+  }
+
+  const { count, error: subscriptionError } = await supabase
+    .from("push_subscriptions")
+    .select("*", { count: "exact", head: true })
+    .eq("endpoint", subscription.endpoint);
+
+  if (subscriptionError) {
+    throw subscriptionError;
+  }
+
+  return count != null && count > 0;
 }

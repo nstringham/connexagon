@@ -4,46 +4,27 @@
   import {
     subscribeToNotifications,
     unsubscribeFromNotifications,
+    isDeviceSubscribedToNotifications,
   } from "$lib/notifications.client.js";
 
   const { data } = $props();
 
-  const { supabase, user, subscriptions } = $derived(data);
+  const { supabase, user } = $derived(data);
 
-  let currentSubscription: PushSubscription | null = $state(null);
-
-  let notificationsEnabled = $derived(
-    subscriptions.some((subscription) => subscription.endpoint == currentSubscription?.endpoint),
-  );
+  let notificationsEnabled = $state(false);
 
   onMount(async () => {
-    if (Notification.permission == "granted") {
-      const registration = await navigator.serviceWorker.ready;
-      currentSubscription = await registration.pushManager.getSubscription();
-    }
+    notificationsEnabled = await isDeviceSubscribedToNotifications(supabase);
   });
 
   async function enableNotifications() {
-    if (user == null) {
-      alert("Your must be logged in to enable notifications");
-      return;
-    }
-
-    try {
-      await subscribeToNotifications(supabase);
-    } catch (error) {
-      alert(error);
-      throw error;
-    }
+    notificationsEnabled = true;
+    await subscribeToNotifications(supabase);
   }
 
   async function disableNotifications() {
-    try {
-      await unsubscribeFromNotifications(supabase);
-    } catch (error) {
-      alert(error);
-      throw error;
-    }
+    notificationsEnabled = false;
+    await unsubscribeFromNotifications(supabase);
   }
 </script>
 
@@ -52,7 +33,7 @@
 {#if notificationsEnabled}
   <Button onclick={disableNotifications}>Disable Notifications</Button>
 {:else}
-  <Button onclick={enableNotifications}>Enable Notifications</Button>
+  <Button onclick={enableNotifications} disabled={user == null}>Enable Notifications</Button>
 {/if}
 
 <form method="POST" action="?/sendNotification">
