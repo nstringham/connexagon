@@ -38,10 +38,10 @@
     display: inline grid;
     color: var(--primary);
     background-color: transparent;
-    height: var(--size);
+    height: var(--height);
 
     --background-opacity: 0.125;
-    --size: 40px;
+    --height: 40px;
   }
 
   .hexagon-button > * {
@@ -57,7 +57,7 @@
 
   .hexagon-button > .children {
     align-self: center;
-    padding: 0 calc(var(--size) / 2);
+    padding: 0 calc(var(--height) / 2);
     font-size: 14pt;
     font-weight: 500;
   }

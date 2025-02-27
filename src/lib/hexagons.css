@@ -1,10 +1,10 @@
 .clip-hexagon {
   clip-path: polygon(
-    calc(var(--size) / 3.4641) 0,
-    calc(100% - var(--size) / 3.4641) 0,
+    calc(var(--height) / 3.4641) 0,
+    calc(100% - var(--height) / 3.4641) 0,
     100% 50%,
-    calc(100% - var(--size) / 3.4641) 100%,
-    calc(var(--size) / 3.4641) 100%,
+    calc(100% - var(--height) / 3.4641) 100%,
+    calc(var(--height) / 3.4641) 100%,
     0 50%
   );
 }
