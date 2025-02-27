@@ -1,20 +1,14 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
+  import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
 
   type CommonProps = {
     children: Snippet;
-    id?: string;
   };
 
-  type LinkProps = {
-    href: string;
-  };
+  type LinkProps = { href: string } & HTMLAnchorAttributes;
 
-  type ButtonProps = {
-    type?: HTMLButtonElement["type"];
-    onclick?: () => unknown;
-    disabled?: boolean;
-  };
+  type ButtonProps = HTMLButtonAttributes;
 
   const { children, ...restProps }: CommonProps & (LinkProps | ButtonProps) = $props();
 </script>
