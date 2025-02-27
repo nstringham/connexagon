@@ -2,6 +2,7 @@
   color-scheme: light dark;
   background-color: light-dark(white, #121212);
   color: light-dark(black, white);
+  accent-color: var(--primary);
 
   --red: oklch(57% 0.26 28deg);
   --gold: oklch(83% 0.19 80deg);

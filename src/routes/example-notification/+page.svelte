@@ -6,6 +6,7 @@
     unsubscribeFromNotifications,
     isDeviceSubscribedToNotifications,
   } from "$lib/notifications.client.js";
+  import { enhance } from "$app/forms";
 
   const { data } = $props();
 
@@ -17,26 +18,23 @@
     notificationsEnabled = await isDeviceSubscribedToNotifications(supabase);
   });
 
-  async function enableNotifications() {
-    notificationsEnabled = true;
-    await subscribeToNotifications(supabase);
-  }
-
-  async function disableNotifications() {
-    notificationsEnabled = false;
-    await unsubscribeFromNotifications(supabase);
-  }
+  $effect(() => {
+    if (notificationsEnabled) {
+      subscribeToNotifications(supabase);
+    } else {
+      unsubscribeFromNotifications(supabase);
+    }
+  });
 </script>
 
 <p>This demo shows how to register for push notifications and how to send them.</p>
 
-{#if notificationsEnabled}
-  <Button onclick={disableNotifications}>Disable Notifications</Button>
-{:else}
-  <Button onclick={enableNotifications} disabled={user == null}>Enable Notifications</Button>
-{/if}
+<p>
+  Enable Notifications
+  <input type="checkbox" bind:checked={notificationsEnabled} disabled={user == null} />
+</p>
 
-<form method="POST" action="?/sendNotification">
+<form method="POST" action="?/sendNotification" use:enhance>
   Notification Message:<input type="text" name="title" value="It's Your Turn" /> <br />
   Notification delay: <input type="number" name="delay" value="5" /> seconds <br />
   <Button type="submit">Send Push Notification</Button>
