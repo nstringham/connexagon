@@ -215,6 +215,20 @@ export type Database = {
         };
         Returns: string[];
       };
+      subscribe_to_push: {
+        Args: {
+          endpoint: string;
+          expiration_time: number;
+          keys: Json;
+        };
+        Returns: undefined;
+      };
+      unsubscribe_from_push: {
+        Args: {
+          endpoint_to_delete: string;
+        };
+        Returns: undefined;
+      };
       xid: {
         Args: {
           _at?: string;
