@@ -12,6 +12,7 @@
   import svgFavicon from "$lib/logo/favicon.svg";
   import pngFavicon from "$lib/logo/favicon-192.png";
   import appleTouchIcon from "$lib/logo/square-icon-180.png";
+  import { unsubscribeFromNotifications } from "$lib/notifications.client.js";
 
   let { data, children } = $props();
   let { supabase, session, user, profilePromise, lightModeCookie } = $derived(data);
@@ -41,6 +42,7 @@
   });
 
   const signOut = async () => {
+    await unsubscribeFromNotifications(supabase);
     const { error } = await supabase.auth.signOut({ scope: "local" });
     if (error) {
       throw error;
