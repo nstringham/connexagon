@@ -72,5 +72,6 @@
 
   input {
     appearance: none;
+    margin: -4px;
   }
 </style>
