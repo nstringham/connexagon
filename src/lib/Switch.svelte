@@ -13,9 +13,9 @@
 </script>
 
 <span class="wrapper">
+  <input type="checkbox" role="switch" onkeypress={onKeypress} bind:checked {...restProps} />
   <span class="track clip-hexagon"></span>
   <span class="thumb clip-hexagon"></span>
-  <input type="checkbox" role="switch" onkeypress={onKeypress} bind:checked {...restProps} />
 </span>
 
 <style>
@@ -26,7 +26,6 @@
 
     --track-length: 56px;
     --track-height: 32px;
-    --height: var(--track-height);
   }
 
   .wrapper:has(input:disabled) {
@@ -44,11 +43,13 @@
     opacity: 0.25;
     filter: grayscale(100%);
     transition:
-      opacity 0.125s ease-out,
-      filter 0.125s ease-out;
+      opacity 0.125s ease-in,
+      filter 0.125s ease-in;
+
+    --height: var(--track-height);
   }
 
-  .wrapper:has(input:checked) > .track {
+  input:checked ~ .track {
     filter: grayscale(0%);
     opacity: 1;
   }
@@ -60,13 +61,13 @@
     background-color: white;
     place-self: center;
     translate: calc(-0.5 * var(--thumb-travel));
-    transition: translate 0.125s ease-out;
+    transition: translate 0.125s ease-in;
 
     --height: 24px;
-    --thumb-travel: calc(var(--track-length) - 32px / 0.866);
+    --thumb-travel: calc(var(--track-length) - var(--track-height) / 0.866);
   }
 
-  .wrapper:has(input:checked) > .thumb {
+  input:checked ~ .thumb {
     translate: calc(0.5 * var(--thumb-travel));
   }
 
