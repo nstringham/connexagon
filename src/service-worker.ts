@@ -99,12 +99,10 @@ async function focusOrOpenTab(url: string) {
   const clientList = await self.clients.matchAll({ type: "window" });
 
   for (const client of clientList) {
-    if (client.url === url && "focus" in client) {
+    if (client.url === url) {
       return client.focus();
     }
   }
 
-  if ("openWindow" in self.clients) {
-    return self.clients.openWindow(url);
-  }
+  return self.clients.openWindow(url);
 }
