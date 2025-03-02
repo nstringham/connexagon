@@ -2,7 +2,7 @@ import { sql } from "$lib/db.server";
 import { error } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import { countTowers, doTurn, getMaxTurnSize, InvalidTurnError, type Color } from "$lib/board";
-import { sendNotification } from "$lib/notifications.server";
+import { sendNotification, sendNotificationsForTurn } from "$lib/notifications.server";
 
 function isIntegerArray(value: unknown): value is number[] {
   return Array.isArray(value) && value.every((n) => Number.isInteger(n));
@@ -117,11 +117,9 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
       }
     }
 
-    const gameOver = towersByColor[color] + claimedTowers >= 5;
-
     let updateGame: Promise<unknown>;
 
-    if (gameOver) {
+    if (towersByColor[color] + claimedTowers >= 5) {
       updateGame = sql`
         update public.games
         set
@@ -153,19 +151,10 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
         );
     `;
 
-    let sendNotifications: Promise<unknown> | undefined;
-
-    if (!gameOver) {
-      sendNotifications = sendNotification(next_player_user_id, {
-        title: "It's your turn",
-        body: "Click here to play your turn",
-        icon: `/games/${game_id}/preview`,
-        data: { url: `/games/${game_id}` },
-      });
-    }
-
-    await Promise.all([updateGame, insertTurn, sendNotifications]);
+    await Promise.all([updateGame, insertTurn]);
   });
+
+  await sendNotificationsForTurn(game_id);
 
   return new Response();
 };
