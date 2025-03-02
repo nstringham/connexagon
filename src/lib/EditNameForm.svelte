@@ -2,7 +2,6 @@
   import { invalidateAll } from "$app/navigation";
   import type { SupabaseClient, User } from "@supabase/supabase-js";
   import type { Database } from "./database-types";
-  import { showModal } from "./modal";
   import Button from "./Button.svelte";
 
   let {
@@ -19,12 +18,7 @@
 
   $effect(() => {
     profilePromise.then((profile) => {
-      if (profile != null) {
-        name = profile.name;
-      } else {
-        name = "";
-        showModal(editModal, { preventCancel: true });
-      }
+      name = profile?.name ?? "";
     });
   });
 
@@ -67,9 +61,10 @@
   });
 
   async function save(event: SubmitEvent) {
+    event.preventDefault();
+
     const { error } = await supabase.from("profiles").upsert({ user_id: user.id, name });
     if (error) {
-      event.preventDefault();
       throw error;
     }
 
@@ -77,29 +72,25 @@
   }
 </script>
 
-<Button onclick={() => showModal(editModal)}>Edit Name</Button>
+<form onsubmit={save}>
+  <label>
+    Name:<br />
+    <input
+      type="text"
+      name="name"
+      bind:value={name}
+      required
+      minlength="3"
+      maxlength="12"
+      pattern="[a-zA-Z][a-zA-Z0-9_ ]+[a-zA-Z0-9]"
+    />
+  </label>
+  {#if dirty && validationError != null}
+    <p class="error">{validationError}</p>
+  {/if}
 
-{#snippet editModal()}
-  <form method="dialog" onsubmit={save}>
-    <label>
-      Name:<br />
-      <input
-        type="text"
-        name="name"
-        bind:value={name}
-        required
-        minlength="3"
-        maxlength="12"
-        pattern="[a-zA-Z][a-zA-Z0-9_ ]+[a-zA-Z0-9]"
-      />
-    </label>
-    {#if dirty && validationError != null}
-      <p class="error">{validationError}</p>
-    {/if}
-
-    <Button type="submit" disabled={validationError != null}>Save</Button>
-  </form>
-{/snippet}
+  <Button type="submit" disabled={validationError != null}>Save</Button>
+</form>
 
 <style>
   .error {

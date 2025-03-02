@@ -1,54 +1,57 @@
 <script lang="ts">
-  import { onDestroy, onMount, setContext, type Snippet } from "svelte";
-
-  let dialogElement: HTMLDialogElement;
+  import type { Snippet } from "svelte";
+  import type { Action } from "svelte/action";
 
   let {
     preventCancel = false,
-    onclose,
+    open = $bindable(true),
     children,
   }: {
     preventCancel?: boolean;
-    onclose?: (event: Event & { currentTarget: EventTarget & HTMLDialogElement }) => void;
+    open?: boolean;
     children: Snippet;
   } = $props();
 
-  onMount(() => {
-    dialogElement.showModal();
-    setContext("modal", dialogElement);
-  });
-
-  onDestroy(() => {
-    dialogElement.close();
-  });
+  const showModal: Action<HTMLDialogElement> = (dialog) => {
+    dialog.showModal();
+  };
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-<dialog
-  bind:this={dialogElement}
-  oncancel={(event) => {
-    if (preventCancel) {
-      event.preventDefault();
-    }
-  }}
-  {onclose}
-  onclick={(event) => {
-    if (preventCancel) {
-      return;
-    }
+{#if open}
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+  <dialog
+    use:showModal
+    oncancel={(event) => {
+      if (preventCancel) {
+        event.preventDefault();
+      }
+    }}
+    onclose={() => {
+      open = false;
+    }}
+    onclick={(event) => {
+      if (preventCancel) {
+        return;
+      }
 
-    const rect = event.currentTarget.getBoundingClientRect();
+      if (event.clientX == 0 && event.clientY == 0) {
+        // fake click event
+        return;
+      }
 
-    if (
-      event.clientX < rect.left ||
-      event.clientX > rect.right ||
-      event.clientY < rect.top ||
-      event.clientY > rect.bottom
-    ) {
-      dialogElement.close();
-    }
-  }}
->
-  {@render children()}
-</dialog>
+      const rect = event.currentTarget.getBoundingClientRect();
+
+      if (
+        event.clientX < rect.left ||
+        event.clientX > rect.right ||
+        event.clientY < rect.top ||
+        event.clientY > rect.bottom
+      ) {
+        open = false;
+      }
+    }}
+  >
+    {@render children()}
+  </dialog>
+{/if}

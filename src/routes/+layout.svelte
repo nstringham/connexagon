@@ -4,24 +4,18 @@
   import { invalidate } from "$app/navigation";
   import { PUBLIC_SUPABASE_URL } from "$env/static/public";
   import { onMount } from "svelte";
-  import { showModal } from "$lib/modal";
   import Button from "$lib/Button.svelte";
   import { MediaQuery } from "svelte/reactivity";
 
   import svgFavicon from "$lib/logo/favicon.svg";
   import pngFavicon from "$lib/logo/favicon-192.png";
   import appleTouchIcon from "$lib/logo/square-icon-180.png";
+  import Modal from "$lib/Modal.svelte";
+  import EditNameForm from "$lib/EditNameForm.svelte";
+  import AccountModal from "$lib/AccountModal.svelte";
 
   let { data, children } = $props();
   let { supabase, session, user, profilePromise, lightModeCookie } = $derived(data);
-
-  // svelte-ignore state_referenced_locally
-  // this is ok because MediaQuery is already reactive
-  const lightMode = new MediaQuery("prefers-color-scheme: light", lightModeCookie);
-
-  $effect(() => {
-    document.cookie = `lightMode=${lightMode.current}`;
-  });
 
   onMount(() => {
     const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
@@ -33,10 +27,22 @@
     return () => void data.subscription.unsubscribe();
   });
 
+  // svelte-ignore state_referenced_locally
+  // this is ok because MediaQuery is already reactive
+  const lightMode = new MediaQuery("prefers-color-scheme: light", lightModeCookie);
+
   $effect(() => {
-    if (user == null) {
-      import("$lib/SignInModal.svelte");
-    }
+    document.cookie = `lightMode=${lightMode.current}`;
+  });
+
+  let showSignInModal = $state(false);
+  let showChooseNameModal = $state(false);
+  let showAccountModal = $state(false);
+
+  $effect(() => {
+    profilePromise.then((profile) => {
+      showChooseNameModal = profile == null;
+    });
   });
 </script>
 
@@ -51,26 +57,26 @@
 <header>
   <h1><a href="/">Connexagon</a></h1>
 
-  {#if user != null}
-    <Button onclick={() => showModal(accountModal)}>Account</Button>
+  {#if user == null}
+    <Button onclick={() => (showSignInModal = true)}>Sign In</Button>
   {:else}
-    <Button onclick={() => showModal(signInForm)}>Sign In</Button>
+    <Button onclick={() => (showAccountModal = true)}>Account</Button>
   {/if}
 </header>
 
 {@render children()}
 
-{#snippet accountModal()}
-  {#await import("$lib/AccountModal.svelte") then { default: AccountModal }}
-    <AccountModal {supabase} user={user!} {profilePromise} />
-  {/await}
-{/snippet}
-
-{#snippet signInForm()}
+{#if user == null}
   {#await import("$lib/SignInModal.svelte") then { default: SignInModal }}
-    <SignInModal {supabase} {user} />
+    <SignInModal {supabase} {user} bind:open={showSignInModal} />
   {/await}
-{/snippet}
+{:else}
+  <Modal bind:open={showChooseNameModal}>
+    <EditNameForm {supabase} {user} {profilePromise} />
+  </Modal>
+
+  <AccountModal {supabase} {user} {profilePromise} bind:open={showAccountModal} />
+{/if}
 
 <style>
   header {
