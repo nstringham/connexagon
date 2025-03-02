@@ -29,7 +29,7 @@ export async function subscribeToNotifications(supabase: SupabaseClient<Database
 
   const { error: supabaseError } = await supabase.rpc("subscribe_to_push", {
     endpoint,
-    expiration_time: expirationTime!, // supabase assumes that all arguments are not allowed to be null
+    expiration_time: expirationTime ?? null!, // supabase assumes that all arguments are not allowed to be null
     keys,
   });
 
