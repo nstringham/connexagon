@@ -2,6 +2,7 @@ import { sql } from "$lib/db.server";
 import { error } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import { generateBoard } from "$lib/board";
+import { sendNotificationsForTurn } from "$lib/notifications.server";
 
 export const POST: RequestHandler = async ({ params: { game_id }, locals: { user } }) => {
   if (user == null) {
@@ -80,6 +81,8 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
 
     await Promise.all([updateGame, updatePlayers]);
   });
+
+  await sendNotificationsForTurn(game_id);
 
   return new Response();
 };
