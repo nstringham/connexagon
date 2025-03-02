@@ -30,7 +30,6 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
       completed: boolean;
       user_id: string;
       color: Color;
-      next_player_user_id: string;
     } & ({ started: false; turn_number: null } | { started: true; turn_number: number });
 
     const result = await sql<QueryResult[]>`
@@ -41,8 +40,7 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
         started_at is not null as started,
         completed_at is not null as completed,
         player.user_id,
-        player.color,
-        next_player.user_id as next_player_user_id
+        player.color
       from
         public.games as game
         join (
@@ -56,8 +54,6 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
         ) as player_count on player_count.game_id = game.id
         join public.players as player on player.game_id = game.id
         and player.turn_order = game.turn % player_count.count
-        join public.players as next_player on next_player.game_id = game.id
-        and next_player.turn_order = (game.turn + 1) % player_count.count
       where
         game.id = ${game_id}
     `;
@@ -74,7 +70,6 @@ export const POST: RequestHandler = async ({ params: { game_id }, locals: { user
       completed,
       user_id,
       color,
-      next_player_user_id,
     } = result[0];
 
     const towers = new Set(towersArray);
