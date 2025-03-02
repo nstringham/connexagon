@@ -1,41 +1,9 @@
 <script lang="ts">
   import Button from "$lib/Button.svelte";
-  import { onMount } from "svelte";
-  import {
-    subscribeToNotifications,
-    unsubscribeFromNotifications,
-    isDeviceSubscribedToNotifications,
-  } from "$lib/notifications.client.js";
   import { enhance } from "$app/forms";
-  import Switch from "$lib/Switch.svelte";
-
-  const { data } = $props();
-
-  const { supabase, user } = $derived(data);
-
-  let notificationsEnabled = $state(false);
-
-  onMount(async () => {
-    notificationsEnabled = await isDeviceSubscribedToNotifications(supabase);
-  });
-
-  $effect(() => {
-    if (notificationsEnabled) {
-      subscribeToNotifications(supabase);
-    } else {
-      unsubscribeFromNotifications(supabase);
-    }
-  });
 </script>
 
 <p>This demo shows how to register for push notifications and how to send them.</p>
-
-<p>
-  <label>
-    Enable Notifications
-    <Switch bind:checked={notificationsEnabled} disabled={user == null} />
-  </label>
-</p>
 
 <form method="POST" action="?/sendNotification" use:enhance>
   Notification Message:<input type="text" name="title" value="It's Your Turn" /> <br />
