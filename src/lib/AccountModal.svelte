@@ -3,7 +3,8 @@
   import type { Database } from "./database-types";
   import Button from "./Button.svelte";
   import Switch from "./Switch.svelte";
-  import EditNameButton from "./EditNameButton.svelte";
+  import EditNameForm from "./EditNameForm.svelte";
+  import Modal from "./Modal.svelte";
   import { onMount } from "svelte";
   import {
     isDeviceSubscribedToNotifications,
@@ -11,14 +12,16 @@
     unsubscribeFromNotifications,
   } from "./notifications.client";
 
-  const {
+  let {
     supabase,
     user,
     profilePromise,
+    open = $bindable(true),
   }: {
     supabase: SupabaseClient<Database>;
     user: User;
     profilePromise: Promise<{ name: string } | null>;
+    open?: boolean;
   } = $props();
 
   let notificationsEnabled: boolean = $state(false);
@@ -37,33 +40,36 @@
     if (error) {
       throw error;
     }
+    open = false;
   }
 </script>
 
-<div class="grid">
-  <EditNameButton {profilePromise} {supabase} {user} />
+<Modal bind:open>
+  <div class="grid">
+    <EditNameForm {supabase} {user} {profilePromise} />
 
-  <label>
-    Enable notifications
-    <Switch
-      bind:checked={notificationsEnabled}
-      oninput={async (event) => {
-        try {
-          if (event.currentTarget.checked) {
-            await subscribeToNotifications(supabase);
-          } else {
-            await unsubscribeFromNotifications(supabase);
+    <label>
+      Enable notifications
+      <Switch
+        bind:checked={notificationsEnabled}
+        oninput={async (event) => {
+          try {
+            if (event.currentTarget.checked) {
+              await subscribeToNotifications(supabase);
+            } else {
+              await unsubscribeFromNotifications(supabase);
+            }
+          } catch (error) {
+            updateNotificationsEnabled();
+            throw error;
           }
-        } catch (error) {
-          updateNotificationsEnabled();
-          throw error;
-        }
-      }}
-    />
-  </label>
+        }}
+      />
+    </label>
 
-  <Button onclick={signOut}>Sign Out</Button>
-</div>
+    <Button onclick={signOut}>Sign Out</Button>
+  </div>
+</Modal>
 
 <style>
   .grid {
@@ -71,7 +77,8 @@
     gap: 12px;
   }
 
-  label {
+  label,
+  .grid > :global(form) {
     min-height: 40px;
     display: grid;
     grid-template-columns: 1fr auto;
