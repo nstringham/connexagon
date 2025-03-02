@@ -4,7 +4,6 @@
   import { invalidate } from "$app/navigation";
   import { PUBLIC_SUPABASE_URL } from "$env/static/public";
   import { onMount } from "svelte";
-  import EditNameButton from "$lib/EditNameButton.svelte";
   import { showModal } from "$lib/modal";
   import Button from "$lib/Button.svelte";
   import { MediaQuery } from "svelte/reactivity";
@@ -12,7 +11,6 @@
   import svgFavicon from "$lib/logo/favicon.svg";
   import pngFavicon from "$lib/logo/favicon-192.png";
   import appleTouchIcon from "$lib/logo/square-icon-180.png";
-  import { unsubscribeFromNotifications } from "$lib/notifications.client.js";
 
   let { data, children } = $props();
   let { supabase, session, user, profilePromise, lightModeCookie } = $derived(data);
@@ -40,14 +38,6 @@
       import("$lib/SignInModal.svelte");
     }
   });
-
-  const signOut = async () => {
-    await unsubscribeFromNotifications(supabase);
-    const { error } = await supabase.auth.signOut({ scope: "local" });
-    if (error) {
-      throw error;
-    }
-  };
 </script>
 
 <svelte:head>
@@ -62,15 +52,19 @@
   <h1><a href="/">Connexagon</a></h1>
 
   {#if user != null}
-    <EditNameButton {profilePromise} {supabase} {user} />
-
-    <Button onclick={signOut}>Sign Out</Button>
+    <Button onclick={() => showModal(accountModal)}>Account</Button>
   {:else}
     <Button onclick={() => showModal(signInForm)}>Sign In</Button>
   {/if}
 </header>
 
 {@render children()}
+
+{#snippet accountModal()}
+  {#await import("$lib/AccountModal.svelte") then { default: AccountModal }}
+    <AccountModal {supabase} user={user!} {profilePromise} />
+  {/await}
+{/snippet}
 
 {#snippet signInForm()}
   {#await import("$lib/SignInModal.svelte") then { default: SignInModal }}
