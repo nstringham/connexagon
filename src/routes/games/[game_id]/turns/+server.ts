@@ -2,7 +2,7 @@ import { sql } from "$lib/db.server";
 import { error } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import { countTowers, doTurn, getMaxTurnSize, InvalidTurnError, type Color } from "$lib/board";
-import { sendNotification, sendNotificationsForTurn } from "$lib/notifications.server";
+import { sendNotificationsForTurn } from "$lib/notifications.server";
 
 function isIntegerArray(value: unknown): value is number[] {
   return Array.isArray(value) && value.every((n) => Number.isInteger(n));
