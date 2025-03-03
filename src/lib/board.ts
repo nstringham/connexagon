@@ -163,7 +163,7 @@ export function generateBoard(players: number): Board {
     while (true) {
       const index = Math.floor(Math.random() * length);
 
-      if (towerDistances[index] <= 1) {
+      if (towerDistances[index] <= 2) {
         continue;
       }
 
@@ -177,7 +177,7 @@ export function generateBoard(players: number): Board {
 
   for (let tower = 0; tower < 4 * players + 1; tower++) {
     let furthest: number = getRandomTowerPlacement();
-    for (let option = 1; option < 12; option++) {
+    for (let option = 1; option < 16; option++) {
       const randomIndex = getRandomTowerPlacement();
       if (towerDistances[randomIndex] > towerDistances[furthest]) {
         furthest = randomIndex;
