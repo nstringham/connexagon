@@ -13,6 +13,21 @@
     }
     await goto(`/games/${gameId}`);
   }
+
+  function sortPlayers<Player extends { turn_order: number | null }>(game: {
+    players: Player[];
+    turn: number | null;
+  }): Player[] {
+    if (game.turn == null) {
+      return game.players;
+    }
+
+    const playerCount = game.players.length;
+    const offset = game.turn + playerCount - 1;
+    return game.players.toSorted(
+      (a, b) => ((a.turn_order! - offset) % playerCount) - ((b.turn_order! - offset) % playerCount),
+    );
+  }
 </script>
 
 <Button onclick={createGame} disabled={user == null}>Create Game</Button>
@@ -24,7 +39,7 @@
     {#each group.games! as game}
       <li>
         <a href="/games/{game.id}">
-          {#each game.players as player}
+          {#each sortPlayers(game) as player}
             <span style:color={cssColors[player.color as Color]}>{player.profile.name}</span>
           {/each}
         </a>
