@@ -1,6 +1,6 @@
 # Connexagon
 
-Play connexagon now at https://connexagon.com
+Play Connexagon now at https://connexagon.com
 
 ## Setting up a Local Development Environment
 
@@ -32,7 +32,7 @@ Play connexagon now at https://connexagon.com
     npx supabase start
     ```
 
-1.  create a `.env.local` file and fill in the information from the previous step
+1.  Create a `.env.local` file and fill in the information from the previous step
 
     ```
     PUBLIC_SUPABASE_URL=<your API URL>
@@ -55,7 +55,7 @@ Play connexagon now at https://connexagon.com
     npm run dev
     ```
 
-1.  Don't forget to shut down Supabase local development when you are done.
+1.  Don't forget to shut down Supabase local development when you are done
 
     ```bash
     npx supabase stop
