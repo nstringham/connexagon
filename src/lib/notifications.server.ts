@@ -30,9 +30,9 @@ export async function sendNotification(user_id: string, notification: Notificati
 }
 
 export async function sendNotificationsForTurn(game_id: string) {
-  type result = webPush.PushSubscription & { title: string; body: string };
+  type Result = webPush.PushSubscription & { title: string; body: string };
 
-  const subscriptions = await sql<result[]>`
+  const subscriptions = await sql<Result[]>`
     with
       player_count as (
         select
