@@ -22,7 +22,7 @@ export async function sendNotification(user_id: string, notification: Notificati
       user_id = ${user_id}
   `;
 
-  return Promise.all(
+  await Promise.allSettled(
     subscriptions.map((subscription) =>
       webPush.sendNotification(subscription, JSON.stringify(notification)),
     ),
@@ -87,7 +87,7 @@ export async function sendNotificationsForTurn(game_id: string) {
       join public.push_subscriptions as subscription on notification.user_id = subscription.user_id
   `;
 
-  return Promise.all(
+  await Promise.allSettled(
     subscriptions.map(({ title, body, ...subscription }) => {
       const notification: NotificationPayload = {
         title,
