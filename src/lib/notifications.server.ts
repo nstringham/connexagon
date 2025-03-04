@@ -54,7 +54,6 @@ export async function sendNotificationsForTurn(game_id: string) {
           public.games as game
           join player_count on player_count.game_id = game.id
           join public.players as player on game.id = player.game_id
-          join public.push_subscriptions as subscription on player.user_id = subscription.user_id
         where
           game.id = ${game_id}
           and game.completed_at is null
