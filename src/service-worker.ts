@@ -99,7 +99,7 @@ async function focusOrOpenTab(url: string) {
   const clientList = await self.clients.matchAll({ type: "window" });
 
   for (const client of clientList) {
-    if (client.url === url) {
+    if (new URL(client.url).pathname === url) {
       return client.focus();
     }
   }
