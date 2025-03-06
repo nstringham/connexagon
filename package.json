@@ -44,7 +44,7 @@
     "stylelint-config-standard": "^37.0.0",
     "stylelint-no-unsupported-browser-features": "^8.0.4",
     "supabase": "^2.9.6",
-    "svelte": "^5.0.0",
+    "svelte": "^5.22.5",
     "svelte-check": "^4.0.0",
     "turnstile-types": "^1.2.3",
     "typescript": "^5.0.0",
