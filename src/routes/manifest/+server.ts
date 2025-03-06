@@ -3,6 +3,7 @@ import type { RequestHandler } from "./$types";
 
 import anySvg from "$lib/logo/icon.svg";
 import maskableSvg from "$lib/logo/maskable-icon.svg";
+import monochromeSvg from "$lib/logo/favicon.svg";
 
 export const GET: RequestHandler = ({ url, setHeaders }) => {
   setHeaders({ "Vercel-CDN-Cache-Control": "public, max-age=31536000, immutable" });
@@ -28,6 +29,12 @@ export const GET: RequestHandler = ({ url, setHeaders }) => {
         type: "image/svg+xml",
         sizes: "any",
         purpose: "maskable",
+      },
+      {
+        src: monochromeSvg,
+        type: "image/svg+xml",
+        sizes: "any",
+        purpose: "monochrome",
       },
     ],
   };
