@@ -11,6 +11,7 @@
     maxAllowedSelection = 0,
     aspectRatio = 1,
     cssColors = defaultCssColors,
+    towerColor = "currentcolor",
     ...restProps
   }: {
     towers: Set<number>;
@@ -19,6 +20,7 @@
     maxAllowedSelection?: number;
     aspectRatio?: number;
     cssColors?: typeof defaultCssColors;
+    towerColor?: string;
   } & SVGAttributes<SVGSVGElement> = $props();
 
   const size = $derived(getSize(cells.length));
@@ -107,9 +109,7 @@
       <path
         class="cell"
         d="M{x},{y}{cellPath}"
-        fill={tower
-          ? "currentcolor"
-          : (cssColors[color as Color] ?? "light-dark(#ebebeb, #181818)")}
+        fill={tower ? towerColor : (cssColors[color as Color] ?? "light-dark(#ebebeb, #181818)")}
         stroke-width={strokeWidth * 2}
       />
       {#if selected}
