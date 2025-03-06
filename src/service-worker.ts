@@ -6,6 +6,7 @@ declare const self: ServiceWorkerGlobalScope;
 
 import { build, files, version } from "$service-worker";
 import type { NotificationPayload } from "./lib/notifications.server";
+import badgeIcon from "$lib/logo/favicon.svg";
 
 const CACHE = `cache-${version}`;
 
@@ -83,6 +84,8 @@ self.addEventListener("fetch", (event) => {
 
 self.addEventListener("push", (event) => {
   const { title, ...options } = event.data!.json() as NotificationPayload;
+
+  options.badge ??= badgeIcon;
 
   event.waitUntil(self.registration.showNotification(title, options));
 });
