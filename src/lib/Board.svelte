@@ -77,8 +77,6 @@
   }
 </script>
 
-<!-- this is ok because we have tabindex on the inner elements -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
 <svg
   {...restProps}
   viewBox="-{viewBoxWidth / 2} -{viewBoxHeight / 2} {viewBoxWidth} {viewBoxHeight}"
