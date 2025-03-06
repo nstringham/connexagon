@@ -155,7 +155,7 @@
         value={userColor}
         onchange={({ currentTarget }) => changeColor(parseInt(currentTarget.value) as Color)}
       >
-        {#each colorOptions as { color, available }}
+        {#each colorOptions as { color, available } (color)}
           {#if color !== Color.UNCLAIMED}
             <option value={color} disabled={!available}>{Color[color]}</option>
           {/if}
