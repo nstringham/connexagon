@@ -6,7 +6,7 @@ import { error } from "@sveltejs/kit";
 import { Resvg } from "@resvg/resvg-js";
 import { sql } from "$lib/db.server";
 
-export const GET: RequestHandler = async ({ params: { game_id }, url }) => {
+export const GET: RequestHandler = async ({ params: { game_id }, url, cookies }) => {
   const result = await sql<{ towers: number[]; cell_colors: Buffer; players: number }[]>`
     select
       game.towers,
@@ -39,13 +39,15 @@ export const GET: RequestHandler = async ({ params: { game_id }, url }) => {
   const width = Number(url.searchParams.get("width") ?? 768);
   const height = Number(url.searchParams.get("height") ?? width);
 
+  const darkMode = cookies.get("lightMode") === "false";
+
   const { body: svg } = render(Board, {
     props: {
       towers: new Set(towers),
       cells: getCells(),
       aspectRatio: width / height,
       cssColors: {
-        [Color.UNCLAIMED]: "#ebebeb",
+        [Color.UNCLAIMED]: darkMode ? "#181818" : "#ebebeb",
         [Color.RED]: "#e70000",
         [Color.GOLD]: "#ffb600",
         [Color.GREEN]: "#00b431",
@@ -54,6 +56,7 @@ export const GET: RequestHandler = async ({ params: { game_id }, url }) => {
         [Color.PURPLE]: "#8803bd",
         [Color.PINK]: "#ff7db8",
       },
+      towerColor: darkMode ? "#ffffff" : "#000000",
       xmlns: "http://www.w3.org/2000/svg",
     },
   });
@@ -68,7 +71,7 @@ export const GET: RequestHandler = async ({ params: { game_id }, url }) => {
 
   const resvg = new Resvg(svg, {
     fitTo: { mode: "width", value: width },
-    background: "#ffffff",
+    background: darkMode ? "#121212" : "#ffffff",
   });
 
   return new Response(resvg.render().asPng(), { headers: { "Content-Type": "image/png" } });
