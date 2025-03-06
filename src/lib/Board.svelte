@@ -90,7 +90,7 @@
     }
   }}
 >
-  {#each cells as color, i}
+  {#each cells as color, i (i)}
     {@const [x, y] = layout[i]}
     {@const tower = towers.has(i)}
     {@const selectable = color === Color.UNCLAIMED && !tower}

@@ -7,10 +7,10 @@
 
 <h2>Joinable Games</h2>
 <ul>
-  {#each games as game}
+  {#each games as game (game.id)}
     <li>
       <a href="/games/{game.id}">
-        {#each game.players as player}
+        {#each game.players as player (player.user_id)}
           <span style:color={cssColors[player.color as Color]}>{player.profile.name}</span>
         {/each}
       </a>

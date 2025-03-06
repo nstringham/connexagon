@@ -33,13 +33,13 @@
 <Button onclick={createGame} disabled={user == null}>Create Game</Button>
 <Button href="/browse">Join Game</Button>
 
-{#each games as group}
+{#each games as group (group.name)}
   <h2>{group.name}</h2>
   <ul>
-    {#each group.games! as game}
+    {#each group.games! as game (game.id)}
       <li>
         <a href="/games/{game.id}">
-          {#each sortPlayers(game) as player}
+          {#each sortPlayers(game) as player (player.user_id)}
             <span style:color={cssColors[player.color as Color]}>{player.profile.name}</span>
           {/each}
         </a>
