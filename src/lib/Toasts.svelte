@@ -1,6 +1,7 @@
 <script lang="ts" module>
   export type Toast = {
     message: string;
+    style?: "error";
   };
 
   let toasts: (Toast & { expiration: number })[] = $state([]);
@@ -17,12 +18,11 @@
 
 <script lang="ts">
   import "$lib/hexagons.css";
-  $inspect(toasts);
 </script>
 
 <div class="wrapper">
   {#each toasts as toast, i (i)}
-    <div class="toast">
+    <div class="toast {toast.style}">
       <div class="background clip-hexagon"></div>
       <span class="message">{toast.message}</span>
     </div>
@@ -33,5 +33,9 @@
   .wrapper {
     position: fixed;
     bottom: 0;
+  }
+
+  .toast.error {
+    color: red;
   }
 </style>

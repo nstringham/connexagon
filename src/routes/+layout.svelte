@@ -14,6 +14,7 @@
   import EditNameForm from "$lib/EditNameForm.svelte";
   import AccountModal from "$lib/AccountModal.svelte";
   import Toasts from "$lib/Toasts.svelte";
+  import { toastError } from "$lib/errors.js";
 
   let { data, children } = $props();
   let { supabase, session, user, profilePromise, lightModeCookie } = $derived(data);
@@ -54,6 +55,11 @@
   <link rel="apple-touch-icon" href={appleTouchIcon} />
   <link rel="preconnect" href={PUBLIC_SUPABASE_URL} />
 </svelte:head>
+
+<svelte:window
+  onerror={(event) => toastError(event instanceof ErrorEvent ? event.error : event)}
+  onunhandledrejection={(event) => toastError(event.reason)}
+/>
 
 <header>
   <h1><a href="/">Connexagon</a></h1>
