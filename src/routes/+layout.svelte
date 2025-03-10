@@ -13,6 +13,7 @@
   import Modal from "$lib/Modal.svelte";
   import EditNameForm from "$lib/EditNameForm.svelte";
   import AccountModal from "$lib/AccountModal.svelte";
+  import Toasts from "$lib/Toasts.svelte";
 
   let { data, children } = $props();
   let { supabase, session, user, profilePromise, lightModeCookie } = $derived(data);
@@ -77,6 +78,8 @@
 
   <AccountModal {supabase} {user} {profilePromise} bind:open={showAccountModal} />
 {/if}
+
+<Toasts />
 
 <style>
   header {
