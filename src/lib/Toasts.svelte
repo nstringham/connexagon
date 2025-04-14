@@ -39,12 +39,19 @@
 <script lang="ts">
   import "$lib/hexagons.css";
   import { fade, fly } from "svelte/transition";
+
+  let height: number = $state(48);
 </script>
 
 {#if currentToast != undefined}
-  <div class="toast clip-hexagon {currentToast.style}" in:fly={{ y: "100%" }} out:fade>
-    <div class="background clip-hexagon"></div>
-    <span class="message">{currentToast.message}</span>
+  <div
+    class="toast clip-hexagon {currentToast.style}"
+    in:fly={{ y: "100%" }}
+    out:fade
+    bind:clientHeight={height}
+    style:--height="{height}px"
+  >
+    {currentToast.message}
   </div>
 {/if}
 
@@ -55,18 +62,23 @@
     font-size: 14pt;
     font-weight: 400;
     position: fixed;
+    left: 0;
     bottom: 0;
     margin: 24px;
-    height: var(--height);
-    padding: 0 calc(var(--height) / 2);
+    min-height: 48px;
+    padding: 12px calc(var(--height) / 3.4641 + 6px);
     display: grid;
     place-content: center;
-
-    --height: 48px;
   }
 
   .toast.error {
     background-color: var(--red);
     color: white;
+  }
+
+  @media (width < 600px) {
+    .toast {
+      right: 0;
+    }
   }
 </style>
