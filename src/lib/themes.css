@@ -1,7 +1,7 @@
 :root {
   color-scheme: light dark;
-  background-color: light-dark(white, #121212);
-  color: light-dark(black, white);
+  background-color: var(--background-color);
+  color: var(--foreground-color);
   accent-color: var(--primary);
 
   --red: oklch(57% 0.26 28deg);
@@ -12,4 +12,6 @@
   --purple: oklch(48% 0.24 311deg);
   --pink: oklch(77% 0.19 356deg);
   --primary: light-dark(var(--blue), var(--aqua));
+  --background-color: light-dark(white, #121212);
+  --foreground-color: light-dark(black, white);
 }
