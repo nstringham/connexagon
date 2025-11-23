@@ -5,7 +5,6 @@ Play Connexagon now at https://connexagon.com
 ## Setting up a Local Development Environment
 
 1.  Prerequisites
-
     1. [Node](https://nodejs.org/)
     1. [Docker Desktop](https://www.docker.com/products/docker-desktop/)
     1. [VS Code](https://code.visualstudio.com/) (optional)
