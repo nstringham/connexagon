@@ -6,6 +6,7 @@
   import Board from "$lib/Board.svelte";
   import Button from "$lib/Button.svelte";
   import type { Tables } from "$lib/database-types";
+  import { assertOk } from "$lib/errors.js";
 
   const { data } = $props();
   const { supabase, user } = $derived(data);
@@ -99,11 +100,16 @@
   let selection: number[] = $state([]);
 
   async function startGame() {
-    await fetch(`/games/${game.id}/start`, { method: "POST" });
+    await assertOk(fetch(`/games/${game.id}/start`, { method: "POST" }));
   }
 
   async function makeTurn() {
-    await fetch(`/games/${game.id}/turns`, { method: "POST", body: JSON.stringify(selection) });
+    await assertOk(
+      fetch(`/games/${game.id}/turns`, {
+        method: "POST",
+        body: JSON.stringify(selection),
+      }),
+    );
     selection = [];
   }
 
